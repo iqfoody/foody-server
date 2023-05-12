@@ -1,0 +1,722 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Wallet {
+  _id: ID!
+  points: Int!
+  amount: Int!
+}
+
+type User {
+  _id: ID!
+  wallet: String!
+  name: String!
+  phoneNumber: String!
+  email: String
+  password: String!
+  type: String!
+  country: String
+  city: String!
+  approvedEmail: Boolean
+  approvedPhoneNumber: Boolean
+  image: String
+  state: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  ip: String
+  platform: String
+  refreshToken: String
+  deviceToken: String
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+type UsersResponse {
+  data: [User!]!
+  pages: Int!
+}
+
+type Admin {
+  _id: ID!
+  name: String!
+  email: String!
+  password: String!
+  type: String!
+  image: String
+  state: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  ip: String
+  platform: String
+  refreshToken: String
+  deviceToken: String
+}
+
+type Driver {
+  _id: ID!
+  name: String!
+  phoneNumber: String!
+  country: String
+  city: String!
+  image: String
+  state: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  ip: String
+  platform: String
+  refreshToken: String
+  deviceToken: String
+}
+
+type Address {
+  _id: ID!
+  user: String!
+  title: String!
+  country: String
+  city: String
+  address: String
+  description: String
+  latitude: Float!
+  longitude: Float!
+}
+
+type Category {
+  _id: ID!
+  title: String!
+  titleEN: String!
+  titleKR: String
+  image: String!
+  position: Int!
+  state: String!
+}
+
+type Restaurant {
+  _id: ID!
+  category: String
+  title: String!
+  titleEN: String!
+  titleKR: String
+  description: String!
+  descriptionEN: String!
+  descriptionKR: String
+  image: String
+  rating: Float!
+  rates: Int!
+  time: Int!
+  deliveryPrice: Int!
+  position: Int!
+  state: String!
+}
+
+type MealAddition {
+  _id: ID!
+  title: String!
+  titleEN: String!
+  titleKR: String
+  price: Int!
+}
+
+type MealIngredient {
+  _id: ID!
+  title: String!
+  titleEN: String!
+  titleKR: String
+}
+
+type Tag {
+  _id: ID!
+  title: String!
+  titleEN: String!
+  titleKR: String
+  image: String
+  position: Int!
+  state: String!
+}
+
+type RestaurantCategory {
+  _id: ID!
+  restaurant: String!
+  title: String!
+  titleEN: String!
+  titleKR: String
+  position: Int!
+}
+
+type Meal {
+  _id: ID!
+  restaurant: String!
+  tag: String
+  restaurantCategory: String!
+  title: String!
+  titleEN: String!
+  titleKR: String
+  description: String!
+  descriptionEN: String!
+  descriptionKR: String
+  image: String!
+  additions: [MealAddition!]
+  ingredients: [MealIngredient!]
+  price: Int!
+  previousPrice: Int
+  points: Int
+  pointsBack: Int
+  position: Int
+  state: String!
+}
+
+type Favorite {
+  _id: ID!
+  user: String!
+  restaurants: String
+  meals: String
+}
+
+type Feedback {
+  _id: ID!
+  subject: String!
+  message: String!
+  name: String
+  phoneNumber: String
+  user: String
+}
+
+type OrderItem {
+  meal: String!
+  additions: [String!]
+  addIngredients: [String!]
+  removeIngredients: [String!]
+  quantity: Int!
+}
+
+type Order {
+  _id: ID!
+  user: String!
+  restaurant: String!
+  address: String!
+  meals: [OrderItem!]!
+  driver: String
+  totalPrice: Int!
+  type: String!
+  deliveryPrice: Int!
+  tableware: Boolean!
+  details: String!
+  paymentMethod: String!
+  state: String!
+  promoCode: Int
+  discount: Int
+  percent: Int
+  walletAmount: Int
+  walletPoint: Int
+}
+
+type PromoCode {
+  _id: ID!
+  name: String!
+  users: [String!]
+  user: String
+  type: String!
+  discount: Int!
+  public: Boolean!
+  expire: Timestamp!
+  state: String!
+}
+
+type Rate {
+  _id: ID!
+  user: String!
+  restaurant: String!
+  rate: Int!
+  description: String
+}
+
+type LoginAdmin {
+  accessToken: String!
+  refreshToken: String!
+  user: Admin!
+}
+
+type Response {
+  message: String!
+}
+
+type Advertisement {
+  _id: ID!
+  target: ID
+  user: String
+  title: String!
+  titleEN: String!
+  titleKR: String
+  image: String!
+  type: String
+  position: Int!
+  state: String!
+}
+
+type Notification {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Search {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Query {
+  searchUsers(searchQuery: SearchUsersInput!): UsersResponse!
+  users(limitEntity: LimitEntity!): UsersResponse!
+  user(id: ID!): User!
+  wallet(id: ID!): Wallet!
+  favorites: [Favorite!]!
+  favorite(id: ID!): Favorite!
+  refresh: String!
+  admins: [Admin!]!
+  admin(id: ID!): Admin!
+  infoAdmin: Admin!
+  drivers: [Driver!]!
+  driver(id: ID!): Driver!
+  addresses(id: ID!): [Address!]!
+  address(id: ID!): Address!
+  advertisements: [Advertisement!]!
+  advertisement(id: ID!): Advertisement!
+  categories: [Category!]!
+  category(id: ID!): Category!
+  feedbacks: [Feedback!]!
+  feedback(id: ID!): Feedback!
+  meals: [Meal!]!
+  meal(id: ID!): Meal!
+  notifications: [Notification!]!
+  notification(id: Int!): Notification!
+  orders(limitEntity: LimitEntity!): [Order!]!
+  order(id: ID!): Order!
+  promoCodes: [PromoCode!]!
+  promoCode(id: ID!): PromoCode!
+  rates: [Rate!]!
+  rate(id: ID!): Rate!
+  restaurants: [Restaurant!]!
+  restaurant(id: ID!): Restaurant!
+  restaurantCategories: [RestaurantCategory!]!
+  restaurantCategory(id: ID!): RestaurantCategory!
+  tags: [Tag!]!
+  tag(id: ID!): Tag!
+  searches: [Search!]!
+  search(id: Int!): Search!
+}
+
+input SearchUsersInput {
+  query: String!
+  page: Float!
+}
+
+input LimitEntity {
+  page: Int!
+  limit: Int!
+  orderBy: Int!
+  state: String
+}
+
+type Mutation {
+  cresteUser(creteUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): String!
+  passwordUser(passwordUserInput: PasswordUserInput!): String!
+  stateUser(stateInput: StateInput!): String!
+  removeUser(id: ID!): String!
+  updateWallet(updateWalletInput: UpdateWalletInput!): String!
+  createFavorite(createFavoriteInput: CreateFavoriteInput!): Favorite!
+  removeFavorite(id: ID!): Favorite!
+  loginAdmin(loginAdminInput: LoginInput!): LoginAdmin!
+  logoutAdmin: String!
+  createAdmin(createAdminInput: CreateAdminInput!): Admin!
+  updateAdmin(updateAdminInput: UpdateAdminInput!): String!
+  passwordAdmin(passwordAdminInput: PasswordUserInput!): String!
+  stateAdmin(stateInput: StateInput!): String!
+  removeAdmin(id: ID!): String!
+  createDriver(createDriverInput: CreateDriverInput!): Driver!
+  updateDriver(updateDriverInput: UpdateDriverInput!): Response!
+  stateDriver(stateInput: StateInput!): Response!
+  removeDriver(id: ID!): Response!
+  createAddress(createAddressInput: CreateAddressInput!): Address!
+  updateAddress(updateAddressInput: UpdateAddressInput!): String!
+  removeAddress(id: ID!): String!
+  updateAdvertisement(updateAdvertisementInput: UpdateAdvertisementInput!): String!
+  removeAdvertisement(id: ID!): String!
+  updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
+  removeCategory(id: ID!): Category!
+  removeFeedback(id: ID!): String!
+  createMeal(createMealInput: CreateMealInput!): Meal!
+  updateMeal(updateMealInput: UpdateMealInput!): Meal!
+  removeMeal(id: ID!): Meal!
+  createNotification(createNotificationInput: CreateNotificationInput!): Notification!
+  updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
+  removeNotification(id: Int!): Notification!
+  createOrder(createOrderInput: CreateOrderInput!): Order!
+  updateOrder(updateOrderInput: UpdateOrderInput!): String!
+  removeOrder(id: ID!): String!
+  createPromoCode(createPromoCodeInput: CreatePromoCodeInput!): PromoCode!
+  updatePromoCode(updatePromoCodeInput: UpdatePromoCodeInput!): String!
+  removePromoCode(id: ID!): String!
+  createRate(createRateInput: CreateRateInput!): Rate!
+  updateRate(updateRateInput: UpdateRateInput!): Rate!
+  removeRate(id: ID!): Rate!
+  createRestaurant(createRestaurantInput: CreateRestaurantInput!): Restaurant!
+  updateRestaurant(updateRestaurantInput: UpdateRestaurantInput!): Restaurant!
+  removeRestaurant(id: ID!): Restaurant!
+  createRestaurantCategory(createRestaurantCategoryInput: CreateRestaurantCategoryInput!): RestaurantCategory!
+  updateRestaurantCategory(updateRestaurantCategoryInput: UpdateRestaurantCategoryInput!): RestaurantCategory!
+  removeRestaurantCategory(id: ID!): RestaurantCategory!
+  createTag(createTagInput: CreateTagInput!): Tag!
+  updateTag(updateTagInput: UpdateTagInput!): Tag!
+  removeTag(id: ID!): Tag!
+  createSearch(createSearchInput: CreateSearchInput!): Search!
+  updateSearch(updateSearchInput: UpdateSearchInput!): Search!
+  removeSearch(id: Int!): Search!
+}
+
+input CreateUserInput {
+  name: String!
+  phoneNumber: String!
+  email: String
+  password: String!
+  type: String
+  city: String
+  image: String
+  deviceToken: String
+  ip: String
+  platform: String
+  refreshToken: String
+}
+
+input UpdateUserInput {
+  name: String
+  phoneNumber: String
+  email: String
+  password: String
+  type: String
+  city: String
+  image: String
+  deviceToken: String
+  ip: String
+  platform: String
+  refreshToken: String
+  id: ID
+}
+
+input PasswordUserInput {
+  id: ID
+  oldPassword: String!
+  password: String!
+}
+
+input StateInput {
+  id: ID!
+  state: String!
+}
+
+input UpdateWalletInput {
+  _id: ID
+  id: ID
+  amount: Int
+  points: Int
+}
+
+input CreateFavoriteInput {
+  user: ID!
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+  deviceToken: String
+}
+
+input CreateAdminInput {
+  name: String!
+  email: String!
+  password: String!
+  type: String!
+  image: String
+}
+
+input UpdateAdminInput {
+  name: String
+  email: String
+  password: String
+  type: String
+  image: String
+  id: ID
+  ip: String
+  platform: String
+  refreshToken: String
+  deviceToken: String
+}
+
+input CreateDriverInput {
+  name: String!
+  phoneNumber: String!
+  password: String!
+  country: String
+  city: String!
+  image: String
+}
+
+input UpdateDriverInput {
+  name: String
+  phoneNumber: String
+  password: String
+  country: String
+  city: String
+  image: String
+  id: ID
+  ip: String
+  platform: String
+  refreshToken: String
+  deviceToken: String
+}
+
+input CreateAddressInput {
+  user: ID!
+  title: String!
+  country: String
+  city: String
+  address: String
+  description: String
+  latitude: Float!
+  longitude: Float!
+}
+
+input UpdateAddressInput {
+  user: ID
+  title: String
+  country: String
+  city: String
+  address: String
+  description: String
+  latitude: Float
+  longitude: Float
+  id: ID
+}
+
+input UpdateAdvertisementInput {
+  target: ID
+  user: ID
+  title: String
+  titleEN: String
+  titleKR: String
+  image: String
+  type: String
+  id: Int
+}
+
+input UpdateCategoryInput {
+  title: String
+  titleEN: String
+  titleKR: String
+  image: String
+  id: ID
+}
+
+input CreateMealInput {
+  restaurant: ID!
+  tag: ID
+  restaurantCategory: ID!
+  title: String!
+  titleEN: String!
+  titleKR: String
+  description: String!
+  descriptionEN: String!
+  descriptionKR: String
+  image: String
+  additions: [CreateMealAdditionInput!]
+  ingredients: [CreateMealIngredientInput!]
+  price: Int!
+  previousPrice: Int
+  points: Int
+  pointsBack: Int
+}
+
+input CreateMealAdditionInput {
+  title: String!
+  titleEN: String!
+  titleKR: String
+  price: Int!
+}
+
+input CreateMealIngredientInput {
+  title: String!
+  titleEN: String!
+  titleKR: String
+}
+
+input UpdateMealInput {
+  restaurant: ID
+  tag: ID
+  restaurantCategory: ID
+  title: String
+  titleEN: String
+  titleKR: String
+  description: String
+  descriptionEN: String
+  descriptionKR: String
+  image: String
+  additions: [CreateMealAdditionInput!]
+  ingredients: [CreateMealIngredientInput!]
+  price: Int
+  previousPrice: Int
+  points: Int
+  pointsBack: Int
+  id: ID!
+}
+
+input CreateNotificationInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateNotificationInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateOrderInput {
+  user: ID
+  restaurant: ID!
+  address: ID!
+  meals: [CreateOrderItemInput!]!
+  driver: ID!
+  tableware: Boolean
+  details: String
+  paymentMethod: String
+  promoCode: String
+}
+
+input CreateOrderItemInput {
+  meal: ID!
+  additions: [String!]
+  addIngredients: [String!]
+  removeIngredients: [String!]
+  quantity: Int!
+}
+
+input UpdateOrderInput {
+  user: ID
+  restaurant: ID
+  address: ID
+  meals: [CreateOrderItemInput!]
+  driver: ID
+  tableware: Boolean
+  details: String
+  paymentMethod: String
+  promoCode: String
+  id: ID!
+}
+
+input CreatePromoCodeInput {
+  name: String!
+  user: ID
+  type: String!
+  discount: Int!
+  public: Boolean
+  expire: Timestamp!
+}
+
+input UpdatePromoCodeInput {
+  name: String
+  user: ID
+  type: String
+  discount: Int
+  public: Boolean
+  expire: Timestamp
+  id: ID!
+}
+
+input CreateRateInput {
+  user: ID!
+  restaurant: ID
+  driver: ID
+  rate: Int!
+  description: String
+}
+
+input UpdateRateInput {
+  user: ID
+  restaurant: ID
+  driver: ID
+  rate: Int
+  description: String
+  id: ID!
+}
+
+input CreateRestaurantInput {
+  category: ID
+  title: String!
+  titleEN: String!
+  titleKR: String
+  description: String!
+  descriptionEN: String!
+  descriptionKR: String
+  image: String
+  time: Int!
+  deliveryPrice: Int
+}
+
+input UpdateRestaurantInput {
+  category: ID
+  title: String
+  titleEN: String
+  titleKR: String
+  description: String
+  descriptionEN: String
+  descriptionKR: String
+  image: String
+  time: Int
+  deliveryPrice: Int
+  id: ID
+  rating: Float
+  rates: Int
+}
+
+input CreateRestaurantCategoryInput {
+  restaurant: ID!
+  title: String!
+  titleEN: String!
+  titleKR: String
+}
+
+input UpdateRestaurantCategoryInput {
+  restaurant: ID
+  title: String
+  titleEN: String
+  titleKR: String
+  id: ID!
+}
+
+input CreateTagInput {
+  title: String!
+  titleEN: String!
+  titleKR: String
+  image: String
+}
+
+input UpdateTagInput {
+  title: String
+  titleEN: String
+  titleKR: String
+  image: String
+  id: ID!
+}
+
+input CreateSearchInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateSearchInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
