@@ -10,7 +10,7 @@ type Wallet {
 
 type User {
   _id: ID!
-  wallet: String!
+  wallet: Wallet!
   name: String!
   phoneNumber: String!
   email: String
@@ -79,6 +79,8 @@ type Address {
   country: String
   city: String
   address: String
+  building: String
+  apartment: String
   description: String
   latitude: Float!
   longitude: Float!
@@ -96,7 +98,7 @@ type Category {
 
 type Restaurant {
   _id: ID!
-  category: String
+  category: Category
   title: String!
   titleEN: String!
   titleKR: String
@@ -110,6 +112,8 @@ type Restaurant {
   deliveryPrice: Int!
   position: Int!
   state: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
 }
 
 type MealAddition {
@@ -117,7 +121,7 @@ type MealAddition {
   title: String!
   titleEN: String!
   titleKR: String
-  price: Int!
+  price: Int
 }
 
 type MealIngredient {
@@ -148,16 +152,16 @@ type RestaurantCategory {
 
 type Meal {
   _id: ID!
-  restaurant: String!
-  tag: String
-  restaurantCategory: String!
+  restaurant: Restaurant!
+  tag: Tag
+  restaurantCategory: RestaurantCategory!
   title: String!
   titleEN: String!
   titleKR: String
   description: String!
   descriptionEN: String!
   descriptionKR: String
-  image: String!
+  image: String
   additions: [MealAddition!]
   ingredients: [MealIngredient!]
   price: Int!
@@ -166,6 +170,8 @@ type Meal {
   pointsBack: Int
   position: Int
   state: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
 }
 
 type Favorite {
@@ -194,35 +200,44 @@ type OrderItem {
 
 type Order {
   _id: ID!
-  user: String!
-  restaurant: String!
-  address: String!
+  user: User!
+  restaurant: Restaurant!
+  address: Address!
   meals: [OrderItem!]!
-  driver: String
-  totalPrice: Int!
+  driver: Driver
+  totalPrice: Float!
+  totalPoints: Int
+  price: Int
+  recievedPrice: Int
   type: String!
   deliveryPrice: Int!
   tableware: Boolean!
+  hasRating: Boolean!
   details: String!
   paymentMethod: String!
   state: String!
-  promoCode: Int
+  promoCode: String
   discount: Int
-  percent: Int
+  discountType: String
   walletAmount: Int
-  walletPoint: Int
+  walletPoints: Int
+  pointsBack: Int
+  createdAt: Timestamp
+  updatedAt: Timestamp
 }
 
 type PromoCode {
   _id: ID!
   name: String!
   users: [String!]
-  user: String
+  user: User
   type: String!
   discount: Int!
-  public: Boolean!
+  isPublic: Boolean!
   expire: Timestamp!
   state: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
 }
 
 type Rate {
@@ -233,14 +248,59 @@ type Rate {
   description: String
 }
 
+type Days {
+  d1: Int!
+  d2: Int!
+  d3: Int!
+  d4: Int!
+  d5: Int!
+  d6: Int!
+  d7: Int!
+  d8: Int!
+  d9: Int!
+  d10: Int!
+  d11: Int!
+  d12: Int!
+  d13: Int!
+  d14: Int!
+  d15: Int!
+  d16: Int!
+  d17: Int!
+  d18: Int!
+  d19: Int!
+  d20: Int!
+  d21: Int!
+  d22: Int!
+  d23: Int!
+  d24: Int!
+  d25: Int!
+  d26: Int!
+  d27: Int!
+  d28: Int
+  d29: Int
+  d30: Int
+  d31: Int
+}
+
+type Months {
+  m0: Days!
+  m1: Days!
+  m2: Days!
+  m3: Days!
+  m4: Days!
+  m5: Days!
+  m6: Days!
+  m7: Days!
+  m8: Days!
+  m9: Days!
+  m10: Days!
+  m11: Days!
+}
+
 type LoginAdmin {
   accessToken: String!
   refreshToken: String!
   user: Admin!
-}
-
-type Response {
-  message: String!
 }
 
 type Advertisement {
@@ -256,9 +316,83 @@ type Advertisement {
   state: String!
 }
 
+type FeedbacksLimit {
+  data: [Feedback!]!
+  pages: Int!
+}
+
+type MealsResponse {
+  data: [Meal!]!
+  pages: Int!
+}
+
 type Notification {
   """Example field (placeholder)"""
   exampleField: Int!
+}
+
+type OrdersResponse {
+  data: [Order!]!
+  pages: Int!
+}
+
+type RatingResponse {
+  user: User!
+  rate: Int!
+}
+
+type StatusResponse {
+  Pending: Int!
+  InProgress: Int!
+  InDelivery: Int!
+  Completed: Int!
+  Canceled: Int!
+}
+
+type WeekResponse {
+  d0: Int!
+  d1: Int!
+  d2: Int!
+  d3: Int!
+  d4: Int!
+  d5: Int!
+  d6: Int!
+}
+
+type HomeResponse {
+  orders: Int!
+  recentlyOrders: [Order!]
+  week: WeekResponse!
+  status: StatusResponse!
+  users: Int!
+  recentlyUsers: [User!]
+  rating: Float
+  total: Int
+  recentlyRating: [RatingResponse!]
+  restaurants: Int
+  meals: Int!
+  drivers: Int!
+}
+
+type Transaction {
+  _id: ID!
+  user: User!
+  admin: Admin
+  order: Order
+  type: String!
+  procedure: String!
+  amount: Int!
+  previous: Int!
+  description: String!
+  paymentMethod: String
+  state: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+type TransactionResponse {
+  data: [Transaction!]!
+  pages: Int!
 }
 
 type Search {
@@ -267,89 +401,112 @@ type Search {
 }
 
 type Query {
-  searchUsers(searchQuery: SearchUsersInput!): UsersResponse!
   users(limitEntity: LimitEntity!): UsersResponse!
   user(id: ID!): User!
+  usersReport(date: String!): Months!
   wallet(id: ID!): Wallet!
   favorites: [Favorite!]!
   favorite(id: ID!): Favorite!
+  addresses(id: ID!): [Address!]!
+  address(id: ID!): Address!
   refresh: String!
   admins: [Admin!]!
   admin(id: ID!): Admin!
   infoAdmin: Admin!
   drivers: [Driver!]!
   driver(id: ID!): Driver!
-  addresses(id: ID!): [Address!]!
-  address(id: ID!): Address!
   advertisements: [Advertisement!]!
   advertisement(id: ID!): Advertisement!
   categories: [Category!]!
   category(id: ID!): Category!
-  feedbacks: [Feedback!]!
+  feedbacks(limitEntity: LimitEntity!): FeedbacksLimit!
   feedback(id: ID!): Feedback!
-  meals: [Meal!]!
+  meals(limitEntity: LimitEntity!): MealsResponse!
+  searchMeals(query: String!): [Meal!]!
   meal(id: ID!): Meal!
   notifications: [Notification!]!
   notification(id: Int!): Notification!
-  orders(limitEntity: LimitEntity!): [Order!]!
+  orders(limitEntity: LimitEntity!): OrdersResponse!
+  homeValues: HomeResponse!
+  ordersUser(limitEntity: LimitEntity!): OrdersResponse!
   order(id: ID!): Order!
+  profitsReport(date: String!): Months!
+  ordersReport(date: String!): Months!
   promoCodes: [PromoCode!]!
   promoCode(id: ID!): PromoCode!
   rates: [Rate!]!
   rate(id: ID!): Rate!
   restaurants: [Restaurant!]!
+  searchRestaurants(query: String!): [Restaurant!]!
   restaurant(id: ID!): Restaurant!
-  restaurantCategories: [RestaurantCategory!]!
+  restaurantCategories(id: ID!): [RestaurantCategory!]!
   restaurantCategory(id: ID!): RestaurantCategory!
+  transactions(limitEntity: LimitEntity!): TransactionResponse!
+  amountTransactions(limitEntity: LimitEntity!): TransactionResponse!
+  pointsTransactions(limitEntity: LimitEntity!): TransactionResponse!
+  userTransactions(limitEntity: LimitEntity!): TransactionResponse!
+  adminTransactions(limitEntity: LimitEntity!): TransactionResponse!
+  transaction(id: String!): Transaction!
   tags: [Tag!]!
   tag(id: ID!): Tag!
-  searches: [Search!]!
+  searchUsers(searchQuery: SearchInput!): UsersResponse!
   search(id: Int!): Search!
-}
-
-input SearchUsersInput {
-  query: String!
-  page: Float!
 }
 
 input LimitEntity {
   page: Int!
   limit: Int!
-  orderBy: Int!
+  orderBy: Int
   state: String
+  user: ID
+}
+
+input SearchInput {
+  query: String!
+  page: Int
 }
 
 type Mutation {
-  cresteUser(creteUserInput: CreateUserInput!): User!
+  createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): String!
-  passwordUser(passwordUserInput: PasswordUserInput!): String!
+  passwordUser(passwordUserInput: UpdatePasswordUser!): String!
   stateUser(stateInput: StateInput!): String!
   removeUser(id: ID!): String!
   updateWallet(updateWalletInput: UpdateWalletInput!): String!
   createFavorite(createFavoriteInput: CreateFavoriteInput!): Favorite!
   removeFavorite(id: ID!): Favorite!
+  createAddress(createAddressInput: CreateAddressInput!): Address!
+  updateAddress(updateAddressInput: UpdateAddressInput!): String!
+  removeAddress(id: ID!): String!
   loginAdmin(loginAdminInput: LoginInput!): LoginAdmin!
   logoutAdmin: String!
   createAdmin(createAdminInput: CreateAdminInput!): Admin!
   updateAdmin(updateAdminInput: UpdateAdminInput!): String!
-  passwordAdmin(passwordAdminInput: PasswordUserInput!): String!
+  passwordAdmin(passwordAdminInput: UpdatePasswordUser!): String!
   stateAdmin(stateInput: StateInput!): String!
   removeAdmin(id: ID!): String!
   createDriver(createDriverInput: CreateDriverInput!): Driver!
-  updateDriver(updateDriverInput: UpdateDriverInput!): Response!
-  stateDriver(stateInput: StateInput!): Response!
-  removeDriver(id: ID!): Response!
-  createAddress(createAddressInput: CreateAddressInput!): Address!
-  updateAddress(updateAddressInput: UpdateAddressInput!): String!
-  removeAddress(id: ID!): String!
+  updateDriver(updateDriverInput: UpdateDriverInput!): String!
+  passwordDriver(passwordDriverInput: UpdatePasswordUser!): String!
+  stateDriver(stateInput: StateInput!): String!
+  removeDriver(id: ID!): String!
   updateAdvertisement(updateAdvertisementInput: UpdateAdvertisementInput!): String!
+  positionAdvertisement(updatePositionInput: [UpdatePositionInput!]!): String!
+  stateAdvertisement(stateInput: StateInput!): String!
   removeAdvertisement(id: ID!): String!
-  updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
-  removeCategory(id: ID!): Category!
+  updateCategory(updateCategoryInput: UpdateCategoryInput!): String!
+  positionCategory(updatePositionInput: [UpdatePositionInput!]!): String!
+  stateCategory(stateInput: StateInput!): String!
+  removeCategory(id: ID!): String!
   removeFeedback(id: ID!): String!
   createMeal(createMealInput: CreateMealInput!): Meal!
-  updateMeal(updateMealInput: UpdateMealInput!): Meal!
-  removeMeal(id: ID!): Meal!
+  updateMeal(updateMealInput: UpdateMealInput!): String!
+  stateMeal(stateInput: StateInput!): String!
+  positionMeal(updatePositionInput: [UpdatePositionInput!]!): String!
+  removeMeal(id: ID!): String!
+  createMealObject(createMealObject: CreateMealObject!): MealAddition!
+  updateMealObject(updateMealObject: UpdateMealObject!): String!
+  removeMealObject(removeMealObject: RemoveMealObject!): String!
   createNotification(createNotificationInput: CreateNotificationInput!): Notification!
   updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
   removeNotification(id: Int!): Notification!
@@ -358,22 +515,28 @@ type Mutation {
   removeOrder(id: ID!): String!
   createPromoCode(createPromoCodeInput: CreatePromoCodeInput!): PromoCode!
   updatePromoCode(updatePromoCodeInput: UpdatePromoCodeInput!): String!
+  statePromoCode(stateInput: StateInput!): String!
   removePromoCode(id: ID!): String!
   createRate(createRateInput: CreateRateInput!): Rate!
   updateRate(updateRateInput: UpdateRateInput!): Rate!
   removeRate(id: ID!): Rate!
   createRestaurant(createRestaurantInput: CreateRestaurantInput!): Restaurant!
-  updateRestaurant(updateRestaurantInput: UpdateRestaurantInput!): Restaurant!
-  removeRestaurant(id: ID!): Restaurant!
+  updateRestaurant(updateRestaurantInput: UpdateRestaurantInput!): String!
+  stateRestaurant(stateInput: StateInput!): String!
+  positionRestaurant(updatePositionInput: [UpdatePositionInput!]!): String!
+  removeRestaurant(id: ID!): String!
   createRestaurantCategory(createRestaurantCategoryInput: CreateRestaurantCategoryInput!): RestaurantCategory!
-  updateRestaurantCategory(updateRestaurantCategoryInput: UpdateRestaurantCategoryInput!): RestaurantCategory!
-  removeRestaurantCategory(id: ID!): RestaurantCategory!
+  updateRestaurantCategory(updateRestaurantCategoryInput: UpdateRestaurantCategoryInput!): String!
+  positionRestaurantCategory(updatePositionInput: [UpdatePositionInput!]!): String!
+  removeRestaurantCategory(id: ID!): String!
+  createTransaction(createTransactionInput: CreateTransactionInput!): Transaction!
+  updateTransaction(updateTransactionInput: UpdateTransactionInput!): Transaction!
+  removeTransaction(id: String!): Transaction!
   createTag(createTagInput: CreateTagInput!): Tag!
-  updateTag(updateTagInput: UpdateTagInput!): Tag!
-  removeTag(id: ID!): Tag!
-  createSearch(createSearchInput: CreateSearchInput!): Search!
-  updateSearch(updateSearchInput: UpdateSearchInput!): Search!
-  removeSearch(id: Int!): Search!
+  updateTag(updateTagInput: UpdateTagInput!): String!
+  StateTag(stateInput: StateInput!): String!
+  positionTag(updatePositionInput: [UpdatePositionInput!]!): String!
+  removeTag(id: ID!): String!
 }
 
 input CreateUserInput {
@@ -405,10 +568,10 @@ input UpdateUserInput {
   id: ID
 }
 
-input PasswordUserInput {
+input UpdatePasswordUser {
   id: ID
-  oldPassword: String!
-  password: String!
+  oldPassword: String
+  password: String
 }
 
 input StateInput {
@@ -425,6 +588,33 @@ input UpdateWalletInput {
 
 input CreateFavoriteInput {
   user: ID!
+}
+
+input CreateAddressInput {
+  user: ID!
+  title: String!
+  country: String
+  city: String
+  address: String
+  building: String
+  apartment: String
+  description: String
+  latitude: Float!
+  longitude: Float!
+}
+
+input UpdateAddressInput {
+  user: ID
+  title: String
+  country: String
+  city: String
+  address: String
+  building: String
+  apartment: String
+  description: String
+  latitude: Float
+  longitude: Float
+  id: ID
 }
 
 input LoginInput {
@@ -477,29 +667,6 @@ input UpdateDriverInput {
   deviceToken: String
 }
 
-input CreateAddressInput {
-  user: ID!
-  title: String!
-  country: String
-  city: String
-  address: String
-  description: String
-  latitude: Float!
-  longitude: Float!
-}
-
-input UpdateAddressInput {
-  user: ID
-  title: String
-  country: String
-  city: String
-  address: String
-  description: String
-  latitude: Float
-  longitude: Float
-  id: ID
-}
-
 input UpdateAdvertisementInput {
   target: ID
   user: ID
@@ -509,6 +676,11 @@ input UpdateAdvertisementInput {
   image: String
   type: String
   id: Int
+}
+
+input UpdatePositionInput {
+  id: ID!
+  position: Int!
 }
 
 input UpdateCategoryInput {
@@ -571,6 +743,29 @@ input UpdateMealInput {
   id: ID!
 }
 
+input CreateMealObject {
+  title: String
+  titleEN: String
+  titleKR: String
+  price: Int
+  id: ID!
+}
+
+input UpdateMealObject {
+  title: String
+  titleEN: String
+  titleKR: String
+  price: Int
+  id: ID!
+  _id: ID!
+}
+
+input RemoveMealObject {
+  id: ID!
+  addition: ID
+  ingredient: ID
+}
+
 input CreateNotificationInput {
   """Example field (placeholder)"""
   exampleField: Int!
@@ -620,7 +815,7 @@ input CreatePromoCodeInput {
   user: ID
   type: String!
   discount: Int!
-  public: Boolean
+  isPublic: Boolean
   expire: Timestamp!
 }
 
@@ -629,7 +824,7 @@ input UpdatePromoCodeInput {
   user: ID
   type: String
   discount: Int
-  public: Boolean
+  isPublic: Boolean
   expire: Timestamp
   id: ID!
 }
@@ -695,6 +890,33 @@ input UpdateRestaurantCategoryInput {
   id: ID!
 }
 
+input CreateTransactionInput {
+  user: ID!
+  admin: ID
+  order: ID
+  type: String!
+  procedure: String!
+  amount: Int!
+  previous: Int
+  description: String!
+  paymentMethod: String
+  state: String
+}
+
+input UpdateTransactionInput {
+  user: ID
+  admin: ID
+  order: ID
+  type: String
+  procedure: String
+  amount: Int
+  previous: Int
+  description: String
+  paymentMethod: String
+  state: String
+  id: ID!
+}
+
 input CreateTagInput {
   title: String!
   titleEN: String!
@@ -708,15 +930,4 @@ input UpdateTagInput {
   titleKR: String
   image: String
   id: ID!
-}
-
-input CreateSearchInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateSearchInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
 }

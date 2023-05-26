@@ -31,12 +31,12 @@ export declare class CategoriesController {
     private readonly categoriesService;
     private readonly awsService;
     constructor(categoriesService: CategoriesService, awsService: AwsService);
-    getCategories(context: any): Promise<(import("mongoose").Document<unknown, {}, import("../models/categories.schema").CategoriesDocument> & Omit<import("../models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[]>;
     getCategory(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/categories.schema").CategoriesDocument> & Omit<import("../models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
+    getCategories(): Promise<(import("mongoose").Document<unknown, {}, import("../models/categories.schema").CategoriesDocument> & Omit<import("../models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>)[]>;
     createCategory(createCategoryInput: CreateCategoryInput, file: any): Promise<import("@nestjs/common").BadRequestException | (import("mongoose").Document<unknown, {}, import("../models/categories.schema").CategoriesDocument> & Omit<import("../models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)>;

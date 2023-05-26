@@ -7,6 +7,8 @@ import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CheckAbilities } from 'src/ability/ability.decorator';
 import { Actions } from 'src/ability/ability.factory';
+import { StateInput } from 'src/constants/state.input';
+import { UpdatePositionInput } from 'src/constants/position.input';
 
 @UseGuards(AccessAuthGuard)
 @Resolver(() => Tag)
@@ -31,13 +33,25 @@ export class TagsResolver {
     return this.tagsService.findOne(id);
   }
 
-  @Mutation(() => Tag)
+  @Mutation(() => String)
   @CheckAbilities({actions: Actions.Update, subject: Tag})
   updateTag(@Args('updateTagInput') updateTagInput: UpdateTagInput) {
     return this.tagsService.update(updateTagInput.id, updateTagInput);
   }
 
-  @Mutation(() => Tag)
+  @Mutation(() => String)
+  @CheckAbilities({actions: Actions.Update, subject: Tag})
+  StateTag(@Args('stateInput') stateInput: StateInput) {
+    return this.tagsService.state(stateInput);
+  }
+
+  @Mutation(() => String)
+  @CheckAbilities({actions: Actions.Update, subject: Tag})
+  positionTag(@Args('updatePositionInput', {type: ()=> [UpdatePositionInput]}) updatePositionInput: UpdatePositionInput[]) {
+    return this.tagsService.position(updatePositionInput);
+  }
+
+  @Mutation(() => String)
   @CheckAbilities({actions: Actions.Delete, subject: Tag})
   removeTag(@Args('id', { type: () => ID }) id: string) {
     return this.tagsService.remove(id);

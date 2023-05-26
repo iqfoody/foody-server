@@ -23,16 +23,16 @@ export class AuthService {
     private driversService: DriversService,
   ) {
     this.cookieOptions = {
-      domain: 'https://admin.iqfoody.com', // <- change it to your client domain...
-      secure: true, // <- should be true in production...
+      domain: 'localhost', // <- change it to your client domain... -> https://admin.iqfoody.com
+      secure: false, // <- should be true in production...
       sameSite: 'lax',
       httpOnly: true,
       path: '/',
       maxAge: 1000*60*60*24
     };
     this.cookieRefreshOptions = {
-      domain: 'https://admin.iqfoody.com', // <- change it to your client domain...
-      secure: true, // <- should be true in production...
+      domain: 'localhost', // <- change it to your client domain... -> https://admin.iqfoody.com
+      secure: false, // <- should be true in production...
       sameSite: 'lax',
       httpOnly: true,
       path: '/',
@@ -59,7 +59,7 @@ export class AuthService {
     const result = await this.getTokens(context.user, "User");
     const refreshToken = await hash(result.refreshToken, 10);
     result.user.refreshToken = result.refreshToken;
-    await this.usersService.updateAny(context.user._id, {refreshToken, ip, platform, deviceToken: loginInput.deviceToken});
+    await this.usersService.updateAny(context.user._id, {refreshToken, ip, platform, deviceToken: loginInput?.deviceToken});
     return {user: result.user, accessToken: result.accessToken};
   }
 
@@ -71,7 +71,7 @@ export class AuthService {
     const refreshToken = await hash(result.refreshToken, 10)
     const ip: string = context.req?.ip;
     const platform: string = context.req?.get('user-agent');
-    await this.adminsService.updateAny(admin._id, {refreshToken, ip, platform, deviceToken: loginInput.deviceToken});
+    await this.adminsService.updateAdmin(admin._id, {refreshToken, ip, platform, deviceToken: loginInput.deviceToken});
     context.res.cookie('osk', result.accessToken, this.cookieOptions);
     context.res.cookie('iop', result.refreshToken, this.cookieRefreshOptions);
     return result;
@@ -90,6 +90,7 @@ export class AuthService {
   }
 
   async signup(createUserInput: CreateUserInput, context: any) {
+    if(createUserInput.password.length < 6) throw new BadRequestException('password E0004');
     if(createUserInput?.phoneNumber){
       let E0011 = await this.usersService.findByPhoneNumber(createUserInput?.phoneNumber);
       if(E0011) throw new BadRequestException('phoneNumber E0011')
@@ -121,15 +122,15 @@ export class AuthService {
   async refresh(context: any, type: string) {
     if(type === "User"){
       const user = await this.usersService.refresh(context.user._id, context.user.refreshToken);
-      const accessToken = await this.getNewAccessToken(user);
+      const accessToken = await this.getNewAccessToken(user, "User");
       return accessToken;
     } else if(type === "Driver") {
       const driver = await this.driversService.refresh(context.user._id, context.user.refreshToken);
-      const accessToken = await this.getNewAccessToken(driver);
+      const accessToken = await this.getNewAccessToken(driver, "Driver");
       return accessToken;
     } else {
       const admin = await this.adminsService.refresh(context.req.user._id, context.req.user.refreshToken);
-      const accessToken = await this.getNewAccessToken(admin);
+      const accessToken = await this.getNewAccessToken(admin, "Admin");
       context.res.cookie('osk', accessToken, this.cookieOptions);
       return "success";
     }
@@ -144,8 +145,8 @@ export class AuthService {
     return { accessToken: at, refreshToken: rt, user };
   }
 
-  async getNewAccessToken(user: any){
-    const userData = { _id: user?._id, type: user?.type, name: user?.name, phoneNumber: user?.phoneNumber, email: user?.email };
+  async getNewAccessToken(user: any, metadata: string){
+    const userData = { _id: user?._id, type: user?.type, name: user?.name, phoneNumber: user?.phoneNumber, email: user?.email, metadata };
     return this.jwtService.sign( userData, this.accessOptions )
   }
 

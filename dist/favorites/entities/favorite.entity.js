@@ -15,6 +15,10 @@ const meal_entity_1 = require("../../meals/entities/meal.entity");
 const restaurant_entity_1 = require("../../restaurants/entities/restaurant.entity");
 const user_entity_1 = require("../../users/entities/user.entity");
 let Favorite = class Favorite {
+    _id;
+    user;
+    restaurants;
+    meals;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

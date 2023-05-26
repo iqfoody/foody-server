@@ -7,6 +7,7 @@ import { CheckAbilities } from 'src/ability/ability.decorator';
 import { Actions } from 'src/ability/ability.factory';
 import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
 import { UseGuards } from '@nestjs/common';
+import { StateInput } from 'src/constants/state.input';
 
 @UseGuards(AccessAuthGuard)
 @Resolver(() => PromoCode)
@@ -35,6 +36,12 @@ export class PromoCodesResolver {
   @CheckAbilities({actions: Actions.Update, subject: PromoCode})
   updatePromoCode(@Args('updatePromoCodeInput') updatePromoCodeInput: UpdatePromoCodeInput) {
     return this.promoCodesService.update(updatePromoCodeInput.id, updatePromoCodeInput);
+  }
+
+  @Mutation(() => String)
+  @CheckAbilities({actions: Actions.Update, subject: PromoCode})
+  statePromoCode(@Args('stateInput') stateInput: StateInput) {
+    return this.promoCodesService.state(stateInput);
   }
 
   @Mutation(() => String)

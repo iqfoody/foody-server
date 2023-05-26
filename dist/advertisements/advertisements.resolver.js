@@ -21,7 +21,10 @@ const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
+const position_input_1 = require("../constants/position.input");
+const state_input_1 = require("../constants/state.input");
 let AdvertisementsResolver = class AdvertisementsResolver {
+    advertisementsService;
     constructor(advertisementsService) {
         this.advertisementsService = advertisementsService;
     }
@@ -33,6 +36,12 @@ let AdvertisementsResolver = class AdvertisementsResolver {
     }
     updateAdvertisement(updateAdvertisementInput) {
         return this.advertisementsService.update(updateAdvertisementInput.id, updateAdvertisementInput);
+    }
+    positionAdvertisement(updatePositionInput) {
+        return this.advertisementsService.position(updatePositionInput);
+    }
+    stateAdvertisement(stateInput) {
+        return this.advertisementsService.state(stateInput);
     }
     removeAdvertisement(id) {
         return this.advertisementsService.remove(id);
@@ -61,6 +70,22 @@ __decorate([
     __metadata("design:paramtypes", [update_advertisement_input_1.UpdateAdvertisementInput]),
     __metadata("design:returntype", void 0)
 ], AdvertisementsResolver.prototype, "updateAdvertisement", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: advertisement_entity_1.Advertisement }),
+    __param(0, (0, graphql_1.Args)('updatePositionInput', { type: () => [position_input_1.UpdatePositionInput] })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array]),
+    __metadata("design:returntype", void 0)
+], AdvertisementsResolver.prototype, "positionAdvertisement", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: advertisement_entity_1.Advertisement }),
+    __param(0, (0, graphql_1.Args)('stateInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [state_input_1.StateInput]),
+    __metadata("design:returntype", void 0)
+], AdvertisementsResolver.prototype, "stateAdvertisement", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: advertisement_entity_1.Advertisement }),

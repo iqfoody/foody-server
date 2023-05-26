@@ -20,12 +20,15 @@ const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
+const limitEntity_1 = require("../constants/limitEntity");
+const feedbacks_limit_entity_1 = require("./entities/feedbacks-limit.entity");
 let FeedbacksResolver = class FeedbacksResolver {
+    feedbacksService;
     constructor(feedbacksService) {
         this.feedbacksService = feedbacksService;
     }
-    findAll() {
-        return this.feedbacksService.findAll();
+    findAll(limitEntity) {
+        return this.feedbacksService.findAll(limitEntity);
     }
     findOne(id) {
         return this.feedbacksService.findOne(id);
@@ -35,10 +38,11 @@ let FeedbacksResolver = class FeedbacksResolver {
     }
 };
 __decorate([
-    (0, graphql_1.Query)(() => [feedback_entity_1.Feedback], { name: 'feedbacks' }),
+    (0, graphql_1.Query)(() => feedbacks_limit_entity_1.FeedbacksLimit, { name: 'feedbacks' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: feedback_entity_1.Feedback }),
+    __param(0, (0, graphql_1.Args)('limitEntity')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
     __metadata("design:returntype", void 0)
 ], FeedbacksResolver.prototype, "findAll", null);
 __decorate([

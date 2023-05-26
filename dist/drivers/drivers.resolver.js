@@ -21,10 +21,11 @@ const update_driver_input_1 = require("./dto/update-driver.input");
 const common_1 = require("@nestjs/common");
 const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const state_input_1 = require("../constants/state.input");
-const response_entity_1 = require("../constants/response.entity");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
+const update_password_user_input_1 = require("../users/dto/update-password-user.input");
 let DriversResolver = class DriversResolver {
+    driversService;
     constructor(driversService) {
         this.driversService = driversService;
     }
@@ -39,6 +40,9 @@ let DriversResolver = class DriversResolver {
     }
     updateDriver(updateDriverInput) {
         return this.driversService.update(updateDriverInput.id, updateDriverInput);
+    }
+    async passwordUser(passwordDriverInput) {
+        return this.driversService.password(passwordDriverInput.id, passwordDriverInput);
     }
     stateDriver(stateInput) {
         return this.driversService.state(stateInput);
@@ -71,7 +75,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], DriversResolver.prototype, "findOne", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => response_entity_1.Response),
+    (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: driver_entity_1.Driver }),
     __param(0, (0, graphql_1.Args)('updateDriverInput')),
     __metadata("design:type", Function),
@@ -79,7 +83,15 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], DriversResolver.prototype, "updateDriver", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => response_entity_1.Response),
+    (0, graphql_1.Mutation)(() => String, { name: 'passwordDriver' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: driver_entity_1.Driver }),
+    __param(0, (0, graphql_1.Args)('passwordDriverInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [update_password_user_input_1.UpdatePasswordUser]),
+    __metadata("design:returntype", Promise)
+], DriversResolver.prototype, "passwordUser", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.State, subject: driver_entity_1.Driver }),
     __param(0, (0, graphql_1.Args)('stateInput')),
     __metadata("design:type", Function),
@@ -87,7 +99,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], DriversResolver.prototype, "stateDriver", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => response_entity_1.Response),
+    (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: driver_entity_1.Driver }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),

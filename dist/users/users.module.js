@@ -16,6 +16,7 @@ const users_controller_1 = require("./users.controller");
 const aws_module_1 = require("../aws/aws.module");
 const wallets_module_1 = require("../wallets/wallets.module");
 const favorites_module_1 = require("../favorites/favorites.module");
+const addresses_module_1 = require("../addresses/addresses.module");
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
@@ -24,6 +25,7 @@ UsersModule = __decorate([
             mongoose_1.MongooseModule.forFeature([{ name: "Users", schema: users_schema_1.UsersSchema }]),
             (0, common_1.forwardRef)(() => wallets_module_1.WalletsModule),
             (0, common_1.forwardRef)(() => favorites_module_1.FavoritesModule),
+            (0, common_1.forwardRef)(() => addresses_module_1.AddressesModule),
             aws_module_1.AwsModule,
         ],
         providers: [users_resolver_1.UsersResolver, users_service_1.UsersService],

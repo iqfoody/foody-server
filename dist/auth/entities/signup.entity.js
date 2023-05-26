@@ -13,6 +13,9 @@ exports.Signup = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const user_entity_1 = require("../../users/entities/user.entity");
 let Signup = class Signup {
+    accessToken;
+    refreshToken;
+    user;
 };
 __decorate([
     (0, graphql_1.Field)(),

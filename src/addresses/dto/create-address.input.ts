@@ -19,6 +19,12 @@ export class CreateAddressInput {
   @Field({ nullable: true })
   address?: string;
 
+  @Field({ nullable: true })
+  building?: string;
+
+  @Field({ nullable: true })
+  apartment?: string;
+
   @Field({nullable: true})
   description?: string;
 

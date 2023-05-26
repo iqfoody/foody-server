@@ -27,7 +27,7 @@ import { AdminsService } from './admins.service';
 import { CreateAdminInput } from './dto/create-admin.input';
 import { UpdateAdminInput } from './dto/update-admin.input';
 import { StateInput } from 'src/constants/state.input';
-import { PasswordUserInput } from 'src/users/dto/password-user.input';
+import { UpdatePasswordUser } from 'src/users/dto/update-password-user.input';
 export declare class AdminsResolver {
     private readonly adminsService;
     constructor(adminsService: AdminsService);
@@ -43,8 +43,8 @@ export declare class AdminsResolver {
     infoAdmin(context: any): Promise<import("mongoose").Document<unknown, import("../models/admins.schema").IAdminsQueryHelpers, import("../models/admins.schema").AdminsDocument> & Omit<import("../models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    updateAdmin(updateAdminInput: UpdateAdminInput): Promise<import("../constants/response.entity").Response>;
-    passwordUser(passwordAdminInput: PasswordUserInput): Promise<string>;
+    updateAdmin(updateAdminInput: UpdateAdminInput): Promise<string>;
+    passwordUser(passwordAdminInput: UpdatePasswordUser): Promise<string>;
     stateAdmin(stateInput: StateInput): Promise<string>;
     removeAdmin(id: string): Promise<string>;
 }

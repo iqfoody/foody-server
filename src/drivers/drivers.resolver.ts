@@ -9,6 +9,8 @@ import { StateInput } from 'src/constants/state.input';
 import { Response } from 'src/constants/response.entity';
 import { CheckAbilities } from 'src/ability/ability.decorator';
 import { Actions } from 'src/ability/ability.factory';
+import { PasswordUserInput } from 'src/users/dto/password-user.input';
+import { UpdatePasswordUser } from 'src/users/dto/update-password-user.input';
 
 @UseGuards(AccessAuthGuard)
 @Resolver(() => Driver)
@@ -33,19 +35,25 @@ export class DriversResolver {
     return this.driversService.findOne(id);
   }
 
-  @Mutation(() => Response)
+  @Mutation(() => String)
   @CheckAbilities({actions: Actions.Update, subject: Driver})
   updateDriver(@Args('updateDriverInput') updateDriverInput: UpdateDriverInput) {
     return this.driversService.update(updateDriverInput.id, updateDriverInput);
   }
 
-  @Mutation(() => Response)
+  @Mutation(() => String, {name: 'passwordDriver'})
+  @CheckAbilities({actions: Actions.Update, subject: Driver})
+  async passwordUser(@Args('passwordDriverInput') passwordDriverInput: UpdatePasswordUser) {
+    return this.driversService.password(passwordDriverInput.id, passwordDriverInput);
+  }
+
+  @Mutation(() => String)
   @CheckAbilities({actions: Actions.State, subject: Driver})
   stateDriver(@Args('stateInput') stateInput: StateInput) {
     return this.driversService.state(stateInput);
   }
 
-  @Mutation(() => Response)
+  @Mutation(() => String)
   @CheckAbilities({actions: Actions.Delete, subject: Driver})
   removeDriver(@Args('id', { type: () => ID }) id: string) {
     return this.driversService.remove(id);

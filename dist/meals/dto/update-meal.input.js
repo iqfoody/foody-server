@@ -13,6 +13,7 @@ exports.UpdateMealInput = void 0;
 const create_meal_input_1 = require("./create-meal.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateMealInput = class UpdateMealInput extends (0, graphql_1.PartialType)(create_meal_input_1.CreateMealInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

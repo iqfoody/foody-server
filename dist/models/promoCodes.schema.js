@@ -16,6 +16,14 @@ exports.PromoCodesSchema = exports.PromoCodes = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let PromoCodes = class PromoCodes {
+    name;
+    users;
+    user;
+    type;
+    discount;
+    isPublic;
+    expire;
+    state;
 };
 __decorate([
     (0, mongoose_1.Prop)({ required: [true, "name required"], unique: [true, "name unique"] }),
@@ -40,7 +48,7 @@ __decorate([
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Boolean, default: true }),
     __metadata("design:type", Boolean)
-], PromoCodes.prototype, "public", void 0);
+], PromoCodes.prototype, "isPublic", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Date, required: [true, "expire required"] }),
     __metadata("design:type", Date)

@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, NotAcceptableException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUsersModel } from 'src/models/users.schema';
 import { CreateUserInput } from './dto/create-user.input';
@@ -16,6 +16,9 @@ import { FavoritesService } from 'src/favorites/favorites.service';
 import { WalletsService } from 'src/wallets/wallets.service';
 import { LimitEntity } from 'src/constants/limitEntity';
 import { UpdatePasswordUser } from './dto/update-password-user.input';
+import { SearchInput } from 'src/constants/searchQuery.input';
+import { AddressesService } from 'src/addresses/addresses.service';
+import { months } from 'src/constants/declearedMonths';
 
 @Injectable()
 export class UsersService {
@@ -24,11 +27,12 @@ export class UsersService {
     private readonly awsService: AwsService,
     private readonly favoritesService: FavoritesService,
     private readonly walletsService: WalletsService,
+    private readonly addressesService: AddressesService,
   ) {}
 
   //? -> dashboard...
 
-  async search(searchUsersInput: SearchUsersInput){
+  async search(searchUsersInput: SearchInput){
     const LIMIT = 8;
     const startIndex = (searchUsersInput.page) * LIMIT;
     const search = new RegExp(searchUsersInput.query, 'i');
@@ -64,13 +68,33 @@ export class UsersService {
     return user;
   }
 
-  async createUser(createUserInput: CreateUserInput){
+  async createUser(createUserInput: CreateUserInput, file: any){
+    // -> check password length...
+    if(createUserInput?.password?.length < 6) throw new BadRequestException("password E0004");
+    // -> check existing phone number...
+    const phoneNumber = await this.findByPhoneNumber(createUserInput.phoneNumber);
+    if(phoneNumber){
+      throw new NotAcceptableException("phoneNumber E0011");
+    // -> check existing email...
+    } else if(createUserInput?.email) {
+      const email = await this.findByEmail(createUserInput.email);
+      if(email) throw new NotAcceptableException("email E0011")
+    }
+    // -> create wallet...
     const wallet = await this.walletsService.create();
     const user = new this.UsersModel({...createUserInput, wallet: wallet._id});
+    // -> upload image to s3 bucket...
+    if(file) {
+      const result = await this.awsService.createImage(file, user._id);
+      user.image = result?.Key;
+    }
     await user.save();
+    // -> create favorites model...
     await this.favoritesService.create({user: user._id});
-    if(createUserInput?.image) user.image = this.awsService.getUrl(user?.image);
-    return user.populate("wallet");
+    // -> get image url...
+    if(user?.image) user.image = this.awsService.getUrl(user.image);
+    const { _id, name, phoneNumber: phone, image, type, state, createdAt} :any= user
+    return {_id, name, phoneNumber: phone, image, type, state, createdAt, email: null};
   }
 
   async updateUser(id: string, updateUserInput: UpdateUserInput) {
@@ -103,11 +127,12 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    const { image } = await this.UsersModel.findOne({_id: id}, {image: 1, _id: 0});
+    const result = await this.UsersModel.findOne({_id: id}, {image: 1, _id: 0});
     await this.UsersModel.findByIdAndDelete(id);
     await this.favoritesService.remove(id);
     await this.walletsService.remove(id);
-    if(image) this.awsService.removeImage(image);
+    await this.addressesService.clean(id);
+    if(result?.image) this.awsService.removeImage(result?.image);
     return "user has been deleted";
   }
 
@@ -124,7 +149,6 @@ export class UsersService {
     const user = new this.UsersModel({...createUserInput, wallet: wallet._id});
     await user.save();
     await this.favoritesService.create({user: user._id});
-    if(createUserInput?.image) user.image = this.awsService.getUrl(user?.image);
     return user.populate({path: "wallet", select: {points: 1, amount: 1, _id: 0}});
   }
 
@@ -214,6 +238,28 @@ export class UsersService {
   async updateAny(id: string, updateUserInput: UpdateUserInput) {
       await this.UsersModel.findByIdAndUpdate(id, updateUserInput);
     return {message: "account updated"};
+  }
+
+  async home() {
+    const users = await this.UsersModel.countDocuments();
+    const recentlyUsers = await this.UsersModel.find().sort({_id: -1}).limit(10).select(["name", "image", "phoneNumber"]);
+    for(const single of recentlyUsers){
+      if(single?.image) single.image = this.awsService.getUrl(single.image);
+    }
+    return { users, recentlyUsers };
+  }
+
+  async usersReport(date: string){
+    const year = new Date(date);
+    let result = months;
+    const users = await this.UsersModel.aggregate([
+      {$match: {$and: [ {createdAt: {$gte: year}}, {createdAt: {$lte: new Date()}} ] }},
+      {$group: {_id: "createAt", total: {$push: "$createdAt"},}},
+    ]);
+    for(const single of users[0]?.total){
+      result = {...result, [`m${new Date(single).getMonth()}`]: {...result[`m${new Date(single).getMonth()}`], [`d${new Date(single).getDate()}`]: result[`m${new Date(single).getMonth()}`][`d${new Date(single).getDate()}`]+1}}
+    }
+    return result;
   }
 
 }

@@ -16,23 +16,23 @@ export class AdvertisementsController {
         private readonly awsService: AwsService,
     ){}
 
+    @Get('/:id')
+    async getAdvertisement(@Param('id') id: string){
+        return this.advertisementsService.findAdvertisement(id);
+    }
+
     @Get('/')
     async getAdvertisements(){
         return this.advertisementsService.findAdvertisements();
     }
 
-    @Get('/s/:id')
-    async getAdvertisement(@Param('id') id: string){
-        return this.advertisementsService.findAdvertisement(id);
-    }
-
-    // dashboard...
+    //? dashboard...
 
     @Post('/')
     @UseGuards(AccessAuthGuard)
     @CheckAbilities({actions: Actions.Create, subject: Advertisement})
     @UseInterceptors(FileInterceptor('image'))
-    async createAdvertisement(@Body('createAdvertisementInput') createAdvertisementInput: CreateAdvertisementInput, @UploadedFile() file) {
+    async createAdvertisement(@Body() createAdvertisementInput: CreateAdvertisementInput, @UploadedFile() file) {
       return this.advertisementsService.create(createAdvertisementInput, file);
     }
 
@@ -40,7 +40,7 @@ export class AdvertisementsController {
     @UseGuards(AccessAuthGuard)
     @CheckAbilities({actions: Actions.Update, subject: Advertisement})
     @UseInterceptors(FileInterceptor('image'))
-    async updateAdvertisement(@Body('updateAdvertisementInput') updateAdvertisementInput: UpdateAdvertisementInput, @UploadedFile() file) {
+    async updateAdvertisement(@Body() updateAdvertisementInput: UpdateAdvertisementInput, @UploadedFile() file) {
         const result = await this.awsService.createImage(file, updateAdvertisementInput.id);
       return this.advertisementsService.update(updateAdvertisementInput.id, {...updateAdvertisementInput, image: result?.Key});
     }

@@ -19,6 +19,7 @@ const notification_entity_1 = require("./entities/notification.entity");
 const create_notification_input_1 = require("./dto/create-notification.input");
 const update_notification_input_1 = require("./dto/update-notification.input");
 let NotificationsResolver = class NotificationsResolver {
+    notificationsService;
     constructor(notificationsService) {
         this.notificationsService = notificationsService;
     }

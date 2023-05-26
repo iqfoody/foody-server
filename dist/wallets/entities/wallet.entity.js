@@ -12,6 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Wallet = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let Wallet = class Wallet {
+    _id;
+    points;
+    amount;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateAdvertisementInput } from './dto/create-advertisement.input';
 import { UpdateAdvertisementInput } from './dto/update-advertisement.input';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { AdvertisementsDocument } from 'src/models/advertisements.schema';
 import { StateInput } from 'src/constants/state.input';
 import { UpdatePositionInput } from 'src/constants/position.input';
@@ -16,6 +16,27 @@ export class AdvertisementsService {
   ) {}
 
   //TODO: populate -> user & target...
+
+  //? application...
+
+  async findAdvertisements() {
+    //TODO: if advert for user -> return advert for them...
+    const advertisements = await this.AdvertisementsModel.find({state: "Active"}, {title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1, target: 1, _id: 0});
+    for(const single of advertisements){
+      if(single?.image) single.image = this.awsService.getUrl(single.image);
+    }
+    return advertisements;
+  }
+
+  // -> this just in case activate _id in -> findAdvertisements...
+  async findAdvertisement(id: string) {
+    if(!isValidObjectId(id)) throw new BadRequestException("There isn't advertisement with this id")
+    const advertisement = await this.AdvertisementsModel.findOne({$and: [{_id: id}, {state: "Active"}]}, {title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1, target: 1, _id: 0});
+    if(advertisement?.image) advertisement.image = this.awsService.getUrl(advertisement.image);
+    return advertisement;
+  }
+
+  //? dashborad...
 
   async create(createAdvertisementInput: CreateAdvertisementInput, file: any) {
     if(!file) return new BadRequestException("image required");
@@ -36,23 +57,8 @@ export class AdvertisementsService {
     return advertisements;
   }
 
-  async findAdvertisements() {
-    //TODO: if advert for user -> return advert for thim...
-    const advertisements = await this.AdvertisementsModel.find({state: "Active"}, {title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1, target: 1, _id: 0});
-    for(const single of advertisements){
-      if(single?.image) single.image = this.awsService.getUrl(single.image);
-    }
-    return advertisements;
-  }
-
   async findOne(id: string) {
     const advertisement = await this.AdvertisementsModel.findById(id);
-    if(advertisement?.image) advertisement.image = this.awsService.getUrl(advertisement.image);
-    return advertisement;
-  }
-//? -> this just in case activate _id in -> findAdvertisements...
-  async findAdvertisement(id: string) {
-    const advertisement = await this.AdvertisementsModel.findOne({$and: [{_id: id}, {state: "Active"}]}, {title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1, target: 1, _id: 0});
     if(advertisement?.image) advertisement.image = this.awsService.getUrl(advertisement.image);
     return advertisement;
   }

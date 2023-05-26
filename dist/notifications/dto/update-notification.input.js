@@ -13,6 +13,7 @@ exports.UpdateNotificationInput = void 0;
 const create_notification_input_1 = require("./create-notification.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateNotificationInput = class UpdateNotificationInput extends (0, graphql_1.PartialType)(create_notification_input_1.CreateNotificationInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int),

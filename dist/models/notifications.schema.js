@@ -16,6 +16,21 @@ exports.NotificationsSchema = exports.Notifications = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let Notifications = class Notifications {
+    sender;
+    receiver;
+    targetId;
+    type;
+    target;
+    titleEN;
+    titleAR;
+    bodyEN;
+    bodyAR;
+    submit;
+    dismiss;
+    priority;
+    action;
+    image;
+    state;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Users' }),

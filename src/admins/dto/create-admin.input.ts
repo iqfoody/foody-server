@@ -1,5 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { adminTypes, publicStatus } from 'src/constants/types.type';
+import { adminTypes } from 'src/constants/types.type';
 
 @InputType()
 export class CreateAdminInput {

@@ -17,32 +17,20 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const aws_service_1 = require("../aws/aws.service");
+const restaurant_categories_service_1 = require("../restaurant-categories/restaurant-categories.service");
 let RestaurantsService = class RestaurantsService {
-    constructor(RestaurantsModel, awsService) {
+    RestaurantsModel;
+    restaurantCategoriesService;
+    awsService;
+    constructor(RestaurantsModel, restaurantCategoriesService, awsService) {
         this.RestaurantsModel = RestaurantsModel;
+        this.restaurantCategoriesService = restaurantCategoriesService;
         this.awsService = awsService;
-    }
-    async create(createRestaurantInput, file) {
-        const position = await this.RestaurantsModel.countDocuments();
-        const restaurant = new this.RestaurantsModel(Object.assign(Object.assign({}, createRestaurantInput), { position }));
-        const result = await this.awsService.createImage(file, restaurant._id);
-        restaurant.image = result === null || result === void 0 ? void 0 : result.Key;
-        await restaurant.save();
-        restaurant.image = this.awsService.getUrl(result === null || result === void 0 ? void 0 : result.Key);
-        return restaurant;
-    }
-    async findAll() {
-        const restaurants = await this.RestaurantsModel.find();
-        for (const single of restaurants) {
-            if (single === null || single === void 0 ? void 0 : single.image)
-                single.image = this.awsService.getUrl(single.image);
-        }
-        return restaurants;
     }
     async findRestaurnats() {
         const restaurants = await this.RestaurantsModel.find({ state: "Active" }).select(['-position', '-state', '-__v', '-createdAt', '-updatedAt']).populate({ path: "category", select: { title: 1, titleEN: 1, titleKR: 1, _id: 0 } });
         for (const single of restaurants) {
-            if (single === null || single === void 0 ? void 0 : single.image)
+            if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
         }
         return restaurants;
@@ -52,12 +40,14 @@ let RestaurantsService = class RestaurantsService {
         const total = await this.RestaurantsModel.countDocuments({ state: "Active" });
         const restaurants = await this.RestaurantsModel.find({ state: "Active" }).select(['-position', '-state', '-__v', '-createdAt', '-updatedAt']).limit(limitEntity.limit).skip(skipIndex).sort({ position: -1 }).populate({ path: "category", select: { title: 1, titleEN: 1, titleKR: 1, _id: 0 } });
         for (const single of restaurants) {
-            if (single === null || single === void 0 ? void 0 : single.image)
+            if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
         }
         return { data: restaurants, pages: Math.ceil(total / limitEntity.limit) };
     }
     async findForCategory(category, orderBy) {
+        if (!(0, mongoose_2.isValidObjectId)(category))
+            throw new common_1.BadRequestException("There isn't restaurants with this category id");
         let sort = { position: 1 };
         if (orderBy === 'highestPrice') {
             sort = { price: -1 };
@@ -70,25 +60,52 @@ let RestaurantsService = class RestaurantsService {
         }
         const restaurants = await this.RestaurantsModel.find({ $and: [{ category }, { state: "Active" }] }).select(['-position', '-state', '-__v', '-createdAt', '-updatedAt', '-category']).sort(sort);
         for (const single of restaurants) {
-            if (single === null || single === void 0 ? void 0 : single.image)
+            if (single?.image)
+                single.image = this.awsService.getUrl(single.image);
+        }
+        return restaurants;
+    }
+    async findRestaurant(id) {
+        if (!(0, mongoose_2.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't restaurant with this id");
+        const restaurant = await this.RestaurantsModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }).select(['-position', '-state', '-__v', '-createdAt', '-updatedAt', '-category']);
+        if (restaurant?.image)
+            restaurant.image = this.awsService.getUrl(restaurant.image);
+        return restaurant;
+    }
+    async searchRestaurant(query) {
+        const restaurants = await this.RestaurantsModel.find({ $and: [{ $text: { $search: query } }, { state: "Active" }] }, { score: { $meta: "textScore" } }).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position']).sort({ score: { $meta: "textScore" } });
+        for (const single of restaurants) {
+            if (single?.image)
+                single.image = this.awsService.getUrl(single.image);
+        }
+        return restaurants;
+    }
+    async create(createRestaurantInput, file) {
+        const position = await this.RestaurantsModel.countDocuments();
+        const restaurant = new this.RestaurantsModel({ ...createRestaurantInput, position });
+        const result = await this.awsService.createImage(file, restaurant._id);
+        restaurant.image = result?.Key;
+        await restaurant.save();
+        restaurant.image = this.awsService.getUrl(result?.Key);
+        return restaurant;
+    }
+    async findAll() {
+        const restaurants = await this.RestaurantsModel.find().populate("category");
+        for (const single of restaurants) {
+            if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
         }
         return restaurants;
     }
     async findOne(id) {
-        const restaurant = await this.RestaurantsModel.findById(id);
-        if (restaurant === null || restaurant === void 0 ? void 0 : restaurant.image)
-            restaurant.image = this.awsService.getUrl(restaurant.image);
-        return restaurant;
-    }
-    async findRestaurant(id) {
-        const restaurant = await this.RestaurantsModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }).select(['-position', '-state', '-__v', '-createdAt', '-updatedAt', '-category']);
-        if (restaurant === null || restaurant === void 0 ? void 0 : restaurant.image)
+        const restaurant = await this.RestaurantsModel.findById(id).populate({ path: "category", select: { _id: 1 } });
+        if (restaurant?.image)
             restaurant.image = this.awsService.getUrl(restaurant.image);
         return restaurant;
     }
     async update(id, updateRestaurantInput) {
-        if (updateRestaurantInput === null || updateRestaurantInput === void 0 ? void 0 : updateRestaurantInput.image) {
+        if (updateRestaurantInput?.image) {
             const { image } = await this.RestaurantsModel.findOne({ _id: updateRestaurantInput.id }, { image: 1, _id: 0 });
             this.awsService.removeImage(image);
         }
@@ -108,11 +125,17 @@ let RestaurantsService = class RestaurantsService {
     async remove(id) {
         const { image } = await this.RestaurantsModel.findOne({ _id: id }, { image: 1, _id: 0 });
         await this.RestaurantsModel.findByIdAndDelete(id);
+        await this.restaurantCategoriesService.clean(id);
         this.awsService.removeImage(image);
         return "Success";
     }
     async search(query) {
-        return this.RestaurantsModel.find({ $and: [{ $text: { $search: query } }, { state: "Active" }] }, { score: { $meta: "textScore" } }).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position']).sort({ score: { $meta: "textScore" } });
+        const restaurants = await this.RestaurantsModel.find({ $text: { $search: query } }, { score: { $meta: "textScore" } }).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position']).sort({ score: { $meta: "textScore" } });
+        for (const single of restaurants) {
+            if (single?.image)
+                single.image = this.awsService.getUrl(single.image);
+        }
+        return restaurants;
     }
     getDeliveryPrice(_id) {
         return this.RestaurantsModel.findOne({ $and: [{ _id }, { state: "Active" }] }, { deliveryPrice: 1, _id: 0 });
@@ -120,11 +143,15 @@ let RestaurantsService = class RestaurantsService {
     findRating(_id) {
         return this.RestaurantsModel.findOne({ $and: [{ _id }, { state: "Active" }] }, { rates: 1, rating: 1, _id: 0 });
     }
+    async home() {
+        return this.RestaurantsModel.countDocuments();
+    }
 };
 RestaurantsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)("Restaurants")),
     __metadata("design:paramtypes", [mongoose_2.Model,
+        restaurant_categories_service_1.RestaurantCategoriesService,
         aws_service_1.AwsService])
 ], RestaurantsService);
 exports.RestaurantsService = RestaurantsService;

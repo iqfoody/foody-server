@@ -24,14 +24,16 @@
 /// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
 import { FeedbacksService } from './feedbacks.service';
+import { LimitEntity } from 'src/constants/limitEntity';
 export declare class FeedbacksResolver {
     private readonly feedbacksService;
     constructor(feedbacksService: FeedbacksService);
-    findAll(): import("mongoose").Query<(import("mongoose").Document<unknown, {}, import("../models/feedbacks.schema").FeedbacksDocument> & Omit<import("../models/feedbacks.schema").Feedbacks & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[], import("mongoose").Document<unknown, {}, import("../models/feedbacks.schema").FeedbacksDocument> & Omit<import("../models/feedbacks.schema").Feedbacks & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, import("../models/feedbacks.schema").FeedbacksDocument>;
+    findAll(limitEntity: LimitEntity): Promise<{
+        data: (import("mongoose").Document<unknown, {}, import("../models/feedbacks.schema").FeedbacksDocument> & Omit<import("../models/feedbacks.schema").Feedbacks & import("mongoose").Document<any, any, any> & {
+            _id: import("mongoose").Types.ObjectId;
+        }, never>)[];
+        pages: number;
+    }>;
     findOne(id: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, import("../models/feedbacks.schema").FeedbacksDocument> & Omit<import("../models/feedbacks.schema").Feedbacks & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, import("mongoose").Document<unknown, {}, import("../models/feedbacks.schema").FeedbacksDocument> & Omit<import("../models/feedbacks.schema").Feedbacks & import("mongoose").Document<any, any, any> & {

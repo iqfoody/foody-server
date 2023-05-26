@@ -22,7 +22,9 @@ const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
 const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
+const state_input_1 = require("../constants/state.input");
 let PromoCodesResolver = class PromoCodesResolver {
+    promoCodesService;
     constructor(promoCodesService) {
         this.promoCodesService = promoCodesService;
     }
@@ -37,6 +39,9 @@ let PromoCodesResolver = class PromoCodesResolver {
     }
     updatePromoCode(updatePromoCodeInput) {
         return this.promoCodesService.update(updatePromoCodeInput.id, updatePromoCodeInput);
+    }
+    statePromoCode(stateInput) {
+        return this.promoCodesService.state(stateInput);
     }
     removePromoCode(id) {
         return this.promoCodesService.remove(id);
@@ -73,6 +78,14 @@ __decorate([
     __metadata("design:paramtypes", [update_promo_code_input_1.UpdatePromoCodeInput]),
     __metadata("design:returntype", void 0)
 ], PromoCodesResolver.prototype, "updatePromoCode", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: promo_code_entity_1.PromoCode }),
+    __param(0, (0, graphql_1.Args)('stateInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [state_input_1.StateInput]),
+    __metadata("design:returntype", void 0)
+], PromoCodesResolver.prototype, "statePromoCode", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: promo_code_entity_1.PromoCode }),

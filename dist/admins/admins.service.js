@@ -18,67 +18,77 @@ const mongoose_1 = require("@nestjs/mongoose");
 const aws_service_1 = require("../aws/aws.service");
 const bcryptjs_1 = require("bcryptjs");
 let AdminsService = class AdminsService {
+    AdminsModel;
+    awsService;
     constructor(AdminsModel, awsService) {
         this.AdminsModel = AdminsModel;
         this.awsService = awsService;
     }
     async login(loginInput) {
         const admin = await this.AdminsModel.login(loginInput);
-        if (admin === null || admin === void 0 ? void 0 : admin.image)
-            admin.image = this.awsService.getUrl(admin === null || admin === void 0 ? void 0 : admin.image);
+        if (admin?.image)
+            admin.image = this.awsService.getUrl(admin?.image);
         return admin;
     }
-    async create(_id, createAdminInput) {
+    async create(_id, createAdminInput, file) {
         const superAdmin = await this.AdminsModel.findOne({ $and: [{ _id }, { type: "Admin" }] });
         if (!superAdmin)
             throw new common_1.ForbiddenException("Access Denied");
         const admin = new this.AdminsModel(createAdminInput);
+        if (file) {
+            const result = await this.awsService.createImage(file, admin._id);
+            admin.image = result?.Key;
+        }
         await admin.save();
-        if (admin === null || admin === void 0 ? void 0 : admin.image)
-            admin.image = this.awsService.getUrl(admin === null || admin === void 0 ? void 0 : admin.image);
+        if (admin?.image)
+            admin.image = this.awsService.getUrl(admin?.image);
         return admin;
     }
     async findAll() {
         const admins = await this.AdminsModel.find({ type: { $ne: "Admin" } });
         for (const admin of admins) {
-            if (admin === null || admin === void 0 ? void 0 : admin.image)
-                admin.image = this.awsService.getUrl(admin === null || admin === void 0 ? void 0 : admin.image);
+            if (admin?.image)
+                admin.image = this.awsService.getUrl(admin?.image);
         }
         return admins;
     }
     async findOne(_id) {
         const admin = await this.AdminsModel.findOne({ $and: [{ _id }, { type: { $ne: "Admin" } }] });
-        if (admin === null || admin === void 0 ? void 0 : admin.image)
-            admin.image = this.awsService.getUrl(admin === null || admin === void 0 ? void 0 : admin.image);
+        if (admin?.image)
+            admin.image = this.awsService.getUrl(admin?.image);
         return admin;
     }
     async findInfo(_id) {
         const admin = await this.AdminsModel.findOne({ $and: [{ _id }, { state: "Active" }] });
-        if (admin === null || admin === void 0 ? void 0 : admin.image)
-            admin.image = this.awsService.getUrl(admin === null || admin === void 0 ? void 0 : admin.image);
+        if (admin?.image)
+            admin.image = this.awsService.getUrl(admin?.image);
         return admin;
     }
     async findByEmail(email) {
         const admin = await this.AdminsModel.findOne({ $and: [{ email }, { type: { $ne: "Admin" } }] });
-        if (admin === null || admin === void 0 ? void 0 : admin.image)
-            admin.image = this.awsService.getUrl(admin === null || admin === void 0 ? void 0 : admin.image);
+        if (admin?.image)
+            admin.image = this.awsService.getUrl(admin?.image);
         return admin;
     }
     async updateAny(_id, updateAdminInput) {
         await this.AdminsModel.findOneAndUpdate({ $and: [{ _id }, { type: { $ne: "Admin" } }] }, updateAdminInput);
         return;
     }
+    async updateAdmin(_id, updateAdminInput) {
+        await this.AdminsModel.findOneAndUpdate({ $and: [{ _id }, { type: "Admin" }] }, updateAdminInput);
+        return;
+    }
     async update(id, updateAdminInput) {
         let E0011 = await this.findByEmail(updateAdminInput.email);
         if (E0011 && id != E0011._id)
             throw new Error('email E0002');
-        if (updateAdminInput === null || updateAdminInput === void 0 ? void 0 : updateAdminInput.image) {
+        if (updateAdminInput?.image) {
             const { image } = await this.AdminsModel.findOne({ _id: updateAdminInput.id }, { image: 1, _id: 0 });
             if (image)
                 this.awsService.removeImage(image);
         }
         await this.AdminsModel.findByIdAndUpdate(id, updateAdminInput);
-        return { message: "account updated" };
+        return "admin updated";
     }
     async passwordAdmin(id, updatePasswordAdmin) {
         const salt = await (0, bcryptjs_1.genSalt)();

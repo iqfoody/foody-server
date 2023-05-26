@@ -20,6 +20,8 @@ const wallets_module_1 = require("../wallets/wallets.module");
 const users_module_1 = require("../users/users.module");
 const rates_module_1 = require("../rates/rates.module");
 const restaurants_module_1 = require("../restaurants/restaurants.module");
+const drivers_module_1 = require("../drivers/drivers.module");
+const transactions_module_1 = require("../transactions/transactions.module");
 let OrdersModule = class OrdersModule {
 };
 OrdersModule = __decorate([
@@ -32,6 +34,8 @@ OrdersModule = __decorate([
             (0, common_1.forwardRef)(() => users_module_1.UsersModule),
             (0, common_1.forwardRef)(() => rates_module_1.RatesModule),
             (0, common_1.forwardRef)(() => restaurants_module_1.RestaurantsModule),
+            (0, common_1.forwardRef)(() => drivers_module_1.DriversModule),
+            (0, common_1.forwardRef)(() => transactions_module_1.TransactionsModule),
             aws_module_1.AwsModule,
         ],
         providers: [orders_resolver_1.OrdersResolver, orders_service_1.OrdersService],

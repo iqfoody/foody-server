@@ -21,6 +21,7 @@ const ability_factory_1 = require("../ability/ability.factory");
 const update_favorite_input_1 = require("./dto/update-favorite.input");
 const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 let FavoritesController = class FavoritesController {
+    favoritesService;
     constructor(favoritesService) {
         this.favoritesService = favoritesService;
     }
@@ -28,6 +29,7 @@ let FavoritesController = class FavoritesController {
         return this.favoritesService.findFavorite(context.user._id);
     }
     async updateFavorite(updateFavoriteInput, context) {
+        console.log(updateFavoriteInput);
         return this.favoritesService.addFavorite(updateFavoriteInput, context.user._id);
     }
 };

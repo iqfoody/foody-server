@@ -12,6 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateTagInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateTagInput = class CreateTagInput {
+    title;
+    titleEN;
+    titleKR;
+    image;
 };
 __decorate([
     (0, graphql_1.Field)(),

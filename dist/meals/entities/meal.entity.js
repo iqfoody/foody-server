@@ -17,21 +17,42 @@ const meal_ingredient_entity_1 = require("./meal-ingredient.entity");
 const tag_entity_1 = require("../../tags/entities/tag.entity");
 const restaurant_category_entity_1 = require("../../restaurant-categories/entities/restaurant-category.entity");
 let Meal = class Meal {
+    _id;
+    restaurant;
+    tag;
+    restaurantCategory;
+    title;
+    titleEN;
+    titleKR;
+    description;
+    descriptionEN;
+    descriptionKR;
+    image;
+    additions;
+    ingredients;
+    price;
+    previousPrice;
+    points;
+    pointsBack;
+    position;
+    state;
+    createdAt;
+    updatedAt;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
     __metadata("design:type", String)
 ], Meal.prototype, "_id", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String || restaurant_entity_1.Restaurant),
+    (0, graphql_1.Field)(() => restaurant_entity_1.Restaurant),
     __metadata("design:type", Object)
 ], Meal.prototype, "restaurant", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String || tag_entity_1.Tag, { nullable: true }),
+    (0, graphql_1.Field)(() => tag_entity_1.Tag, { nullable: true }),
     __metadata("design:type", Object)
 ], Meal.prototype, "tag", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String || restaurant_category_entity_1.RestaurantCategory),
+    (0, graphql_1.Field)(() => restaurant_category_entity_1.RestaurantCategory),
     __metadata("design:type", Object)
 ], Meal.prototype, "restaurantCategory", void 0);
 __decorate([
@@ -59,7 +80,7 @@ __decorate([
     __metadata("design:type", String)
 ], Meal.prototype, "descriptionKR", void 0);
 __decorate([
-    (0, graphql_1.Field)(),
+    (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)
 ], Meal.prototype, "image", void 0);
 __decorate([
@@ -94,6 +115,14 @@ __decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", String)
 ], Meal.prototype, "state", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", Date)
+], Meal.prototype, "createdAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", Date)
+], Meal.prototype, "updatedAt", void 0);
 Meal = __decorate([
     (0, graphql_1.ObjectType)()
 ], Meal);

@@ -4,4 +4,5 @@ export declare class LimitEntity {
     limit: number;
     orderBy?: number;
     state?: storeOrdersStatus;
+    user?: string;
 }

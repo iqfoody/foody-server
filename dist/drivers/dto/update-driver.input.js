@@ -13,6 +13,11 @@ exports.UpdateDriverInput = void 0;
 const create_driver_input_1 = require("./create-driver.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateDriverInput = class UpdateDriverInput extends (0, graphql_1.PartialType)(create_driver_input_1.CreateDriverInput) {
+    id;
+    ip;
+    platform;
+    refreshToken;
+    deviceToken;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),

@@ -26,12 +26,14 @@
 import { MealsService } from './meals.service';
 import { AwsService } from 'src/aws/aws.service';
 import { UpdateMealInput } from './dto/update-meal.input';
-import { CreateMealInput } from './dto/create-meal.input';
 export declare class MealsController {
     private readonly mealsService;
     private readonly awsService;
     constructor(mealsService: MealsService, awsService: AwsService);
-    getMealsInfinty(limit: number, page: number): Promise<{
+    getMeal(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
+    getMealsInfinty(): Promise<{
         data: (import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
             _id: import("mongoose").Types.ObjectId;
         }, never>)[];
@@ -46,11 +48,6 @@ export declare class MealsController {
     getrestaurantCategory(restaurantCategory: string): Promise<(import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    getMeal(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
-    createMeal(createMealInput: CreateMealInput, file: any): Promise<import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    createMeal(id: string, file: any): Promise<string>;
     updateMeal(updateMealInput: UpdateMealInput, file: any): Promise<string>;
 }

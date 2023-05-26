@@ -17,6 +17,8 @@ const passport_jwt_1 = require("passport-jwt");
 const ability_factory_1 = require("../ability/ability.factory");
 const ability_decorator_1 = require("../ability/ability.decorator");
 let AccessTokenStrategy = class AccessTokenStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, 'jwt') {
+    reflector;
+    caslAbilityFactory;
     constructor(reflector, caslAbilityFactory) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromBodyField('access'),
@@ -31,7 +33,7 @@ let AccessTokenStrategy = class AccessTokenStrategy extends (0, passport_1.Passp
         const rules = this.reflector.get(ability_decorator_1.CHECK_ABILITY, handler) || [];
         const ability = this.caslAbilityFactory.defineAbility(payload);
         try {
-            const canAccess = rules.every((rule) => ability.relevantRuleFor(rule.actions, rule.subject, rule === null || rule === void 0 ? void 0 : rule.field));
+            const canAccess = rules.every((rule) => ability.relevantRuleFor(rule.actions, rule.subject, rule?.field));
             if (canAccess) {
                 return payload;
             }

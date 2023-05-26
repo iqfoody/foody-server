@@ -16,6 +16,11 @@ exports.FeedbacksSchema = exports.Feedbacks = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let Feedbacks = class Feedbacks {
+    subject;
+    message;
+    name;
+    phoneNumber;
+    user;
 };
 __decorate([
     (0, mongoose_1.Prop)({ required: [true, "title required"] }),

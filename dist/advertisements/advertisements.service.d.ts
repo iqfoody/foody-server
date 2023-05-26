@@ -34,19 +34,19 @@ export declare class AdvertisementsService {
     private AdvertisementsModel;
     private readonly awsService;
     constructor(AdvertisementsModel: Model<AdvertisementsDocument>, awsService: AwsService);
+    findAdvertisements(): Promise<(import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>)[]>;
+    findAdvertisement(id: string): Promise<import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
     create(createAdvertisementInput: CreateAdvertisementInput, file: any): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    findAdvertisements(): Promise<(import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[]>;
     findOne(id: string): Promise<import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
-    findAdvertisement(id: string): Promise<import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     update(id: string, updateAdvertisementInput: UpdateAdvertisementInput): Promise<string>;

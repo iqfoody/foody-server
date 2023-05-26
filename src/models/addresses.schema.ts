@@ -24,6 +24,12 @@ export class Addresses {
   address: string;
 
   @Prop()
+  building: string;
+
+  @Prop()
+  apartment: string;
+
+  @Prop()
   phoneNumber: string;
 
   @Prop()

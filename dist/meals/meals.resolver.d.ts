@@ -26,18 +26,35 @@
 import { MealsService } from './meals.service';
 import { CreateMealInput } from './dto/create-meal.input';
 import { UpdateMealInput } from './dto/update-meal.input';
+import { LimitEntity } from 'src/constants/limitEntity';
+import { StateInput } from 'src/constants/state.input';
+import { UpdatePositionInput } from 'src/constants/position.input';
+import { CreateMealObject } from './dto/create-meal-object.input';
+import { UpdateMealObject } from './dto/update-meal-object.input';
+import { RemoveMealObject } from './dto/remove-mea-object.input';
 export declare class MealsResolver {
     private readonly mealsService;
     constructor(mealsService: MealsService);
     createMeal(createMealInput: CreateMealInput): Promise<import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    findAll(): Promise<(import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+    findAll(limitEntity: LimitEntity): Promise<{
+        data: (import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+            _id: import("mongoose").Types.ObjectId;
+        }, never>)[];
+        pages: number;
+    }>;
+    search(query: string): Promise<(import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
     findOne(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     updateMeal(updateMealInput: UpdateMealInput): Promise<string>;
+    stateMeal(stateInput: StateInput): Promise<string>;
+    positionMeal(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     removeMeal(id: string): Promise<string>;
+    createMealObject(createMealObject: CreateMealObject): Promise<any>;
+    updateMealObject(updateMealObject: UpdateMealObject): Promise<string>;
+    removeMealObject(removeMealObject: RemoveMealObject): Promise<string>;
 }

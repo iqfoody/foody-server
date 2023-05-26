@@ -26,18 +26,19 @@ import { CreateRestaurantCategoryInput } from './dto/create-restaurant-category.
 import { UpdateRestaurantCategoryInput } from './dto/update-restaurant-category.input';
 import { Model } from 'mongoose';
 import { RestaurantCategoriesDocument } from 'src/models/restaurantCategories.schema';
+import { UpdatePositionInput } from 'src/constants/position.input';
 export declare class RestaurantCategoriesService {
     private RestaurantCategoriesModel;
     constructor(RestaurantCategoriesModel: Model<RestaurantCategoriesDocument>);
-    create(createRestaurantCategoryInput: CreateRestaurantCategoryInput): Promise<import("mongoose").Document<unknown, {}, RestaurantCategoriesDocument> & Omit<import("src/models/restaurantCategories.schema").RestaurantCategories & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
-    findAll(): import("mongoose").Query<(import("mongoose").Document<unknown, {}, RestaurantCategoriesDocument> & Omit<import("src/models/restaurantCategories.schema").RestaurantCategories & import("mongoose").Document<any, any, any> & {
+    findForRestaurant(restaurant: string): import("mongoose").Query<(import("mongoose").Document<unknown, {}, RestaurantCategoriesDocument> & Omit<import("src/models/restaurantCategories.schema").RestaurantCategories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[], import("mongoose").Document<unknown, {}, RestaurantCategoriesDocument> & Omit<import("src/models/restaurantCategories.schema").RestaurantCategories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, RestaurantCategoriesDocument>;
-    findForRestaurant(restaurant: string): import("mongoose").Query<(import("mongoose").Document<unknown, {}, RestaurantCategoriesDocument> & Omit<import("src/models/restaurantCategories.schema").RestaurantCategories & import("mongoose").Document<any, any, any> & {
+    create(createRestaurantCategoryInput: CreateRestaurantCategoryInput): Promise<import("mongoose").Document<unknown, {}, RestaurantCategoriesDocument> & Omit<import("src/models/restaurantCategories.schema").RestaurantCategories & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
+    findAll(restaurant: string): import("mongoose").Query<(import("mongoose").Document<unknown, {}, RestaurantCategoriesDocument> & Omit<import("src/models/restaurantCategories.schema").RestaurantCategories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[], import("mongoose").Document<unknown, {}, RestaurantCategoriesDocument> & Omit<import("src/models/restaurantCategories.schema").RestaurantCategories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
@@ -48,5 +49,7 @@ export declare class RestaurantCategoriesService {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, RestaurantCategoriesDocument>;
     update(id: string, updateRestaurantCategoryInput: UpdateRestaurantCategoryInput): Promise<string>;
+    position(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     remove(id: string): Promise<string>;
+    clean(id: string): Promise<string>;
 }

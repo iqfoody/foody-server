@@ -4,6 +4,6 @@ export declare class CreatePromoCodeInput {
     user?: string;
     type: promoCodeTypes;
     discount: number;
-    public?: boolean;
+    isPublic?: boolean;
     expire: Date;
 }

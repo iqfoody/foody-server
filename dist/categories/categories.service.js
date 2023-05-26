@@ -18,51 +18,55 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const aws_service_1 = require("../aws/aws.service");
 let CategoriesService = class CategoriesService {
+    CategoriesModel;
+    awsService;
     constructor(CategoriesModel, awsService) {
         this.CategoriesModel = CategoriesModel;
         this.awsService = awsService;
+    }
+    async findCategories() {
+        const categories = await this.CategoriesModel.find({ state: "Active" }, { title: 1, titleEN: 1, titleKR: 1, image: 1 });
+        for (const single of categories) {
+            if (single?.image)
+                single.image = this.awsService.getUrl(single.image);
+        }
+        return categories;
+    }
+    async findCategory(id) {
+        if (!(0, mongoose_2.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't category with this id");
+        const category = await this.CategoriesModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }, { title: 1, titleEN: 1, titleKR: 1, image: 1 });
+        if (category?.image)
+            category.image = this.awsService.getUrl(category.image);
+        return category;
     }
     async create(createCategoryInput, file) {
         if (!file)
             return new common_1.BadRequestException("image required");
         const position = await this.CategoriesModel.countDocuments();
-        const category = new this.CategoriesModel(Object.assign(Object.assign({}, createCategoryInput), { position }));
+        const category = new this.CategoriesModel({ ...createCategoryInput, position });
         const result = await this.awsService.createImage(file, category._id);
-        category.image = result === null || result === void 0 ? void 0 : result.Key;
+        category.image = result?.Key;
         await category.save();
-        category.image = this.awsService.getUrl(result === null || result === void 0 ? void 0 : result.Key);
+        category.image = this.awsService.getUrl(result?.Key);
         return category;
     }
     async findAll() {
         const categories = await this.CategoriesModel.find();
         for (const single of categories) {
-            if (single === null || single === void 0 ? void 0 : single.image)
-                single.image = this.awsService.getUrl(single.image);
-        }
-        return categories;
-    }
-    async findCategories() {
-        const categories = await this.CategoriesModel.find({ state: "Active" }, { title: 1, titleEN: 1, titleKR: 1, image: 1 });
-        for (const single of categories) {
-            if (single === null || single === void 0 ? void 0 : single.image)
+            if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
         }
         return categories;
     }
     async findOne(id) {
         const category = await this.CategoriesModel.findById(id);
-        if (category === null || category === void 0 ? void 0 : category.image)
-            category.image = this.awsService.getUrl(category.image);
-        return category;
-    }
-    async findCategory(id) {
-        const category = await this.CategoriesModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }, { title: 1, titleEN: 1, titleKR: 1, image: 1 });
-        if (category === null || category === void 0 ? void 0 : category.image)
+        if (category?.image)
             category.image = this.awsService.getUrl(category.image);
         return category;
     }
     async update(id, updateCategoryInput) {
-        if (updateCategoryInput === null || updateCategoryInput === void 0 ? void 0 : updateCategoryInput.image) {
+        if (updateCategoryInput?.image) {
             const { image } = await this.CategoriesModel.findOne({ _id: updateCategoryInput.id }, { image: 1, _id: 0 });
             this.awsService.removeImage(image);
         }

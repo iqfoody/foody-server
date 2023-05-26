@@ -1,6 +1,6 @@
-import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
+import { ObjectType, Field, Int, ID, Float } from '@nestjs/graphql';
 import { Address } from 'src/addresses/entities/address.entity';
-import { orderStatus, orderTypes, paymentMethodsType } from 'src/constants/types.type';
+import { orderStatus, orderTypes, paymentMethodsType, promoCodeTypes } from 'src/constants/types.type';
 import { Driver } from 'src/drivers/entities/driver.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -12,23 +12,32 @@ export class Order {
   @Field(() => ID)
   _id: string;
 
-  @Field(()=> String || User)
+  @Field(()=> User)
   user: string | User;
 
-  @Field(()=> String || Restaurant)
+  @Field(()=> Restaurant)
   restaurant: string | Restaurant;
 
-  @Field(()=> String || Address)
+  @Field(()=> Address)
   address: string | Address;
 
   @Field(()=> [OrderItem])
   meals: OrderItem[];
 
-  @Field(()=> String || Driver, {nullable: true})
+  @Field(()=> Driver, {nullable: true})
   driver?: string | Driver;
 
-  @Field(()=> Int)
+  @Field(()=> Float)
   totalPrice: number;
+
+  @Field(()=> Int, {nullable: true})
+  totalPoints?: number;
+
+  @Field(()=> Int, {nullable: true})
+  price?: number;
+
+  @Field(()=> Int, {nullable: true})
+  recievedPrice?: number;
 
   @Field()
   type: orderTypes;
@@ -39,6 +48,9 @@ export class Order {
   @Field(()=> Boolean)
   tableware: boolean;
 
+  @Field(()=> Boolean)
+  hasRating: boolean;
+
   @Field()
   details: string;
 
@@ -48,19 +60,28 @@ export class Order {
   @Field()
   state: orderStatus;
 
-  @Field(()=> Int, {nullable: true})
-  promoCode?: number;
+  @Field({nullable: true})
+  promoCode?: string;
 
   @Field(()=> Int, {nullable: true})
   discount?: number;
 
-  @Field(()=> Int, {nullable: true})
-  percent?: number;
+  @Field({nullable: true})
+  discountType?: promoCodeTypes;
 
   @Field(()=> Int, {nullable: true})
   walletAmount?: number;
 
   @Field(()=> Int, {nullable: true})
-  walletPoint?: number;
+  walletPoints?: number;
+
+  @Field(()=> Int, {nullable: true})
+  pointsBack?: number;
+
+  @Field(()=> Date, {nullable: true})
+  createdAt?: Date
+
+  @Field(()=> Date, {nullable: true})
+  updatedAt?: Date
 
 }

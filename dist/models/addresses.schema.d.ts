@@ -8,6 +8,8 @@ export declare class Addresses {
     country: string;
     city: province;
     address: string;
+    building: string;
+    apartment: string;
     phoneNumber: string;
     description: string;
     latitude: number;

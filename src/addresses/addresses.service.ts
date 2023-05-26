@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateAddressInput } from './dto/create-address.input';
 import { UpdateAddressInput } from './dto/update-address.input';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { AddressesDocument } from 'src/models/addresses.schema';
 
 @Injectable()
@@ -38,20 +38,28 @@ export class AddressesService {
   //? -> application...
 
   findAddresses(user: string) {
-    return this.AddressesModel.find({user});
+    return this.AddressesModel.find({user}).select(["-__v", "-user"]);
   }
 
   findAddress(id: string, user: string) {
-    return this.AddressesModel.findOne({$and: [{_id: id}, {user}]});
+    if(!isValidObjectId(id)) throw new BadRequestException("There isn't address with this id");
+    return this.AddressesModel.findOne({$and: [{_id: id}, {user}]}).select(["-__v", "-user"]);
   }
 
-  async updateAddress(id: string, updateAddressInput: UpdateAddressInput, user: string) {
-    await this.AddressesModel.findOneAndUpdate({$and: [{_id: id}, {user}]}, updateAddressInput);
+  async updateAddress(updateAddressInput: UpdateAddressInput, user: string) {
+    if(!isValidObjectId(updateAddressInput?.id)) throw new BadRequestException("There isn't address with this id");
+    await this.AddressesModel.findOneAndUpdate({$and: [{_id: updateAddressInput.id}, {user}]}, updateAddressInput);
     return "Success";
   }
 
   async removeAddress(id: string, user: string) {
+    if(!isValidObjectId(id)) throw new BadRequestException("There isn't address with this id");
     await this.AddressesModel.findOneAndDelete({$and: [{_id: id}, {user}]});
+    return "Success";
+  }
+  
+  async clean(id: string){
+    await this.AddressesModel.deleteMany({user: id});
     return "Success";
   }
 }

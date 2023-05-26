@@ -12,6 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreatePromoCodeInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreatePromoCodeInput = class CreatePromoCodeInput {
+    name;
+    user;
+    type;
+    discount;
+    isPublic;
+    expire;
 };
 __decorate([
     (0, graphql_1.Field)(),
@@ -32,7 +38,7 @@ __decorate([
 __decorate([
     (0, graphql_1.Field)(() => Boolean, { nullable: true }),
     __metadata("design:type", Boolean)
-], CreatePromoCodeInput.prototype, "public", void 0);
+], CreatePromoCodeInput.prototype, "isPublic", void 0);
 __decorate([
     (0, graphql_1.Field)(() => Date),
     __metadata("design:type", Date)

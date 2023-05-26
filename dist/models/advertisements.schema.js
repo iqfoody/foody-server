@@ -16,6 +16,15 @@ exports.AdvertisementsSchema = exports.Advertisements = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let Advertisements = class Advertisements {
+    user;
+    title;
+    titleEN;
+    titleKR;
+    image;
+    type;
+    target;
+    position;
+    state;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Users' }),

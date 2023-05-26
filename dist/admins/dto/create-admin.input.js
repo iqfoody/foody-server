@@ -12,6 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateAdminInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateAdminInput = class CreateAdminInput {
+    name;
+    email;
+    password;
+    type;
+    image;
 };
 __decorate([
     (0, graphql_1.Field)(),

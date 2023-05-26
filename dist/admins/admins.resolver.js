@@ -23,13 +23,14 @@ const common_1 = require("@nestjs/common");
 const state_input_1 = require("../constants/state.input");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
-const password_user_input_1 = require("../users/dto/password-user.input");
+const update_password_user_input_1 = require("../users/dto/update-password-user.input");
 let AdminsResolver = class AdminsResolver {
+    adminsService;
     constructor(adminsService) {
         this.adminsService = adminsService;
     }
     createAdmin(createAdminInput, context) {
-        return this.adminsService.create(context.req.user._id, createAdminInput);
+        return this.adminsService.create(context.req.user._id, createAdminInput, null);
     }
     findAll() {
         return this.adminsService.findAll();
@@ -98,7 +99,7 @@ __decorate([
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: admin_entity_1.Admin }),
     __param(0, (0, graphql_1.Args)('passwordAdminInput')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [password_user_input_1.PasswordUserInput]),
+    __metadata("design:paramtypes", [update_password_user_input_1.UpdatePasswordUser]),
     __metadata("design:returntype", Promise)
 ], AdminsResolver.prototype, "passwordUser", null);
 __decorate([

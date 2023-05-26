@@ -7,6 +7,7 @@ import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CheckAbilities } from 'src/ability/ability.decorator';
 import { Actions } from 'src/ability/ability.factory';
+import { UpdatePositionInput } from 'src/constants/position.input';
 
 @UseGuards(AccessAuthGuard)
 @Resolver(() => RestaurantCategory)
@@ -21,8 +22,8 @@ export class RestaurantCategoriesResolver {
 
   @Query(() => [RestaurantCategory], { name: 'restaurantCategories' })
   @CheckAbilities({actions: Actions.Read, subject: RestaurantCategory})
-  findAll() {
-    return this.restaurantCategoriesService.findAll();
+  findAll(@Args('id', {type: ()=> ID}) id: string) {
+    return this.restaurantCategoriesService.findAll(id);
   }
 
   @Query(() => RestaurantCategory, { name: 'restaurantCategory' })
@@ -31,13 +32,19 @@ export class RestaurantCategoriesResolver {
     return this.restaurantCategoriesService.findOne(id);
   }
 
-  @Mutation(() => RestaurantCategory)
+  @Mutation(() => String)
   @CheckAbilities({actions: Actions.Update, subject: RestaurantCategory})
   updateRestaurantCategory(@Args('updateRestaurantCategoryInput') updateRestaurantCategoryInput: UpdateRestaurantCategoryInput) {
     return this.restaurantCategoriesService.update(updateRestaurantCategoryInput.id, updateRestaurantCategoryInput);
   }
 
-  @Mutation(() => RestaurantCategory)
+  @Mutation(() => String)
+  @CheckAbilities({actions: Actions.Update, subject: RestaurantCategory})
+  positionRestaurantCategory(@Args('updatePositionInput', {type: ()=> [UpdatePositionInput]}) updatePositionInput: UpdatePositionInput[]) {
+    return this.restaurantCategoriesService.position(updatePositionInput);
+  }
+
+  @Mutation(() => String)
   @CheckAbilities({actions: Actions.Delete, subject: RestaurantCategory})
   removeRestaurantCategory(@Args('id', { type: () => ID }) id: string) {
     return this.restaurantCategoriesService.remove(id);

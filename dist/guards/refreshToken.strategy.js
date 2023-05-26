@@ -23,7 +23,7 @@ let RefreshTokenStrategy = class RefreshTokenStrategy extends (0, passport_1.Pas
     }
     async validate(req, payload) {
         const refreshToken = req.body.refresh;
-        return Object.assign(Object.assign({}, payload), { refreshToken });
+        return { ...payload, refreshToken };
     }
 };
 RefreshTokenStrategy = __decorate([

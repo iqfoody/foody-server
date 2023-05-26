@@ -13,6 +13,7 @@ exports.UpdatePromoCodeInput = void 0;
 const create_promo_code_input_1 = require("./create-promo-code.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdatePromoCodeInput = class UpdatePromoCodeInput extends (0, graphql_1.PartialType)(create_promo_code_input_1.CreatePromoCodeInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

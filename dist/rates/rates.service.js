@@ -16,30 +16,40 @@ exports.RatesService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const aws_service_1 = require("../aws/aws.service");
 let RatesService = class RatesService {
-    constructor(RatesModel) {
+    RatesModel;
+    awsService;
+    constructor(RatesModel, awsService) {
         this.RatesModel = RatesModel;
+        this.awsService = awsService;
     }
     create(createRateInput) {
         return this.RatesModel.create(createRateInput);
     }
     async rateDriver(createRateInput) {
-        if (!(createRateInput === null || createRateInput === void 0 ? void 0 : createRateInput.driver) || !(createRateInput === null || createRateInput === void 0 ? void 0 : createRateInput.user))
+        if (!createRateInput?.driver || !createRateInput?.user)
             throw new common_1.BadRequestException("driver & user required");
+        if (!(0, mongoose_2.isValidObjectId)(createRateInput.driver))
+            throw new common_1.BadRequestException("There isn't driver with this id");
         await this.RatesModel.create(createRateInput);
         return "Success";
     }
     async rateResaurant(createRateInput) {
-        if (!(createRateInput === null || createRateInput === void 0 ? void 0 : createRateInput.restaurant) || !(createRateInput === null || createRateInput === void 0 ? void 0 : createRateInput.user))
+        if (!createRateInput?.restaurant || !createRateInput?.user)
             throw new common_1.BadRequestException("restaurant & user required");
-        const rates = await this.RatesModel.aggregate([{ $match: { restaurant: { $eq: { $toObjectId: createRateInput.restaurant } } } }, { $group: { _id: "$restaurant", rating: { $avg: "$rate" } } }]);
-        const total = await this.RatesModel.countDocuments({ restaurant: createRateInput.restaurant });
-        console.log(createRateInput.restaurant);
-        console.log(rates, total);
-        const newValue = createRateInput.rate / total + 1;
-        const newRatingValue = rates.rate + newValue;
-        await this.RatesModel.create(createRateInput);
-        return { rating: newRatingValue, rates: total + 1 };
+        if (!(0, mongoose_2.isValidObjectId)(createRateInput.restaurant))
+            throw new common_1.BadRequestException("There isn't restaurant with this id");
+        const rate = await this.RatesModel.create(createRateInput);
+        if (!rate)
+            throw new common_1.BadRequestException("rating hasn't created.");
+        const objectId = new mongoose_2.mongo.ObjectId(createRateInput.restaurant);
+        const result = await this.RatesModel.aggregate([{ $match: { restaurant: objectId } }, { $group: { _id: "$restaurant", rating: { $avg: "$rate" }, rates: { $sum: 1 } } }]);
+        if (result[0]) {
+            const { rating, rates } = result[0];
+            return { rating, rates };
+        }
+        return { rating: createRateInput.rate, rates: 1 };
     }
     findAll() {
         return this.RatesModel.find();
@@ -55,11 +65,23 @@ let RatesService = class RatesService {
         await this.RatesModel.findByIdAndDelete(id);
         return "Success";
     }
+    async home() {
+        const rating = await this.RatesModel.aggregate([
+            { $group: { _id: "rating", rating: { $avg: "$rate" }, total: { $sum: 1 } } }
+        ]);
+        const recentlyRating = await this.RatesModel.find().sort({ _id: -1 }).limit(10).populate({ path: "user", select: { name: 1, image: 1 } }).select(["-__v", "-_id", "-restaurant"]);
+        for (const single of recentlyRating) {
+            if (single?.user?.image)
+                single.user.image = this.awsService.getUrl(single.user.image);
+        }
+        return { rating: rating[0]?.rating, recentlyRating, total: rating[0]?.total };
+    }
 };
 RatesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)("Rates")),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        aws_service_1.AwsService])
 ], RatesService);
 exports.RatesService = RatesService;
 //# sourceMappingURL=rates.service.js.map

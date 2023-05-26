@@ -16,6 +16,11 @@ export class RestaurantsController {
         private readonly restaurantsService: RestaurantsService,
         private readonly awsService: AwsService,
     ){}
+
+    @Get('/:id')
+    async getRestaurant(@Param('id') restaurant: string){
+        return this.restaurantsService.findRestaurant(restaurant);
+    }
     
     @Get('/')
     async getRestaurants(){
@@ -32,11 +37,6 @@ export class RestaurantsController {
         return this.restaurantsService.findForCategory(category, orderby);
     }
 
-    @Get('/:id')
-    async getRestaurant(@Param('id') restaurant: string){
-        return this.restaurantsService.findRestaurant(restaurant);
-    }
-
     // dashboard...
 
     @Post('/')
@@ -51,7 +51,7 @@ export class RestaurantsController {
     @UseGuards(AccessAuthGuard)
     @CheckAbilities({actions: Actions.Update, subject: Restaurant})
     @UseInterceptors(FileInterceptor('image'))
-    async updateRestaurant(@Body('updateRestaurantInput') updateRestaurantInput: UpdateRestaurantInput, @UploadedFile() file) {
+    async updateRestaurant(@Body() updateRestaurantInput: UpdateRestaurantInput, @UploadedFile() file) {
         const result = await this.awsService.createImage(file, updateRestaurantInput.id);
         return this.restaurantsService.update(updateRestaurantInput.id, {...updateRestaurantInput, image: result?.Key});
     }

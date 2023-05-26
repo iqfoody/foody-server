@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateTagInput } from './dto/create-tag.input';
 import { UpdateTagInput } from './dto/update-tag.input';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { AwsService } from 'src/aws/aws.service';
 import { TagsDocument } from 'src/models/tags.schema';
 import { StateInput } from 'src/constants/state.input';
@@ -14,6 +14,25 @@ export class TagsService {
     @InjectModel("Tags") private TagsModel: Model<TagsDocument>,
     private readonly awsService: AwsService,
   ) {}
+
+  //? application...
+
+  async findTags() {
+    const tags = await this.TagsModel.find({state: "Active"}, {title: 1, titleEN: 1, titleKR: 1});
+    for(const single of tags){
+      if(single?.image) single.image = this.awsService.getUrl(single.image);
+    }
+    return tags;
+  }
+
+  async findTag(id: string) {
+    if(!isValidObjectId(id)) throw new BadRequestException("There isn't tag with this id");
+    const tag = await this.TagsModel.findOne({$and: [{_id: id}, {state: "Active"}]}, {title: 1, titleEN: 1, titleKR: 1});
+    if(tag?.image) tag.image = this.awsService.getUrl(tag.image);
+    return tag;
+  }
+
+  //? dashboard...
 
   async create(createTagInput: CreateTagInput, file: any) {
     const position = await this.TagsModel.countDocuments();
@@ -35,22 +54,8 @@ export class TagsService {
     return tags;
   }
 
-  async findTags() {
-    const tags = await this.TagsModel.find({state: "Active"}, {title: 1, titleEN: 1, titleKR: 1});
-    for(const single of tags){
-      if(single?.image) single.image = this.awsService.getUrl(single.image);
-    }
-    return tags;
-  }
-
   async findOne(id: string) {
     const tag = await this.TagsModel.findById(id);
-    if(tag?.image) tag.image = this.awsService.getUrl(tag.image);
-    return tag;
-  }
-
-  async findTag(id: string) {
-    const tag = await this.TagsModel.findOne({$and: [{_id: id}, {state: "Active"}]}, {title: 1, titleEN: 1, titleKR: 1});
     if(tag?.image) tag.image = this.awsService.getUrl(tag.image);
     return tag;
   }

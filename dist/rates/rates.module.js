@@ -13,12 +13,14 @@ const rates_resolver_1 = require("./rates.resolver");
 const rates_controller_1 = require("./rates.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const rates_schema_1 = require("../models/rates.schema");
+const aws_module_1 = require("../aws/aws.module");
 let RatesModule = class RatesModule {
 };
 RatesModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: "Rates", schema: rates_schema_1.RatesSchema }]),
+            aws_module_1.AwsModule
         ],
         providers: [rates_resolver_1.RatesResolver, rates_service_1.RatesService],
         exports: [rates_service_1.RatesService],

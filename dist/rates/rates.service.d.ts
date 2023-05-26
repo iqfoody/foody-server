@@ -26,16 +26,18 @@ import { CreateRateInput } from './dto/create-rate.input';
 import { UpdateRateInput } from './dto/update-rate.input';
 import { Model } from 'mongoose';
 import { RatesDocument } from 'src/models/rates.schema';
+import { AwsService } from 'src/aws/aws.service';
 export declare class RatesService {
     private RatesModel;
-    constructor(RatesModel: Model<RatesDocument>);
+    private readonly awsService;
+    constructor(RatesModel: Model<RatesDocument>, awsService: AwsService);
     create(createRateInput: CreateRateInput): Promise<import("mongoose").Document<unknown, {}, RatesDocument> & Omit<import("src/models/rates.schema").Rates & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     rateDriver(createRateInput: CreateRateInput): Promise<string>;
     rateResaurant(createRateInput: CreateRateInput): Promise<{
         rating: any;
-        rates: number;
+        rates: any;
     }>;
     findAll(): import("mongoose").Query<(import("mongoose").Document<unknown, {}, RatesDocument> & Omit<import("src/models/rates.schema").Rates & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
@@ -49,4 +51,9 @@ export declare class RatesService {
     }, never>, {}, RatesDocument>;
     update(id: string, updateRateInput: UpdateRateInput): Promise<string>;
     remove(id: string): Promise<string>;
+    home(): Promise<{
+        rating: any;
+        recentlyRating: any;
+        total: any;
+    }>;
 }

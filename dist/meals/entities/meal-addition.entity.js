@@ -12,6 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MealAddition = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let MealAddition = class MealAddition {
+    _id;
+    title;
+    titleEN;
+    titleKR;
+    price;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
@@ -30,7 +35,7 @@ __decorate([
     __metadata("design:type", String)
 ], MealAddition.prototype, "titleKR", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Int),
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
     __metadata("design:type", Number)
 ], MealAddition.prototype, "price", void 0);
 MealAddition = __decorate([

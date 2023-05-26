@@ -13,6 +13,15 @@ exports.CreateOrderInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const create_order_item_entity_1 = require("./create-order-item.entity");
 let CreateOrderInput = class CreateOrderInput {
+    user;
+    restaurant;
+    address;
+    meals;
+    driver;
+    tableware;
+    details;
+    paymentMethod;
+    promoCode;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),

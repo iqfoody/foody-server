@@ -16,11 +16,11 @@ let RefreshAuthGuard = class RefreshAuthGuard extends (0, passport_1.AuthGuard)(
         const request = ctx.getContext().req;
         if (request.cookies.iop) {
             const refresh = request.cookies.iop;
-            request.body = Object.assign(Object.assign({}, request.body), { refresh });
+            request.body = { ...request.body, refresh };
         }
         else if (request.headers.authorization) {
             const refresh = request.headers.authorization.replace('Bearer', '').trim();
-            request.body = Object.assign(Object.assign({}, request.body), { refresh });
+            request.body = { ...request.body, refresh };
         }
         return request;
     }

@@ -16,6 +16,8 @@ type storeOrdersStatus = "Pending" | "Accepted" | "InDelivery" | "Completed" | "
 type ratingOrderStatus = "Ignored" | "None" | "Rated";
 type discountTypes = "Price" | "Percent";
 type promoCodeTypes = "Price" | "Percent";
-type advertisementsTypes = "Restaurant" | "Meal" | null;
+type advertisementsTypes = "Restaurant" | "Meal" | "null";
 type paymentMethodsType = "Cash" | "Wallet" | "Points";
-export { adminTypes, employerTypes, userTypes, province, weekDays, genders, userStatus, orderStatus, publicStatus, orderTypes, issueTypes, notificationsTypes, notificationsStatus, storeOrdersStatus, ratingOrderStatus, discountTypes, advertisementsTypes, paymentMethodsType, promoCodeTypes, mealStatus };
+type procedureTypes = "Plus" | "Minus";
+type transactionTypes = "Amount" | "Points";
+export { adminTypes, employerTypes, userTypes, province, weekDays, genders, userStatus, orderStatus, publicStatus, orderTypes, issueTypes, notificationsTypes, notificationsStatus, storeOrdersStatus, ratingOrderStatus, discountTypes, advertisementsTypes, paymentMethodsType, promoCodeTypes, mealStatus, procedureTypes, transactionTypes };

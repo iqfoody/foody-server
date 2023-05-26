@@ -21,14 +21,12 @@ const ability_factory_1 = require("../ability/ability.factory");
 const rate_entity_1 = require("./entities/rate.entity");
 const create_rate_input_1 = require("./dto/create-rate.input");
 let RatesController = class RatesController {
+    ratesService;
     constructor(ratesService) {
         this.ratesService = ratesService;
     }
     async createMeal(createRateInput, context) {
-        return this.ratesService.rateDriver(Object.assign(Object.assign({}, createRateInput), { user: context.user._id }));
-    }
-    async rate(createRateInput, context) {
-        return this.ratesService.rateResaurant(Object.assign(Object.assign({}, createRateInput), { user: context.user._id }));
+        return this.ratesService.rateDriver({ ...createRateInput, user: context.user._id });
     }
 };
 __decorate([
@@ -40,15 +38,6 @@ __decorate([
     __metadata("design:paramtypes", [create_rate_input_1.CreateRateInput, Object]),
     __metadata("design:returntype", Promise)
 ], RatesController.prototype, "createMeal", null);
-__decorate([
-    (0, common_1.Post)('/restaurant'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Add, subject: rate_entity_1.Rate }),
-    __param(0, (0, common_1.Body)('createRateInput')),
-    __param(1, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_rate_input_1.CreateRateInput, Object]),
-    __metadata("design:returntype", Promise)
-], RatesController.prototype, "rate", null);
 RatesController = __decorate([
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, common_1.Controller)('rates'),

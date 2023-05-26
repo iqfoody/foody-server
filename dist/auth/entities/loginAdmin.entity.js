@@ -13,6 +13,9 @@ exports.LoginAdmin = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const admin_entity_1 = require("../../admins/entities/admin.entity");
 let LoginAdmin = class LoginAdmin {
+    accessToken;
+    refreshToken;
+    user;
 };
 __decorate([
     (0, graphql_1.Field)(),

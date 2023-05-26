@@ -6,6 +6,8 @@ import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CheckAbilities } from 'src/ability/ability.decorator';
 import { Actions } from 'src/ability/ability.factory';
+import { UpdatePositionInput } from 'src/constants/position.input';
+import { StateInput } from 'src/constants/state.input';
 
 @UseGuards(AccessAuthGuard)
 @Resolver(() => Advertisement)
@@ -28,6 +30,18 @@ export class AdvertisementsResolver {
   @CheckAbilities({actions: Actions.Update, subject: Advertisement})
   updateAdvertisement(@Args('updateAdvertisementInput') updateAdvertisementInput: UpdateAdvertisementInput) {
     return this.advertisementsService.update(updateAdvertisementInput.id, updateAdvertisementInput);
+  }
+
+  @Mutation(() => String)
+  @CheckAbilities({actions: Actions.Update, subject: Advertisement})
+  positionAdvertisement(@Args('updatePositionInput', {type: ()=> [UpdatePositionInput]}) updatePositionInput: UpdatePositionInput[]) {
+    return this.advertisementsService.position(updatePositionInput);
+  }
+
+  @Mutation(() => String)
+  @CheckAbilities({actions: Actions.Update, subject: Advertisement})
+  stateAdvertisement(@Args('stateInput') stateInput: StateInput) {
+    return this.advertisementsService.state(stateInput);
   }
 
   @Mutation(() => String)

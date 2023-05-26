@@ -21,6 +21,7 @@ const loginAdmin_entity_1 = require("./entities/loginAdmin.entity");
 const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const refreshAuth_guard_1 = require("../guards/refreshAuth.guard");
 let AuthResolver = class AuthResolver {
+    authService;
     constructor(authService) {
         this.authService = authService;
     }

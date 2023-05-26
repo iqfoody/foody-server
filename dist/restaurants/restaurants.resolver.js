@@ -22,7 +22,10 @@ const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
+const state_input_1 = require("../constants/state.input");
+const position_input_1 = require("../constants/position.input");
 let RestaurantsResolver = class RestaurantsResolver {
+    restaurantsService;
     constructor(restaurantsService) {
         this.restaurantsService = restaurantsService;
     }
@@ -32,11 +35,20 @@ let RestaurantsResolver = class RestaurantsResolver {
     findAll() {
         return this.restaurantsService.findAll();
     }
+    search(query) {
+        return this.restaurantsService.search(query);
+    }
     findOne(id) {
         return this.restaurantsService.findOne(id);
     }
     updateRestaurant(updateRestaurantInput) {
         return this.restaurantsService.update(updateRestaurantInput.id, updateRestaurantInput);
+    }
+    stateRestaurant(stateInput) {
+        return this.restaurantsService.state(stateInput);
+    }
+    positionRestaurant(updatePositionInput) {
+        return this.restaurantsService.position(updatePositionInput);
     }
     removeRestaurant(id) {
         return this.restaurantsService.remove(id);
@@ -58,6 +70,14 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], RestaurantsResolver.prototype, "findAll", null);
 __decorate([
+    (0, graphql_1.Query)(() => [restaurant_entity_1.Restaurant], { name: 'searchRestaurants' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: restaurant_entity_1.Restaurant }),
+    __param(0, (0, graphql_1.Args)('query', { type: () => String })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], RestaurantsResolver.prototype, "search", null);
+__decorate([
     (0, graphql_1.Query)(() => restaurant_entity_1.Restaurant, { name: 'restaurant' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: restaurant_entity_1.Restaurant }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
@@ -66,7 +86,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], RestaurantsResolver.prototype, "findOne", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => restaurant_entity_1.Restaurant),
+    (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: restaurant_entity_1.Restaurant }),
     __param(0, (0, graphql_1.Args)('updateRestaurantInput')),
     __metadata("design:type", Function),
@@ -74,7 +94,23 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], RestaurantsResolver.prototype, "updateRestaurant", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => restaurant_entity_1.Restaurant),
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: restaurant_entity_1.Restaurant }),
+    __param(0, (0, graphql_1.Args)('stateInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [state_input_1.StateInput]),
+    __metadata("design:returntype", void 0)
+], RestaurantsResolver.prototype, "stateRestaurant", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: restaurant_entity_1.Restaurant }),
+    __param(0, (0, graphql_1.Args)('updatePositionInput', { type: () => [position_input_1.UpdatePositionInput] })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array]),
+    __metadata("design:returntype", void 0)
+], RestaurantsResolver.prototype, "positionRestaurant", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: restaurant_entity_1.Restaurant }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),

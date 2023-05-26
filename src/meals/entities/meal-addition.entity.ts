@@ -15,7 +15,7 @@ export class MealAddition {
   @Field({nullable: true})
   titleKR?: string;
 
-  @Field(()=> Int)
-  price: number;
+  @Field(()=> Int, {nullable: true})
+  price?: number;
 
 }

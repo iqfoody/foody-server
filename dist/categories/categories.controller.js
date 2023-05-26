@@ -24,31 +24,26 @@ const category_entity_1 = require("./entities/category.entity");
 const create_category_input_1 = require("./dto/create-category.input");
 const update_category_input_1 = require("./dto/update-category.input");
 let CategoriesController = class CategoriesController {
+    categoriesService;
+    awsService;
     constructor(categoriesService, awsService) {
         this.categoriesService = categoriesService;
         this.awsService = awsService;
     }
-    async getCategories(context) {
-        return this.categoriesService.findCategories();
-    }
     async getCategory(id) {
         return this.categoriesService.findCategory(id);
+    }
+    async getCategories() {
+        return this.categoriesService.findCategories();
     }
     async createCategory(createCategoryInput, file) {
         return this.categoriesService.create(createCategoryInput, file);
     }
     async updateCategory(updateCategoryInput, file) {
         const result = await this.awsService.createImage(file, updateCategoryInput.id);
-        return this.categoriesService.update(updateCategoryInput.id, Object.assign(Object.assign({}, updateCategoryInput), { image: result === null || result === void 0 ? void 0 : result.Key }));
+        return this.categoriesService.update(updateCategoryInput.id, { ...updateCategoryInput, image: result?.Key });
     }
 };
-__decorate([
-    (0, common_1.Get)('/'),
-    __param(0, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], CategoriesController.prototype, "getCategories", null);
 __decorate([
     (0, common_1.Get)('/:id'),
     __param(0, (0, common_1.Param)('id')),
@@ -57,11 +52,17 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], CategoriesController.prototype, "getCategory", null);
 __decorate([
+    (0, common_1.Get)('/'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "getCategories", null);
+__decorate([
     (0, common_1.Post)('/'),
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: category_entity_1.Category }),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)('createCategoryInput')),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_category_input_1.CreateCategoryInput, Object]),
@@ -72,7 +73,7 @@ __decorate([
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: category_entity_1.Category }),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)('updateCategoryInput')),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_category_input_1.UpdateCategoryInput, Object]),

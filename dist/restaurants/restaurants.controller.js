@@ -24,9 +24,14 @@ const restaurant_entity_1 = require("./entities/restaurant.entity");
 const create_restaurant_input_1 = require("./dto/create-restaurant.input");
 const update_restaurant_input_1 = require("./dto/update-restaurant.input");
 let RestaurantsController = class RestaurantsController {
+    restaurantsService;
+    awsService;
     constructor(restaurantsService, awsService) {
         this.restaurantsService = restaurantsService;
         this.awsService = awsService;
+    }
+    async getRestaurant(restaurant) {
+        return this.restaurantsService.findRestaurant(restaurant);
     }
     async getRestaurants() {
         return this.restaurantsService.findRestaurnats();
@@ -37,17 +42,21 @@ let RestaurantsController = class RestaurantsController {
     async getRestaurantsForCategory(category, orderby) {
         return this.restaurantsService.findForCategory(category, orderby);
     }
-    async getRestaurant(restaurant) {
-        return this.restaurantsService.findRestaurant(restaurant);
-    }
     async createRestaurant(createRestaurantInput, file) {
         return this.restaurantsService.create(createRestaurantInput, file);
     }
     async updateRestaurant(updateRestaurantInput, file) {
         const result = await this.awsService.createImage(file, updateRestaurantInput.id);
-        return this.restaurantsService.update(updateRestaurantInput.id, Object.assign(Object.assign({}, updateRestaurantInput), { image: result === null || result === void 0 ? void 0 : result.Key }));
+        return this.restaurantsService.update(updateRestaurantInput.id, { ...updateRestaurantInput, image: result?.Key });
     }
 };
+__decorate([
+    (0, common_1.Get)('/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], RestaurantsController.prototype, "getRestaurant", null);
 __decorate([
     (0, common_1.Get)('/'),
     __metadata("design:type", Function),
@@ -71,13 +80,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RestaurantsController.prototype, "getRestaurantsForCategory", null);
 __decorate([
-    (0, common_1.Get)('/:id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], RestaurantsController.prototype, "getRestaurant", null);
-__decorate([
     (0, common_1.Post)('/'),
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: restaurant_entity_1.Restaurant }),
@@ -93,7 +95,7 @@ __decorate([
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: restaurant_entity_1.Restaurant }),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)('updateRestaurantInput')),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_restaurant_input_1.UpdateRestaurantInput, Object]),

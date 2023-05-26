@@ -13,13 +13,32 @@ exports.User = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const wallet_entity_1 = require("../../wallets/entities/wallet.entity");
 let User = class User {
+    _id;
+    wallet;
+    name;
+    phoneNumber;
+    email;
+    password;
+    type;
+    country;
+    city;
+    approvedEmail;
+    approvedPhoneNumber;
+    image;
+    state;
+    createdAt;
+    updatedAt;
+    ip;
+    platform;
+    refreshToken;
+    deviceToken;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
     __metadata("design:type", String)
 ], User.prototype, "_id", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String || wallet_entity_1.Wallet),
+    (0, graphql_1.Field)(() => wallet_entity_1.Wallet),
     __metadata("design:type", Object)
 ], User.prototype, "wallet", void 0);
 __decorate([

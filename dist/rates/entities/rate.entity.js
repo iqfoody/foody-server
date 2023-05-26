@@ -14,6 +14,11 @@ const graphql_1 = require("@nestjs/graphql");
 const restaurant_entity_1 = require("../../restaurants/entities/restaurant.entity");
 const user_entity_1 = require("../../users/entities/user.entity");
 let Rate = class Rate {
+    _id;
+    user;
+    restaurant;
+    rate;
+    description;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

@@ -15,10 +15,17 @@ const common_1 = require("@nestjs/common");
 const aws_sdk_1 = require("aws-sdk");
 const client_cloudfront_1 = require("@aws-sdk/client-cloudfront");
 let AwsService = class AwsService {
+    s3;
+    cloudFront;
+    bucketImages;
+    errorParams;
+    cloudFrontKeyID;
+    cloudFrontPrivateKey;
+    distributionId;
     constructor() {
         const region = process.env.AWS_BUCKET_REGION;
-        const accessKeyId = process.env.AWS_ACCESS_KEY_PRODUCTION;
-        const secretAccessKey = process.env.AWS_SECRET_KEY_PRODUCTION;
+        const accessKeyId = process.env.AWS_ACCESS_KEY_LOCAL;
+        const secretAccessKey = process.env.AWS_SECRET_KEY_LOCAL;
         this.s3 = new aws_sdk_1.S3({
             region,
             accessKeyId,

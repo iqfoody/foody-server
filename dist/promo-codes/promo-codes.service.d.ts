@@ -27,25 +27,13 @@ import { CreatePromoCodeInput } from './dto/create-promo-code.input';
 import { UpdatePromoCodeInput } from './dto/update-promo-code.input';
 import { Model } from 'mongoose';
 import { PromoCodesDocument } from 'src/models/promoCodes.schema';
+import { StateInput } from 'src/constants/state.input';
 export declare class PromoCodesService {
     private PromoCodesModel;
     constructor(PromoCodesModel: Model<PromoCodesDocument>);
-    create(createPromoCodeInput: CreatePromoCodeInput): Promise<import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
-    findAll(): import("mongoose").Query<(import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[], import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, PromoCodesDocument>;
     findPromoCodes(user: string): import("mongoose").Query<(import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[], import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, PromoCodesDocument>;
-    findOne(id: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, PromoCodesDocument>;
     check(name: string, user: string): Promise<NotFoundException | {
@@ -54,7 +42,21 @@ export declare class PromoCodesService {
         discount: number;
         type: import("../constants/types.type").promoCodeTypes;
     }>;
-    usePromoCode(name: string, user: string): Promise<NotFoundException | NotAcceptableException | "Verifyed">;
+    usePromoCode(name: string, user: string): Promise<NotAcceptableException | NotFoundException | "Verifyed">;
+    create(createPromoCodeInput: CreatePromoCodeInput): Promise<import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
+    findAll(): import("mongoose").Query<Omit<import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, never>[], import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, {}, PromoCodesDocument>;
+    findOne(id: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, {}, PromoCodesDocument>;
     update(id: string, updatePromoCodeInput: UpdatePromoCodeInput): Promise<string>;
+    state(stateInput: StateInput): Promise<string>;
     remove(id: string): Promise<string>;
 }

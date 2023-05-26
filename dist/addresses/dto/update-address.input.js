@@ -13,6 +13,7 @@ exports.UpdateAddressInput = void 0;
 const create_address_input_1 = require("./create-address.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateAddressInput = class UpdateAddressInput extends (0, graphql_1.PartialType)(create_address_input_1.CreateAddressInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),

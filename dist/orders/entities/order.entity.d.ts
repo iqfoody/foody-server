@@ -1,5 +1,5 @@
 import { Address } from 'src/addresses/entities/address.entity';
-import { orderStatus, orderTypes, paymentMethodsType } from 'src/constants/types.type';
+import { orderStatus, orderTypes, paymentMethodsType, promoCodeTypes } from 'src/constants/types.type';
 import { Driver } from 'src/drivers/entities/driver.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -12,15 +12,22 @@ export declare class Order {
     meals: OrderItem[];
     driver?: string | Driver;
     totalPrice: number;
+    totalPoints?: number;
+    price?: number;
+    recievedPrice?: number;
     type: orderTypes;
     deliveryPrice: number;
     tableware: boolean;
+    hasRating: boolean;
     details: string;
     paymentMethod: paymentMethodsType;
     state: orderStatus;
-    promoCode?: number;
+    promoCode?: string;
     discount?: number;
-    percent?: number;
+    discountType?: promoCodeTypes;
     walletAmount?: number;
-    walletPoint?: number;
+    walletPoints?: number;
+    pointsBack?: number;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

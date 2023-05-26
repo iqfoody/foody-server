@@ -17,6 +17,8 @@ const common_1 = require("@nestjs/common");
 const meals_service_1 = require("../meals/meals.service");
 const restaurants_service_1 = require("../restaurants/restaurants.service");
 let SearchesService = class SearchesService {
+    mealsService;
+    RestaurantsService;
     constructor(mealsService, RestaurantsService) {
         this.mealsService = mealsService;
         this.RestaurantsService = RestaurantsService;

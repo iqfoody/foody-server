@@ -8,7 +8,7 @@ export class User {
   @Field(() => ID)
   _id: string;
 
-  @Field(() => String || Wallet)
+  @Field(() => Wallet)
   wallet: string | Wallet;
 
   @Field()

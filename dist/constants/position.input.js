@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdatePositionInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let UpdatePositionInput = class UpdatePositionInput {
+    id;
+    position;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

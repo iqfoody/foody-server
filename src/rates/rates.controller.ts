@@ -19,9 +19,9 @@ export class RatesController {
       return this.ratesService.rateDriver({...createRateInput, user: context.user._id});
     }
 
-    @Post('/restaurant')
-    @CheckAbilities({actions: Actions.Add, subject: Rate})
-    async rate(@Body('createRateInput') createRateInput: CreateRateInput, @Req() context) {
-      return this.ratesService.rateResaurant({...createRateInput, user: context.user._id});
-    }
+    // @Post('/restaurant')
+    // @CheckAbilities({actions: Actions.Add, subject: Rate})
+    // async rate(@Body('createRateInput') createRateInput: CreateRateInput, @Req() context) {
+    //   return this.ratesService.rateResaurant({...createRateInput, user: context.user._id});
+    // }
 }

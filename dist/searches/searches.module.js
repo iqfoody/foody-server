@@ -13,6 +13,7 @@ const searches_resolver_1 = require("./searches.resolver");
 const searches_controller_1 = require("./searches.controller");
 const meals_module_1 = require("../meals/meals.module");
 const restaurants_module_1 = require("../restaurants/restaurants.module");
+const users_module_1 = require("../users/users.module");
 let SearchesModule = class SearchesModule {
 };
 SearchesModule = __decorate([
@@ -20,6 +21,7 @@ SearchesModule = __decorate([
         imports: [
             (0, common_1.forwardRef)(() => meals_module_1.MealsModule),
             (0, common_1.forwardRef)(() => restaurants_module_1.RestaurantsModule),
+            (0, common_1.forwardRef)(() => users_module_1.UsersModule),
         ],
         providers: [searches_resolver_1.SearchesResolver, searches_service_1.SearchesService],
         exports: [searches_service_1.SearchesService],

@@ -34,19 +34,19 @@ export declare class CategoriesService {
     private CategoriesModel;
     private readonly awsService;
     constructor(CategoriesModel: Model<CategoriesDocument>, awsService: AwsService);
+    findCategories(): Promise<(import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>)[]>;
+    findCategory(id: string): Promise<import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
     create(createCategoryInput: CreateCategoryInput, file: any): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    findCategories(): Promise<(import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[]>;
     findOne(id: string): Promise<import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
-    findCategory(id: string): Promise<import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     update(id: string, updateCategoryInput: UpdateCategoryInput): Promise<string>;

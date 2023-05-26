@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SearchUsersInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let SearchUsersInput = class SearchUsersInput {
+    query;
+    page;
 };
 __decorate([
     (0, graphql_1.Field)(),

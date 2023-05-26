@@ -13,6 +13,7 @@ exports.UpdateCategoryInput = void 0;
 const create_category_input_1 = require("./create-category.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateCategoryInput = class UpdateCategoryInput extends (0, graphql_1.PartialType)(create_category_input_1.CreateCategoryInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),

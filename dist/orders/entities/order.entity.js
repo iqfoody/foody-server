@@ -17,21 +17,46 @@ const restaurant_entity_1 = require("../../restaurants/entities/restaurant.entit
 const user_entity_1 = require("../../users/entities/user.entity");
 const order_item_entity_1 = require("./order-item.entity");
 let Order = class Order {
+    _id;
+    user;
+    restaurant;
+    address;
+    meals;
+    driver;
+    totalPrice;
+    totalPoints;
+    price;
+    recievedPrice;
+    type;
+    deliveryPrice;
+    tableware;
+    hasRating;
+    details;
+    paymentMethod;
+    state;
+    promoCode;
+    discount;
+    discountType;
+    walletAmount;
+    walletPoints;
+    pointsBack;
+    createdAt;
+    updatedAt;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
     __metadata("design:type", String)
 ], Order.prototype, "_id", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String || user_entity_1.User),
+    (0, graphql_1.Field)(() => user_entity_1.User),
     __metadata("design:type", Object)
 ], Order.prototype, "user", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String || restaurant_entity_1.Restaurant),
+    (0, graphql_1.Field)(() => restaurant_entity_1.Restaurant),
     __metadata("design:type", Object)
 ], Order.prototype, "restaurant", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String || address_entity_1.Address),
+    (0, graphql_1.Field)(() => address_entity_1.Address),
     __metadata("design:type", Object)
 ], Order.prototype, "address", void 0);
 __decorate([
@@ -39,13 +64,25 @@ __decorate([
     __metadata("design:type", Array)
 ], Order.prototype, "meals", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String || driver_entity_1.Driver, { nullable: true }),
+    (0, graphql_1.Field)(() => driver_entity_1.Driver, { nullable: true }),
     __metadata("design:type", Object)
 ], Order.prototype, "driver", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Int),
+    (0, graphql_1.Field)(() => graphql_1.Float),
     __metadata("design:type", Number)
 ], Order.prototype, "totalPrice", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], Order.prototype, "totalPoints", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], Order.prototype, "price", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], Order.prototype, "recievedPrice", void 0);
 __decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", String)
@@ -59,6 +96,10 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Order.prototype, "tableware", void 0);
 __decorate([
+    (0, graphql_1.Field)(() => Boolean),
+    __metadata("design:type", Boolean)
+], Order.prototype, "hasRating", void 0);
+__decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", String)
 ], Order.prototype, "details", void 0);
@@ -71,17 +112,17 @@ __decorate([
     __metadata("design:type", String)
 ], Order.prototype, "state", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
-    __metadata("design:type", Number)
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
 ], Order.prototype, "promoCode", void 0);
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
     __metadata("design:type", Number)
 ], Order.prototype, "discount", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
-    __metadata("design:type", Number)
-], Order.prototype, "percent", void 0);
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], Order.prototype, "discountType", void 0);
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
     __metadata("design:type", Number)
@@ -89,7 +130,19 @@ __decorate([
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
     __metadata("design:type", Number)
-], Order.prototype, "walletPoint", void 0);
+], Order.prototype, "walletPoints", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], Order.prototype, "pointsBack", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", Date)
+], Order.prototype, "createdAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", Date)
+], Order.prototype, "updatedAt", void 0);
 Order = __decorate([
     (0, graphql_1.ObjectType)()
 ], Order);

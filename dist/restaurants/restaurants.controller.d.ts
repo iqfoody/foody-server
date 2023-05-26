@@ -31,6 +31,9 @@ export declare class RestaurantsController {
     private readonly restaurantsService;
     private readonly awsService;
     constructor(restaurantsService: RestaurantsService, awsService: AwsService);
+    getRestaurant(restaurant: string): Promise<import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
     getRestaurants(): Promise<Omit<import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, never>[]>;
@@ -43,9 +46,6 @@ export declare class RestaurantsController {
     getRestaurantsForCategory(category: string, orderby: string): Promise<(import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    getRestaurant(restaurant: string): Promise<import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
     createRestaurant(createRestaurantInput: CreateRestaurantInput, file: any): Promise<import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;

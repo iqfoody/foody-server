@@ -13,6 +13,17 @@ exports.PromoCode = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const user_entity_1 = require("../../users/entities/user.entity");
 let PromoCode = class PromoCode {
+    _id;
+    name;
+    users;
+    user;
+    type;
+    discount;
+    isPublic;
+    expire;
+    state;
+    createdAt;
+    updatedAt;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
@@ -27,7 +38,7 @@ __decorate([
     __metadata("design:type", Array)
 ], PromoCode.prototype, "users", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String || user_entity_1.User, { nullable: true }),
+    (0, graphql_1.Field)(() => user_entity_1.User, { nullable: true }),
     __metadata("design:type", Object)
 ], PromoCode.prototype, "user", void 0);
 __decorate([
@@ -41,7 +52,7 @@ __decorate([
 __decorate([
     (0, graphql_1.Field)(() => Boolean),
     __metadata("design:type", Boolean)
-], PromoCode.prototype, "public", void 0);
+], PromoCode.prototype, "isPublic", void 0);
 __decorate([
     (0, graphql_1.Field)(() => Date),
     __metadata("design:type", Date)
@@ -50,6 +61,14 @@ __decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", String)
 ], PromoCode.prototype, "state", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", Date)
+], PromoCode.prototype, "createdAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", Date)
+], PromoCode.prototype, "updatedAt", void 0);
 PromoCode = __decorate([
     (0, graphql_1.ObjectType)()
 ], PromoCode);

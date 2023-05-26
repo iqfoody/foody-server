@@ -26,23 +26,20 @@
 import { OrdersService } from './orders.service';
 import { CreateOrderInput } from './dto/create-order.input';
 import { CreateRateOrderInput } from './dto/create-rate-order.input';
+import { orderStatus } from 'src/constants/types.type';
 export declare class OrdersController {
     private readonly ordersService;
     constructor(ordersService: OrdersService);
-    getOrderes(req: any): Promise<any[]>;
+    getOrderes(req: any, state?: orderStatus): Promise<any[]>;
     createOrder(createOrderInput: CreateOrderInput, req: any): Promise<import("mongoose").Document<unknown, {}, import("../models/orders.schema").OrdersDocument> & Omit<import("../models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     ratingOrder(id: string, createRateOrderInput: CreateRateOrderInput, req: any): Promise<string>;
-    cancelOrder(id: string, req: any): Promise<import("mongoose").Document<unknown, {}, import("../models/orders.schema").OrdersDocument> & Omit<import("../models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    cancelOrder(id: string, req: any): Promise<string>;
     inDeliveryOrder(id: string, req: any): Promise<import("mongoose").Document<unknown, {}, import("../models/orders.schema").OrdersDocument> & Omit<import("../models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    completeOrder(id: string, recievedPrice: number, req: any): Promise<import("mongoose").Document<unknown, {}, import("../models/orders.schema").OrdersDocument> & Omit<import("../models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    completeOrder(id: string, recievedPrice: number, req: any): Promise<string>;
     getOrder(id: string, req: any): Promise<any>;
     deleteOrder(id: string, req: any): Promise<string>;
 }

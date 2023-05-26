@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Search = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let Search = class Search {
+    exampleField;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int, { description: 'Example field (placeholder)' }),

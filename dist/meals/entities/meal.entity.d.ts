@@ -15,7 +15,7 @@ export declare class Meal {
     description: string;
     descriptionEN: string;
     descriptionKR?: string;
-    image: string;
+    image?: string;
     additions?: MealAddition[];
     ingredients?: MealIngredient[];
     price: number;
@@ -24,4 +24,6 @@ export declare class Meal {
     pointsBack?: number;
     position?: number;
     state: mealStatus;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

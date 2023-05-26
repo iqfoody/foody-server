@@ -18,6 +18,24 @@ const mongoose_2 = __importDefault(require("mongoose"));
 const bcryptjs_1 = require("bcryptjs");
 const common_1 = require("@nestjs/common");
 let Users = class Users {
+    wallet;
+    name;
+    phoneNumber;
+    email;
+    password;
+    type;
+    country;
+    city;
+    approvedEmail;
+    approvedPhoneNumber;
+    image;
+    state;
+    ip;
+    platform;
+    deviceToken;
+    refreshToken;
+    comparePassword;
+    compareToken;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Wallets", required: [true, "wallet required"] }),

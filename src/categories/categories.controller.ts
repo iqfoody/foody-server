@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { AwsService } from 'src/aws/aws.service';
 import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
@@ -16,14 +16,14 @@ export class CategoriesController {
         private readonly awsService: AwsService,
     ) {}
 
-    @Get('/')
-    async getCategories(@Req() context){
-        return this.categoriesService.findCategories();
-    }
-
     @Get('/:id')
     async getCategory(@Param('id') id: string){
         return this.categoriesService.findCategory(id);
+    }
+
+    @Get('/')
+    async getCategories(){
+        return this.categoriesService.findCategories();
     }
 
     // dashboard...
@@ -32,7 +32,7 @@ export class CategoriesController {
     @UseGuards(AccessAuthGuard)
     @CheckAbilities({actions: Actions.Create, subject: Category})
     @UseInterceptors(FileInterceptor('image'))
-    async createCategory(@Body('createCategoryInput') createCategoryInput: CreateCategoryInput, @UploadedFile() file) {
+    async createCategory(@Body() createCategoryInput: CreateCategoryInput, @UploadedFile() file) {
       return this.categoriesService.create(createCategoryInput, file);
     }
 
@@ -40,7 +40,7 @@ export class CategoriesController {
     @UseGuards(AccessAuthGuard)
     @CheckAbilities({actions: Actions.Update, subject: Category})
     @UseInterceptors(FileInterceptor('image'))
-    async updateCategory(@Body('updateCategoryInput') updateCategoryInput: UpdateCategoryInput, @UploadedFile() file) {
+    async updateCategory(@Body() updateCategoryInput: UpdateCategoryInput, @UploadedFile() file) {
         const result = await this.awsService.createImage(file, updateCategoryInput.id);
       return this.categoriesService.update(updateCategoryInput.id, {...updateCategoryInput, image: result?.Key});
     }

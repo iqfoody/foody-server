@@ -13,6 +13,7 @@ exports.UpdateTagInput = void 0;
 const create_tag_input_1 = require("./create-tag.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateTagInput = class UpdateTagInput extends (0, graphql_1.PartialType)(create_tag_input_1.CreateTagInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

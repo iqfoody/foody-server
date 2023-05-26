@@ -17,14 +17,19 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let FeedbacksService = class FeedbacksService {
+    FeedbacksModel;
     constructor(FeedbacksModel) {
         this.FeedbacksModel = FeedbacksModel;
     }
-    create(createFeedbackInput) {
-        return this.FeedbacksModel.create(createFeedbackInput);
+    async create(createFeedbackInput) {
+        await this.FeedbacksModel.create(createFeedbackInput);
+        return "Success";
     }
-    findAll() {
-        return this.FeedbacksModel.find();
+    async findAll(limitEntity) {
+        const startIndex = limitEntity.page * limitEntity.limit;
+        const feedbacks = await this.FeedbacksModel.find().limit(limitEntity.limit).skip(startIndex).sort({ _id: -1 });
+        const total = await this.FeedbacksModel.countDocuments();
+        return { data: feedbacks, pages: Math.ceil(total / limitEntity.limit) };
     }
     findOne(id) {
         return this.FeedbacksModel.findById(id);

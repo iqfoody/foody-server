@@ -13,6 +13,7 @@ exports.UpdateFeedbackInput = void 0;
 const create_feedback_input_1 = require("./create-feedback.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateFeedbackInput = class UpdateFeedbackInput extends (0, graphql_1.PartialType)(create_feedback_input_1.CreateFeedbackInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

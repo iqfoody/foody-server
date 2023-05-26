@@ -7,7 +7,9 @@ export declare class PromoCode {
     user?: string | User;
     type: promoCodeTypes;
     discount: number;
-    public: boolean;
+    isPublic: boolean;
     expire: Date;
     state: publicStatus;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

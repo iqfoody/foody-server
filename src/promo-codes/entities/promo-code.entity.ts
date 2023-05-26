@@ -14,7 +14,7 @@ export class PromoCode {
   @Field(()=> [String] || [User], {nullable: true})
   users?: string[] | User[];
 
-  @Field(()=> String || User, {nullable: true})
+  @Field(()=> User, {nullable: true})
   user?: string | User;
 
   @Field()
@@ -24,12 +24,18 @@ export class PromoCode {
   discount: number;
 
   @Field(()=> Boolean)
-  public: boolean;
+  isPublic: boolean;
 
   @Field(()=> Date)
   expire: Date;
 
   @Field()
   state: publicStatus;
+
+  @Field(()=> Date, {nullable: true})
+  createdAt?: Date;
+
+  @Field(()=> Date, {nullable: true})
+  updatedAt?: Date;
 
 }

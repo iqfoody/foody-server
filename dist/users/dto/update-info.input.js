@@ -12,6 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateUserInfo = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let UpdateUserInfo = class UpdateUserInfo {
+    name;
+    phoneNumber;
+    email;
+    image;
 };
 __decorate([
     (0, graphql_1.Field)({ nullable: true }),

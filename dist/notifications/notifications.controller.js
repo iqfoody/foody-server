@@ -8,19 +8,34 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationsController = void 0;
 const common_1 = require("@nestjs/common");
 const firebase_service_1 = require("../firebase/firebase.service");
 let NotificationsController = class NotificationsController {
+    firebaseService;
     constructor(firebaseService) {
         this.firebaseService = firebaseService;
+    }
+    async getMealsInfinty(limit, page) {
+        return;
     }
     async sendPublic() {
         await this.firebaseService.sendPublic({ test: "test" });
         return "Success";
     }
 };
+__decorate([
+    (0, common_1.Get)('/main'),
+    __param(0, (0, common_1.Query)('limit')),
+    __param(1, (0, common_1.Query)('page')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", Promise)
+], NotificationsController.prototype, "getMealsInfinty", null);
 __decorate([
     (0, common_1.Post)('/'),
     __metadata("design:type", Function),

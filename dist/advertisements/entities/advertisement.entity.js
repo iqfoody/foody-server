@@ -12,6 +12,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Advertisement = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let Advertisement = class Advertisement {
+    _id;
+    target;
+    user;
+    title;
+    titleEN;
+    titleKR;
+    image;
+    type;
+    position;
+    state;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

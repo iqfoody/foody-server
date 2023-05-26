@@ -54,6 +54,7 @@ export declare class AddressesService {
     }, never>, import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, AddressesDocument>;
-    updateAddress(id: string, updateAddressInput: UpdateAddressInput, user: string): Promise<string>;
+    updateAddress(updateAddressInput: UpdateAddressInput, user: string): Promise<string>;
     removeAddress(id: string, user: string): Promise<string>;
+    clean(id: string): Promise<string>;
 }

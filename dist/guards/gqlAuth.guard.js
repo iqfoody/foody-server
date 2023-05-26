@@ -16,7 +16,7 @@ let GqlAuthGuard = class GqlAuthGuard extends (0, passport_1.AuthGuard)('local')
         const request = ctx.getContext().req;
         const body = request.body;
         const origin = request.headers.origin;
-        request.body = Object.assign(Object.assign({}, body), { origin });
+        request.body = { ...body, origin };
         return request;
     }
 };

@@ -7,12 +7,14 @@ import { UsersController } from './users.controller';
 import { AwsModule } from 'src/aws/aws.module';
 import { WalletsModule } from 'src/wallets/wallets.module';
 import { FavoritesModule } from 'src/favorites/favorites.module';
+import { AddressesModule } from 'src/addresses/addresses.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: "Users", schema: UsersSchema }]),
     forwardRef(() => WalletsModule),
     forwardRef(() => FavoritesModule),
+    forwardRef(() => AddressesModule),
     AwsModule,
   ],
   providers: [UsersResolver, UsersService],

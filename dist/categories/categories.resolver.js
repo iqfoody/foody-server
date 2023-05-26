@@ -21,7 +21,10 @@ const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
+const state_input_1 = require("../constants/state.input");
+const position_input_1 = require("../constants/position.input");
 let CategoriesResolver = class CategoriesResolver {
+    categoriesService;
     constructor(categoriesService) {
         this.categoriesService = categoriesService;
     }
@@ -33,6 +36,12 @@ let CategoriesResolver = class CategoriesResolver {
     }
     updateCategory(updateCategoryInput) {
         return this.categoriesService.update(updateCategoryInput.id, updateCategoryInput);
+    }
+    positionCategory(updatePositionInput) {
+        return this.categoriesService.position(updatePositionInput);
+    }
+    stateCategory(stateInput) {
+        return this.categoriesService.state(stateInput);
     }
     removeCategory(id) {
         return this.categoriesService.remove(id);
@@ -54,7 +63,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CategoriesResolver.prototype, "findOne", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => category_entity_1.Category),
+    (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: category_entity_1.Category }),
     __param(0, (0, graphql_1.Args)('updateCategoryInput')),
     __metadata("design:type", Function),
@@ -62,7 +71,23 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CategoriesResolver.prototype, "updateCategory", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => category_entity_1.Category),
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: category_entity_1.Category }),
+    __param(0, (0, graphql_1.Args)('updatePositionInput', { type: () => [position_input_1.UpdatePositionInput] })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array]),
+    __metadata("design:returntype", void 0)
+], CategoriesResolver.prototype, "positionCategory", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: category_entity_1.Category }),
+    __param(0, (0, graphql_1.Args)('stateInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [state_input_1.StateInput]),
+    __metadata("design:returntype", void 0)
+], CategoriesResolver.prototype, "stateCategory", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: category_entity_1.Category }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),

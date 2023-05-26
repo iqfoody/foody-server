@@ -12,6 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Driver = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let Driver = class Driver {
+    _id;
+    name;
+    phoneNumber;
+    country;
+    city;
+    image;
+    state;
+    createdAt;
+    updatedAt;
+    ip;
+    platform;
+    refreshToken;
+    deviceToken;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

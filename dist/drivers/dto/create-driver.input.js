@@ -12,6 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateDriverInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateDriverInput = class CreateDriverInput {
+    name;
+    phoneNumber;
+    password;
+    country;
+    city;
+    image;
 };
 __decorate([
     (0, graphql_1.Field)(),

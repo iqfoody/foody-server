@@ -12,6 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateMealAdditionInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateMealAdditionInput = class CreateMealAdditionInput {
+    title;
+    titleEN;
+    titleKR;
+    price;
 };
 __decorate([
     (0, graphql_1.Field)(),

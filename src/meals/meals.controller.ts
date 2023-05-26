@@ -16,9 +16,15 @@ export class MealsController {
         private readonly awsService: AwsService,
     ){}
 
+    @Get('/:id')
+    async getMeal(@Param('id') id: string){
+        return this.mealsService.findMeal(id);
+    }
+
     @Get('/main')
-    async getMealsInfinty(@Query('limit') limit: number, @Query('page') page: number){
-        return this.mealsService.findMealsInfinty({limit, page})
+    //@Query('limit') limit: number, @Query('page') page: number
+    async getMealsInfinty(){
+        return this.mealsService.findMealsInfinty({limit: 10, page: 0})
     }
 
     @Get('/restaurant/:id')
@@ -36,28 +42,22 @@ export class MealsController {
         return this.mealsService.findForRestaurantCategory(restaurantCategory);
     }
 
-    @Get('/:id')
-    async getMeal(@Param('id') id: string){
-        return this.mealsService.findMeal(id);
-    }
-
     // dashboard...
 
-    @Post('/')
+    @Post('/:id')
     @UseGuards(AccessAuthGuard)
     @CheckAbilities({actions: Actions.Create, subject: Meal})
     @UseInterceptors(FileInterceptor('image'))
-    async createMeal(@Body('createMealInput') createMealInput: CreateMealInput, @UploadedFile() file) {
-        //const additions = [{title: "بطاطا", titleEN: "Batata", price: 3000 },{title: "بطاطا", titleEN: "Batata", price: 2000 }, ];
-        //const ingredients = [{title: "خس", titleEN: "Lettuce"}, {title: "طماطم", titleEN: "Tomato" }];
-        return this.mealsService.create(createMealInput, file);
+    async createMeal(@Param('id') id: string, @UploadedFile() file) {
+        const result = await this.awsService.createImage(file, id);
+        return this.mealsService.createImage(id, result?.Key);
     }
 
     @Put('/')
     @UseGuards(AccessAuthGuard)
     @CheckAbilities({actions: Actions.Update, subject: Meal})
     @UseInterceptors(FileInterceptor('image'))
-    async updateMeal(@Body('updateMealInput') updateMealInput: UpdateMealInput, @UploadedFile() file) {
+    async updateMeal(@Body() updateMealInput: UpdateMealInput, @UploadedFile() file) {
         const result = await this.awsService.createImage(file, updateMealInput.id);
       return this.mealsService.update(updateMealInput.id, {...updateMealInput, image: result?.Key});
     }

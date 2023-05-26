@@ -22,6 +22,7 @@ const common_1 = require("@nestjs/common");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
 let FavoritesResolver = class FavoritesResolver {
+    favoritesService;
     constructor(favoritesService) {
         this.favoritesService = favoritesService;
     }

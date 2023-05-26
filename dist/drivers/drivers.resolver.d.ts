@@ -27,7 +27,7 @@ import { DriversService } from './drivers.service';
 import { CreateDriverInput } from './dto/create-driver.input';
 import { UpdateDriverInput } from './dto/update-driver.input';
 import { StateInput } from 'src/constants/state.input';
-import { Response } from 'src/constants/response.entity';
+import { UpdatePasswordUser } from 'src/users/dto/update-password-user.input';
 export declare class DriversResolver {
     private readonly driversService;
     constructor(driversService: DriversService);
@@ -40,11 +40,8 @@ export declare class DriversResolver {
     findOne(id: string): Promise<import("mongoose").Document<unknown, import("../models/drivers.schema").IDriversQueryHelpers, import("../models/drivers.schema").DriversDocument> & Omit<import("../models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    updateDriver(updateDriverInput: UpdateDriverInput): Promise<{
-        message: string;
-    }>;
-    stateDriver(stateInput: StateInput): Promise<Response>;
-    removeDriver(id: string): Promise<{
-        message: string;
-    }>;
+    updateDriver(updateDriverInput: UpdateDriverInput): Promise<string>;
+    passwordUser(passwordDriverInput: UpdatePasswordUser): Promise<string>;
+    stateDriver(stateInput: StateInput): Promise<string>;
+    removeDriver(id: string): Promise<string>;
 }

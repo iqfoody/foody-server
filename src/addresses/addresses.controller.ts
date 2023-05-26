@@ -14,16 +14,16 @@ export class AddressesController {
         private readonly addressesService: AddressesService,
     ) {}
 
-    @Get('/')
-    @CheckAbilities({actions: Actions.Info, subject: Address})
-    async getAddresses(@Req() req){
-        return this.addressesService.findAddresses(req.user._id);
-    }
-
     @Get('/:id')
     @CheckAbilities({actions: Actions.Info, subject: Address})
     async getAddress(@Param('id') id: string, @Req() req){
         return this.addressesService.findAddress(id, req.user._id);
+    }
+
+    @Get('/')
+    @CheckAbilities({actions: Actions.Info, subject: Address})
+    async getAddresses(@Req() req){
+        return this.addressesService.findAddresses(req.user._id);
     }
 
     @Post('/')
@@ -35,10 +35,10 @@ export class AddressesController {
     @Put('/:id')
     @CheckAbilities({actions: Actions.Edit, subject: Address})
     async updateAddress(@Param('id') id: string, @Body('updateAddressInput') updateAddressInput: UpdateAddressInput, @Req() req){
-        return this.addressesService.updateAddress(id, updateAddressInput, req.user._id);
+        return this.addressesService.updateAddress({...updateAddressInput, id}, req.user._id);
     }
 
-    @Delete('/')
+    @Delete('/:id')
     @CheckAbilities({actions: Actions.Remove, subject: Address})
     async deleteAddress(@Param('id') id: string, @Req() req){
         return this.addressesService.removeAddress(id, req.user._id);

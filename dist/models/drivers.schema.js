@@ -14,6 +14,19 @@ const mongoose_1 = require("@nestjs/mongoose");
 const bcryptjs_1 = require("bcryptjs");
 const common_1 = require("@nestjs/common");
 let Drivers = class Drivers {
+    name;
+    phoneNumber;
+    password;
+    country;
+    city;
+    image;
+    state;
+    ip;
+    platform;
+    deviceToken;
+    refreshToken;
+    comparePassword;
+    compareToken;
 };
 __decorate([
     (0, mongoose_1.Prop)({ required: [true, 'name field required'] }),

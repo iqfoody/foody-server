@@ -39,6 +39,7 @@ const restaurants_module_1 = require("./restaurants/restaurants.module");
 const tags_module_1 = require("./tags/tags.module");
 const wallets_module_1 = require("./wallets/wallets.module");
 const searches_module_1 = require("./searches/searches.module");
+const transactions_module_1 = require("./transactions/transactions.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -80,7 +81,8 @@ AppModule = __decorate([
             restaurants_module_1.RestaurantsModule,
             tags_module_1.TagsModule,
             wallets_module_1.WalletsModule,
-            searches_module_1.SearchesModule
+            searches_module_1.SearchesModule,
+            transactions_module_1.TransactionsModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

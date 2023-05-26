@@ -5,16 +5,18 @@ import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CheckAbilities } from 'src/ability/ability.decorator';
 import { Actions } from 'src/ability/ability.factory';
+import { LimitEntity } from 'src/constants/limitEntity';
+import { FeedbacksLimit } from './entities/feedbacks-limit.entity';
 
 @UseGuards(AccessAuthGuard)
 @Resolver(() => Feedback)
 export class FeedbacksResolver {
   constructor(private readonly feedbacksService: FeedbacksService) {}
 
-  @Query(() => [Feedback], { name: 'feedbacks' })
+  @Query(() => FeedbacksLimit, { name: 'feedbacks' })
   @CheckAbilities({actions: Actions.Read, subject: Feedback})
-  findAll() {
-    return this.feedbacksService.findAll();
+  findAll(@Args('limitEntity') limitEntity: LimitEntity) {
+    return this.feedbacksService.findAll(limitEntity);
   }
 
   @Query(() => Feedback, { name: 'feedback' })

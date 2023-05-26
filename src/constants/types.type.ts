@@ -35,9 +35,13 @@ type discountTypes = "Price" | "Percent";
 
 type promoCodeTypes = "Price" | "Percent";
 
-type advertisementsTypes = "Restaurant" | "Meal" | null;
+type advertisementsTypes = "Restaurant" | "Meal" | "null";
 
 type paymentMethodsType = "Cash" | "Wallet" | "Points";
+
+type procedureTypes = "Plus" | "Minus";
+
+type transactionTypes = "Amount" | "Points";
 
 export{
     adminTypes,
@@ -59,5 +63,7 @@ export{
     advertisementsTypes,
     paymentMethodsType,
     promoCodeTypes,
-    mealStatus
+    mealStatus,
+    procedureTypes,
+    transactionTypes
 }

@@ -12,6 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateFeedbackInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateFeedbackInput = class CreateFeedbackInput {
+    subject;
+    message;
+    name;
+    phoneNumber;
+    user;
 };
 __decorate([
     (0, graphql_1.Field)(),

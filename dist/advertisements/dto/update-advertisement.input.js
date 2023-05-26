@@ -13,6 +13,7 @@ exports.UpdateAdvertisementInput = void 0;
 const create_advertisement_input_1 = require("./create-advertisement.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateAdvertisementInput = class UpdateAdvertisementInput extends (0, graphql_1.PartialType)(create_advertisement_input_1.CreateAdvertisementInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),

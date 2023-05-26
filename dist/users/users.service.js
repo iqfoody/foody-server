@@ -19,12 +19,20 @@ const bcryptjs_1 = require("bcryptjs");
 const aws_service_1 = require("../aws/aws.service");
 const favorites_service_1 = require("../favorites/favorites.service");
 const wallets_service_1 = require("../wallets/wallets.service");
+const addresses_service_1 = require("../addresses/addresses.service");
+const declearedMonths_1 = require("../constants/declearedMonths");
 let UsersService = class UsersService {
-    constructor(UsersModel, awsService, favoritesService, walletsService) {
+    UsersModel;
+    awsService;
+    favoritesService;
+    walletsService;
+    addressesService;
+    constructor(UsersModel, awsService, favoritesService, walletsService, addressesService) {
         this.UsersModel = UsersModel;
         this.awsService = awsService;
         this.favoritesService = favoritesService;
         this.walletsService = walletsService;
+        this.addressesService = addressesService;
     }
     async search(searchUsersInput) {
         const LIMIT = 8;
@@ -33,8 +41,8 @@ let UsersService = class UsersService {
         const users = await this.UsersModel.find({ $or: [{ email: search }, { name: search }, { phoneNumber: search }] }).limit(LIMIT).skip(startIndex);
         const total = await this.UsersModel.countDocuments();
         for (const user of users) {
-            if (user === null || user === void 0 ? void 0 : user.image)
-                user.image = this.awsService.getUrl(user === null || user === void 0 ? void 0 : user.image);
+            if (user?.image)
+                user.image = this.awsService.getUrl(user?.image);
         }
         return { data: users, pages: Math.ceil(total / LIMIT) };
     }
@@ -43,46 +51,62 @@ let UsersService = class UsersService {
         const users = await this.UsersModel.find().limit(limitEntity.limit).skip(startIndex).sort({ _id: -1 });
         const total = await this.UsersModel.countDocuments();
         for (const user of users) {
-            if (user === null || user === void 0 ? void 0 : user.image)
-                user.image = this.awsService.getUrl(user === null || user === void 0 ? void 0 : user.image);
+            if (user?.image)
+                user.image = this.awsService.getUrl(user?.image);
         }
         return { data: users, pages: Math.ceil(total / limitEntity.limit) };
     }
     async findAll() {
         const users = await this.UsersModel.find().exec();
         for (const user of users) {
-            if (user === null || user === void 0 ? void 0 : user.image)
-                user.image = this.awsService.getUrl(user === null || user === void 0 ? void 0 : user.image);
+            if (user?.image)
+                user.image = this.awsService.getUrl(user?.image);
         }
         return users;
     }
     async findOne(id) {
         const user = await this.UsersModel.findById(id).populate("wallet");
-        if (user === null || user === void 0 ? void 0 : user.image)
-            user.image = this.awsService.getUrl(user === null || user === void 0 ? void 0 : user.image);
+        if (user?.image)
+            user.image = this.awsService.getUrl(user?.image);
         return user;
     }
-    async createUser(createUserInput) {
+    async createUser(createUserInput, file) {
+        if (createUserInput?.password?.length < 6)
+            throw new common_1.BadRequestException("password E0004");
+        const phoneNumber = await this.findByPhoneNumber(createUserInput.phoneNumber);
+        if (phoneNumber) {
+            throw new common_1.NotAcceptableException("phoneNumber E0011");
+        }
+        else if (createUserInput?.email) {
+            const email = await this.findByEmail(createUserInput.email);
+            if (email)
+                throw new common_1.NotAcceptableException("email E0011");
+        }
         const wallet = await this.walletsService.create();
-        const user = new this.UsersModel(Object.assign(Object.assign({}, createUserInput), { wallet: wallet._id }));
+        const user = new this.UsersModel({ ...createUserInput, wallet: wallet._id });
+        if (file) {
+            const result = await this.awsService.createImage(file, user._id);
+            user.image = result?.Key;
+        }
         await user.save();
         await this.favoritesService.create({ user: user._id });
-        if (createUserInput === null || createUserInput === void 0 ? void 0 : createUserInput.image)
-            user.image = this.awsService.getUrl(user === null || user === void 0 ? void 0 : user.image);
-        return user.populate("wallet");
+        if (user?.image)
+            user.image = this.awsService.getUrl(user.image);
+        const { _id, name, phoneNumber: phone, image, type, state, createdAt } = user;
+        return { _id, name, phoneNumber: phone, image, type, state, createdAt, email: null };
     }
     async updateUser(id, updateUserInput) {
-        if (updateUserInput === null || updateUserInput === void 0 ? void 0 : updateUserInput.phoneNumber) {
+        if (updateUserInput?.phoneNumber) {
             let E0011 = await this.findByPhoneNumber(updateUserInput.phoneNumber);
             if (E0011 && id != E0011._id)
                 throw new common_1.BadRequestException('phoneNumber E0011');
         }
-        if (updateUserInput === null || updateUserInput === void 0 ? void 0 : updateUserInput.email) {
+        if (updateUserInput?.email) {
             let E0002 = await this.findByEmail(updateUserInput.email);
             if (E0002 && id != E0002._id)
                 throw new common_1.BadRequestException('email E0002');
         }
-        if (updateUserInput === null || updateUserInput === void 0 ? void 0 : updateUserInput.image) {
+        if (updateUserInput?.image) {
             const { image } = await this.UsersModel.findOne({ _id: id }, { image: 1, _id: 0 });
             if (image)
                 this.awsService.removeImage(image);
@@ -101,33 +125,32 @@ let UsersService = class UsersService {
         return "Success";
     }
     async remove(id) {
-        const { image } = await this.UsersModel.findOne({ _id: id }, { image: 1, _id: 0 });
+        const result = await this.UsersModel.findOne({ _id: id }, { image: 1, _id: 0 });
         await this.UsersModel.findByIdAndDelete(id);
         await this.favoritesService.remove(id);
         await this.walletsService.remove(id);
-        if (image)
-            this.awsService.removeImage(image);
+        await this.addressesService.clean(id);
+        if (result?.image)
+            this.awsService.removeImage(result?.image);
         return "user has been deleted";
     }
     async login(loginUserInput) {
         const user = await this.UsersModel.login(loginUserInput);
-        if (user === null || user === void 0 ? void 0 : user.image)
-            user.image = this.awsService.getUrl(user === null || user === void 0 ? void 0 : user.image);
+        if (user?.image)
+            user.image = this.awsService.getUrl(user?.image);
         return user;
     }
     async create(createUserInput) {
         const wallet = await this.walletsService.create();
-        const user = new this.UsersModel(Object.assign(Object.assign({}, createUserInput), { wallet: wallet._id }));
+        const user = new this.UsersModel({ ...createUserInput, wallet: wallet._id });
         await user.save();
         await this.favoritesService.create({ user: user._id });
-        if (createUserInput === null || createUserInput === void 0 ? void 0 : createUserInput.image)
-            user.image = this.awsService.getUrl(user === null || user === void 0 ? void 0 : user.image);
         return user.populate({ path: "wallet", select: { points: 1, amount: 1, _id: 0 } });
     }
     async findByType(_id, type) {
         const user = await this.UsersModel.findOne({ $and: [{ _id }, { type }] }).exec();
-        if (user === null || user === void 0 ? void 0 : user.image)
-            user.image = this.awsService.getUrl(user === null || user === void 0 ? void 0 : user.image);
+        if (user?.image)
+            user.image = this.awsService.getUrl(user?.image);
         return user;
     }
     findWallet(id) {
@@ -135,23 +158,23 @@ let UsersService = class UsersService {
     }
     async info(id) {
         const user = await this.UsersModel.findOne({ _id: id }, { name: 1, wallet: 1, phoneNumber: 1, type: 1, city: 1, image: 1, _id: 0 }).populate({ path: "wallet", select: { points: 1, amount: 1, _id: 0 } });
-        if (user === null || user === void 0 ? void 0 : user.image)
-            user.image = this.awsService.getUrl(user === null || user === void 0 ? void 0 : user.image);
+        if (user?.image)
+            user.image = this.awsService.getUrl(user?.image);
         return user;
     }
     async update(id, updateUserInfo) {
-        if (updateUserInfo === null || updateUserInfo === void 0 ? void 0 : updateUserInfo.phoneNumber) {
+        if (updateUserInfo?.phoneNumber) {
             let E0011 = await this.findByPhoneNumber(updateUserInfo.phoneNumber);
             if (E0011 && id != E0011._id) {
                 throw new common_1.BadRequestException('phoneNumber E0011');
             }
         }
-        if (updateUserInfo === null || updateUserInfo === void 0 ? void 0 : updateUserInfo.email) {
+        if (updateUserInfo?.email) {
             let E0002 = await this.findByEmail(updateUserInfo.email);
             if (E0002 && id != E0002._id)
                 throw new common_1.BadRequestException('email E0002');
         }
-        if (updateUserInfo === null || updateUserInfo === void 0 ? void 0 : updateUserInfo.image) {
+        if (updateUserInfo?.image) {
             const { image } = await this.UsersModel.findOne({ _id: id }, { image: 1, _id: 0 });
             if (image)
                 this.awsService.removeImage(image);
@@ -193,19 +216,40 @@ let UsersService = class UsersService {
     }
     async findByPhoneNumber(phoneNumber) {
         const user = await this.UsersModel.findOne({ phoneNumber }).exec();
-        if (user === null || user === void 0 ? void 0 : user.image)
-            user.image = this.awsService.getUrl(user === null || user === void 0 ? void 0 : user.image);
+        if (user?.image)
+            user.image = this.awsService.getUrl(user?.image);
         return user;
     }
     async findByEmail(email) {
         const user = await this.UsersModel.findOne({ email }).exec();
-        if (user === null || user === void 0 ? void 0 : user.image)
-            user.image = this.awsService.getUrl(user === null || user === void 0 ? void 0 : user.image);
+        if (user?.image)
+            user.image = this.awsService.getUrl(user?.image);
         return user;
     }
     async updateAny(id, updateUserInput) {
         await this.UsersModel.findByIdAndUpdate(id, updateUserInput);
         return { message: "account updated" };
+    }
+    async home() {
+        const users = await this.UsersModel.countDocuments();
+        const recentlyUsers = await this.UsersModel.find().sort({ _id: -1 }).limit(10).select(["name", "image", "phoneNumber"]);
+        for (const single of recentlyUsers) {
+            if (single?.image)
+                single.image = this.awsService.getUrl(single.image);
+        }
+        return { users, recentlyUsers };
+    }
+    async usersReport(date) {
+        const year = new Date(date);
+        let result = declearedMonths_1.months;
+        const users = await this.UsersModel.aggregate([
+            { $match: { $and: [{ createdAt: { $gte: year } }, { createdAt: { $lte: new Date() } }] } },
+            { $group: { _id: "createAt", total: { $push: "$createdAt" }, } },
+        ]);
+        for (const single of users[0]?.total) {
+            result = { ...result, [`m${new Date(single).getMonth()}`]: { ...result[`m${new Date(single).getMonth()}`], [`d${new Date(single).getDate()}`]: result[`m${new Date(single).getMonth()}`][`d${new Date(single).getDate()}`] + 1 } };
+        }
+        return result;
     }
 };
 UsersService = __decorate([
@@ -213,7 +257,8 @@ UsersService = __decorate([
     __param(0, (0, mongoose_1.InjectModel)("Users")),
     __metadata("design:paramtypes", [Object, aws_service_1.AwsService,
         favorites_service_1.FavoritesService,
-        wallets_service_1.WalletsService])
+        wallets_service_1.WalletsService,
+        addresses_service_1.AddressesService])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

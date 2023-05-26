@@ -11,6 +11,8 @@ import { WalletsModule } from 'src/wallets/wallets.module';
 import { UsersModule } from 'src/users/users.module';
 import { RatesModule } from 'src/rates/rates.module';
 import { RestaurantsModule } from 'src/restaurants/restaurants.module';
+import { DriversModule } from 'src/drivers/drivers.module';
+import { TransactionsModule } from 'src/transactions/transactions.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { RestaurantsModule } from 'src/restaurants/restaurants.module';
     forwardRef(()=> UsersModule),
     forwardRef(()=> RatesModule),
     forwardRef(()=> RestaurantsModule),
+    forwardRef(()=> DriversModule),
+    forwardRef(()=> TransactionsModule),
     AwsModule,
   ],
   providers: [OrdersResolver, OrdersService],

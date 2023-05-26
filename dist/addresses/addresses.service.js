@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let AddressesService = class AddressesService {
+    AddressesModel;
     constructor(AddressesModel) {
         this.AddressesModel = AddressesModel;
     }
@@ -38,17 +39,27 @@ let AddressesService = class AddressesService {
         return "Success";
     }
     findAddresses(user) {
-        return this.AddressesModel.find({ user });
+        return this.AddressesModel.find({ user }).select(["-__v", "-user"]);
     }
     findAddress(id, user) {
-        return this.AddressesModel.findOne({ $and: [{ _id: id }, { user }] });
+        if (!(0, mongoose_2.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't address with this id");
+        return this.AddressesModel.findOne({ $and: [{ _id: id }, { user }] }).select(["-__v", "-user"]);
     }
-    async updateAddress(id, updateAddressInput, user) {
-        await this.AddressesModel.findOneAndUpdate({ $and: [{ _id: id }, { user }] }, updateAddressInput);
+    async updateAddress(updateAddressInput, user) {
+        if (!(0, mongoose_2.isValidObjectId)(updateAddressInput?.id))
+            throw new common_1.BadRequestException("There isn't address with this id");
+        await this.AddressesModel.findOneAndUpdate({ $and: [{ _id: updateAddressInput.id }, { user }] }, updateAddressInput);
         return "Success";
     }
     async removeAddress(id, user) {
+        if (!(0, mongoose_2.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't address with this id");
         await this.AddressesModel.findOneAndDelete({ $and: [{ _id: id }, { user }] });
+        return "Success";
+    }
+    async clean(id) {
+        await this.AddressesModel.deleteMany({ user: id });
         return "Success";
     }
 };

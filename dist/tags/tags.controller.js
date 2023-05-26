@@ -24,6 +24,8 @@ const create_tag_input_1 = require("./dto/create-tag.input");
 const update_tag_input_1 = require("./dto/update-tag.input");
 const tag_entity_1 = require("./entities/tag.entity");
 let TagsController = class TagsController {
+    tagsService;
+    awsService;
     constructor(tagsService, awsService) {
         this.tagsService = tagsService;
         this.awsService = awsService;
@@ -39,7 +41,7 @@ let TagsController = class TagsController {
     }
     async updateTag(updateTagInput, file) {
         const result = await this.awsService.createImage(file, updateTagInput.id);
-        return this.tagsService.update(updateTagInput.id, Object.assign(Object.assign({}, updateTagInput), { image: result === null || result === void 0 ? void 0 : result.Key }));
+        return this.tagsService.update(updateTagInput.id, { ...updateTagInput, image: result?.Key });
     }
 };
 __decorate([

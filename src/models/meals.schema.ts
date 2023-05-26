@@ -68,7 +68,7 @@ export class Meals {
   @Prop()
   descriptionKR: string;
 
-  @Prop({required: [true, "image required"]})
+  @Prop()
   image: string;
 
   @Prop({type: [MealAdditionsSchema]})

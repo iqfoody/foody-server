@@ -40,6 +40,7 @@ export declare class Orders {
     discountType: promoCodeTypes;
     walletAmount: number;
     walletPoints: number;
+    pointsBack: number;
     totalPoints: number;
     price: number;
 }

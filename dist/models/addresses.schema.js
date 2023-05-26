@@ -16,6 +16,17 @@ exports.AddressesSchema = exports.Addresses = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let Addresses = class Addresses {
+    user;
+    title;
+    country;
+    city;
+    address;
+    building;
+    apartment;
+    phoneNumber;
+    description;
+    latitude;
+    longitude;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Users', required: [true, "user required"] }),
@@ -37,6 +48,14 @@ __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Addresses.prototype, "address", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Addresses.prototype, "building", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Addresses.prototype, "apartment", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)

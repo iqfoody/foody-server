@@ -3,6 +3,7 @@ import { CreateFeedbackInput } from './dto/create-feedback.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FeedbacksDocument } from 'src/models/feedbacks.schema';
+import { LimitEntity } from 'src/constants/limitEntity';
 
 @Injectable()
 export class FeedbacksService {
@@ -10,12 +11,19 @@ export class FeedbacksService {
     @InjectModel("Feedbacks") private FeedbacksModel: Model<FeedbacksDocument>,
   ) {}
 
-  create(createFeedbackInput: CreateFeedbackInput) {
-    return this.FeedbacksModel.create(createFeedbackInput);
+  //? application...
+  async create(createFeedbackInput: CreateFeedbackInput) {
+    await this.FeedbacksModel.create(createFeedbackInput);
+    return "Success";
   }
 
-  findAll() {
-    return this.FeedbacksModel.find();
+  //? dashboard...
+
+  async findAll(limitEntity: LimitEntity) {
+    const startIndex = limitEntity.page * limitEntity.limit;
+    const feedbacks = await this.FeedbacksModel.find().limit(limitEntity.limit).skip(startIndex).sort({_id: -1});
+    const total = await this.FeedbacksModel.countDocuments();
+    return {data: feedbacks, pages: Math.ceil(total / limitEntity.limit)};
   }
 
   findOne(id: string) {

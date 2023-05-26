@@ -28,7 +28,6 @@ import { UpdateAdminInput } from './dto/update-admin.input';
 import { IAdminsModel } from 'src/models/admins.schema';
 import { AwsService } from 'src/aws/aws.service';
 import { LoginInput } from 'src/auth/dto/login.input';
-import { Response } from 'src/constants/response.entity';
 import { StateInput } from 'src/constants/state.input';
 import { UpdatePasswordUser } from 'src/users/dto/update-password-user.input';
 export declare class AdminsService {
@@ -36,7 +35,7 @@ export declare class AdminsService {
     private readonly awsService;
     constructor(AdminsModel: IAdminsModel, awsService: AwsService);
     login(loginInput: LoginInput): Promise<import("src/models/admins.schema").AdminsDocument>;
-    create(_id: string, createAdminInput: CreateAdminInput): Promise<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
+    create(_id: string, createAdminInput: CreateAdminInput, file: any): Promise<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     findAll(): Promise<(import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
@@ -52,7 +51,8 @@ export declare class AdminsService {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     updateAny(_id: string, updateAdminInput: UpdateAdminInput): Promise<void>;
-    update(id: string, updateAdminInput: UpdateAdminInput): Promise<Response>;
+    updateAdmin(_id: string, updateAdminInput: UpdateAdminInput): Promise<void>;
+    update(id: string, updateAdminInput: UpdateAdminInput): Promise<string>;
     passwordAdmin(id: string, updatePasswordAdmin: UpdatePasswordUser): Promise<string>;
     state(stateInput: StateInput): Promise<string>;
     logout(_id: string): Promise<void>;

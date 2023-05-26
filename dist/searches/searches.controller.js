@@ -17,11 +17,15 @@ const common_1 = require("@nestjs/common");
 const meals_service_1 = require("../meals/meals.service");
 const restaurants_service_1 = require("../restaurants/restaurants.service");
 let SearchesController = class SearchesController {
+    restaurantsService;
+    mealsService;
     constructor(restaurantsService, mealsService) {
         this.restaurantsService = restaurantsService;
         this.mealsService = mealsService;
     }
     async search(query) {
+        if (!query || query?.length <= 2 || query?.length >= 15)
+            return;
         const restaurants = await this.restaurantsService.search(query);
         const meals = await this.mealsService.search(query);
         return [...restaurants, ...meals];

@@ -13,6 +13,17 @@ exports.Address = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const user_entity_1 = require("../../users/entities/user.entity");
 let Address = class Address {
+    _id;
+    user;
+    title;
+    country;
+    city;
+    address;
+    building;
+    apartment;
+    description;
+    latitude;
+    longitude;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
@@ -38,6 +49,14 @@ __decorate([
     (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)
 ], Address.prototype, "address", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], Address.prototype, "building", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], Address.prototype, "apartment", void 0);
 __decorate([
     (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)

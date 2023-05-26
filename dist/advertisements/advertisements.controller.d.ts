@@ -31,14 +31,14 @@ export declare class AdvertisementsController {
     private readonly advertisementsService;
     private readonly awsService;
     constructor(advertisementsService: AdvertisementsService, awsService: AwsService);
-    getAdvertisements(): Promise<(import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[]>;
     getAdvertisement(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    createAdvertisement(createAdvertisementInput: CreateAdvertisementInput, file: any): Promise<import("@nestjs/common").BadRequestException | (import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
+    getAdvertisements(): Promise<(import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>)>;
+    }, never>)[]>;
+    createAdvertisement(createAdvertisementInput: CreateAdvertisementInput, file: any): Promise<(import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>) | import("@nestjs/common").BadRequestException>;
     updateAdvertisement(updateAdvertisementInput: UpdateAdvertisementInput, file: any): Promise<string>;
 }

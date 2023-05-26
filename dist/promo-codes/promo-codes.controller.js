@@ -20,10 +20,11 @@ const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
 const promo_code_entity_1 = require("./entities/promo-code.entity");
 let PromoCodesController = class PromoCodesController {
+    promoCodesService;
     constructor(promoCodesService) {
         this.promoCodesService = promoCodesService;
     }
-    async getOrderes(req) {
+    async getPromoCodes(req) {
         return this.promoCodesService.findPromoCodes(req.user._id);
     }
     async checkPromoCode(name, req) {
@@ -37,11 +38,11 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], PromoCodesController.prototype, "getOrderes", null);
+], PromoCodesController.prototype, "getPromoCodes", null);
 __decorate([
-    (0, common_1.Patch)('/:id'),
+    (0, common_1.Get)('/:promoCode'),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: promo_code_entity_1.PromoCode }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('promoCode')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),

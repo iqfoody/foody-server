@@ -16,6 +16,8 @@ exports.WalletsSchema = exports.Wallets = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let Wallets = class Wallets {
+    points;
+    amount;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0 }),

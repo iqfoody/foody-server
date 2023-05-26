@@ -25,6 +25,8 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { AdvertisementsService } from './advertisements.service';
 import { UpdateAdvertisementInput } from './dto/update-advertisement.input';
+import { UpdatePositionInput } from 'src/constants/position.input';
+import { StateInput } from 'src/constants/state.input';
 export declare class AdvertisementsResolver {
     private readonly advertisementsService;
     constructor(advertisementsService: AdvertisementsService);
@@ -35,5 +37,7 @@ export declare class AdvertisementsResolver {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     updateAdvertisement(updateAdvertisementInput: UpdateAdvertisementInput): Promise<string>;
+    positionAdvertisement(updatePositionInput: UpdatePositionInput[]): Promise<string>;
+    stateAdvertisement(stateInput: StateInput): Promise<string>;
     removeAdvertisement(id: string): Promise<string>;
 }

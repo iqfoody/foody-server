@@ -22,6 +22,7 @@ export class FavoritesController {
     @Post('/')
     @CheckAbilities({actions: Actions.Edit, subject: Favorite})
     async updateFavorite(@Body('updateFavoriteInput') updateFavoriteInput: UpdateFavoriteInput, @Req() context) {
+      console.log(updateFavoriteInput);
       return this.favoritesService.addFavorite(updateFavoriteInput, context.user._id);
     }
 }

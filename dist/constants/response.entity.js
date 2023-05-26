@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Response = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let Response = class Response {
+    message;
 };
 __decorate([
     (0, graphql_1.Field)(),

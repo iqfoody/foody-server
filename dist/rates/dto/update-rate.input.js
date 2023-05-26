@@ -13,6 +13,7 @@ exports.UpdateRateInput = void 0;
 const create_rate_input_1 = require("./create-rate.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateRateInput = class UpdateRateInput extends (0, graphql_1.PartialType)(create_rate_input_1.CreateRateInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

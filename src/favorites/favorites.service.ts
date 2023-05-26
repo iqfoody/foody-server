@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateFavoriteInput } from './dto/create-favorite.input';
 import { UpdateFavoriteInput } from './dto/update-favorite.input';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { FavoritesDocument } from 'src/models/favorites.schema';
 
 @Injectable()
@@ -34,6 +34,7 @@ export class FavoritesService {
     if(updateFavoriteInput.type === "Meal"){
       // -> check meal in requested data...
       if(!updateFavoriteInput?.meal) throw new BadRequestException("meal required");
+      if(!isValidObjectId(updateFavoriteInput.meal)) throw new BadRequestException("There isn't meal with this id");
       let meals: String[] = favorite?.meals as any;
       const index = favorite?.meals?.findIndex(id => id == user);
       if(index === -1){ meals.push(updateFavoriteInput.meal) }
@@ -44,6 +45,7 @@ export class FavoritesService {
     } else if (updateFavoriteInput.type === "Restaurant") {
       // -> check restaurant in requested data...
       if(!updateFavoriteInput?.restaurant) throw new BadRequestException("restaurant required");
+      if(!isValidObjectId(updateFavoriteInput.restaurant)) throw new BadRequestException("There isn't restaurant with this id");
       let restaurants: String[] = favorite.restaurants as any;
       const index = favorite.restaurants.findIndex(id => id === user);
       if(index === -1){ restaurants.push(updateFavoriteInput.restaurant) }

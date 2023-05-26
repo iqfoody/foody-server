@@ -3,5 +3,5 @@ export declare class MealAddition {
     title: string;
     titleEN: string;
     titleKR?: string;
-    price: number;
+    price?: number;
 }

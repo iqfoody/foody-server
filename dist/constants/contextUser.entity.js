@@ -12,6 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContextUser = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let ContextUser = class ContextUser {
+    _id;
+    name;
+    phoneNumber;
+    email;
+    type;
+    metadata;
+    refreshToken;
+    deviceToken;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

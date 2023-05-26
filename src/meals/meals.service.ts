@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateMealInput } from './dto/create-meal.input';
 import { UpdateMealInput } from './dto/update-meal.input';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { MealsDocument } from 'src/models/meals.schema';
 import { AwsService } from 'src/aws/aws.service';
 import { StateInput } from 'src/constants/state.input';
 import { UpdatePositionInput } from 'src/constants/position.input';
 import { LimitEntity } from 'src/constants/limitEntity';
+import { CreateMealObject } from './dto/create-meal-object.input';
+import { UpdateMealObject } from './dto/update-meal-object.input';
+import { RemoveMealObject } from './dto/remove-mea-object.input';
 
 @Injectable()
 export class MealsService {
@@ -16,23 +19,7 @@ export class MealsService {
     private readonly awsService: AwsService,
   ) {}
 
-  async create(createMealInput: CreateMealInput, file: any) {
-    const position = await this.MealsModel.countDocuments();
-    const meal = new this.MealsModel({...createMealInput, position});
-    const result = await this.awsService.createImage(file, meal._id);
-    meal.image = result?.Key;
-    await meal.save();
-    meal.image = this.awsService.getUrl(result?.Key);
-    return meal;
-  }
-
-  async findAll() {
-    const meals = await this.MealsModel.find();
-    for(const single of meals){
-      if(single?.image) single.image = this.awsService.getUrl(single.image);
-    }
-    return meals;
-  }
+  //? application...
 
   async findForRestaurant(restaurant: string) {
     const meals = await this.MealsModel.find({$and: [{restaurant}, {state: "Active"}]}).select(['-__v', '-createdAt', '-updatedAt', '-state', '-position', '-restaurant', '-tag', '-restaurantCategory']);
@@ -53,6 +40,7 @@ export class MealsService {
   }
 
   async findForTag(tag: string) {
+    if(!isValidObjectId(tag)) throw new BadRequestException("There isn't meals with this tag id");
     const meals = await this.MealsModel.find({$and: [{tag}, {state: "Active"}]}).select(['-__v', '-createdAt', '-updatedAt', '-state', '-position', '-restaurant', '-tag', '-restaurantCategory']);
     for(const single of meals){
       if(single?.image) single.image = this.awsService.getUrl(single.image);
@@ -60,22 +48,54 @@ export class MealsService {
     return meals;
   }
 
-  async findForRestaurantCategory(restaurantCategories: string) {
-    const meals = await this.MealsModel.find({$and: [{restaurantCategories}, {state: "Active"}]}).select(['-__v', '-createdAt', '-updatedAt', '-state', '-position', '-restaurant', '-tag', '-restaurantCategory']);
+  async findForRestaurantCategory(restaurantCategory: string) {
+    if(!isValidObjectId(restaurantCategory)) throw new BadRequestException("There isn't meals with this restaurant category id");
+    const meals = await this.MealsModel.find({$and: [{restaurantCategory}, {state: "Active"}]}).select(['-__v', '-createdAt', '-updatedAt', '-state', '-position', '-restaurant', '-tag', '-restaurantCategory']);
     for(const single of meals){
       if(single?.image) single.image = this.awsService.getUrl(single.image);
     }
     return meals;
   }
 
-  async findOne(id: string) {
-    const meal = await this.MealsModel.findById(id);
+  async findMeal(id: string) {
+    if(!isValidObjectId(id)) throw new BadRequestException("There isn't meal with this id");
+    const meal = await this.MealsModel.findOne({$and: [{_id: id}, {state: "Active"}]}).select(['-__v', '-createdAt', '-updatedAt', '-state', '-position', '-restaurant', '-tag', '-restaurantCategory']);
     if(meal?.image) meal.image = this.awsService.getUrl(meal.image);
     return meal;
   }
 
-  async findMeal(id: string) {
-    const meal = await this.MealsModel.findOne({$and: [{_id: id}, {state: "Active"}]}).select(['-__v', '-createdAt', '-updatedAt', '-state', '-position', '-restaurant', '-tag', '-restaurantCategory']);
+  async searchMeals(query: string){
+    const meals = await this.MealsModel.find({$and: [{$text: {$search: query}}, {state: "Active"}]}, {score: {$meta: "textScore"}} ).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']).sort({score: {$meta: "textScore"}});
+    for(const single of meals){
+      if(single?.image) single.image = this.awsService.getUrl(single.image);
+    }
+    return meals;
+  }
+
+  //? dashboard...
+
+  async create(createMealInput: CreateMealInput) {
+    const position = await this.MealsModel.countDocuments();
+    return this.MealsModel.create({...createMealInput, position});
+  }
+
+  async createImage(id: string, image: string){
+    await this.MealsModel.findByIdAndUpdate(id, {image});
+    return this.awsService.getUrl(image);
+  }
+
+  async findAll(limitEntity: LimitEntity) {
+    const startIndex = limitEntity.page * limitEntity.limit;
+    const meals = await this.MealsModel.find().sort({_id: -1}).limit(limitEntity.limit).skip(startIndex);
+    const total = await this.MealsModel.countDocuments();
+    for(const single of meals){
+      if(single?.image) single.image = this.awsService.getUrl(single.image);
+    }
+    return {data: meals, pages: Math.ceil(total / limitEntity.limit)};
+  }
+
+  async findOne(id: string) {
+    const meal = await this.MealsModel.findById(id);
     if(meal?.image) meal.image = this.awsService.getUrl(meal.image);
     return meal;
   }
@@ -108,12 +128,62 @@ export class MealsService {
     return "Success";
   }
 
-  async findExtention(_id: string){
-    return this.MealsModel.findOne({_id}, {additions: 1, ingredients: 1, price: 1, points: 1, _id: 0});
+  async findExtention(_id: string, restaurant: string){
+    if(!isValidObjectId(_id) || !isValidObjectId(restaurant)) throw new BadRequestException("There isn't meal or restaurant with this id")
+    return this.MealsModel.findOne({$and: [{_id}, {restaurant}]}, {additions: 1, ingredients: 1, price: 1, points: 1, pointsBack: 1, _id: 0});
   }
 
   async search(query: string){
-    return this.MealsModel.find({$and: [{$text: {$search: query}}, {state: "Active"}]}, {score: {$meta: "textScore"}} ).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']).sort({score: {$meta: "textScore"}});
+    const meals = await this.MealsModel.find({$text: {$search: query}}, {score: {$meta: "textScore"}} ).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']).sort({score: {$meta: "textScore"}});
+    for(const single of meals){
+      if(single?.image) single.image = this.awsService.getUrl(single.image);
+    }
+    return meals;
+  }
+
+  async home() {
+    return this.MealsModel.countDocuments();
+  }
+
+  //* additions & ingredients service...
+
+  async createMealObject(createMealObject: CreateMealObject) {
+    const meal :any = await this.MealsModel.findById(createMealObject.id);
+    if(createMealObject?.price){
+      meal.additions.push(createMealObject);
+      await this.MealsModel.findByIdAndUpdate(createMealObject.id, {additions: meal.additions});
+      return meal.additions[meal.additions.length -1];
+    } else {
+      meal.ingredients.push(createMealObject);
+      await this.MealsModel.findByIdAndUpdate(createMealObject.id, {ingredients: meal.ingredients});
+      return meal.ingredients[meal.ingredients.length -1];
+    }
+  }
+
+  async updateMealObject(updateMealObject: UpdateMealObject) {
+    const meal :any = await this.MealsModel.findById(updateMealObject.id);
+    if(updateMealObject?.price){
+      const additions = meal.additions.map((addition => addition._id == updateMealObject._id ? updateMealObject : addition));
+      await this.MealsModel.findByIdAndUpdate(meal._id, {additions: additions});
+      return "Success";
+    } else {
+      const ingredients = meal.ingredients.map((ingredient => ingredient._id == updateMealObject._id ? updateMealObject : ingredient));
+      await this.MealsModel.findByIdAndUpdate(meal._id, {ingredients: ingredients});
+      return "Success";
+    }
+  }
+
+  async removeMealObject(removeMealObject: RemoveMealObject) {
+    const meal :any = await this.MealsModel.findById(removeMealObject.id);
+    if(removeMealObject?.addition){
+      const additions = meal.additions.filter((addition => addition._id != removeMealObject.addition));
+      await this.MealsModel.findByIdAndUpdate(meal._id, {additions: additions});
+      return "Success";
+    } else {
+      const ingredients = meal.ingredients.filter((ingredient => ingredient._id != removeMealObject.ingredient));
+      await this.MealsModel.findByIdAndUpdate(meal._id, {ingredients: ingredients});
+      return "Success";
+    }
   }
 
 }

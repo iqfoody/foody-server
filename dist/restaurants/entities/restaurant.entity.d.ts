@@ -16,4 +16,6 @@ export declare class Restaurant {
     deliveryPrice: number;
     position: number;
     state: publicStatus;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

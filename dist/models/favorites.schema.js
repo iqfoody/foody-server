@@ -16,6 +16,9 @@ exports.FavoritesSchema = exports.Favorites = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let Favorites = class Favorites {
+    user;
+    restaurants;
+    meals;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Users", required: [true, "user required"] }),

@@ -5,13 +5,14 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { UseGuards } from '@nestjs/common';
 import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
-import { PasswordUserInput } from './dto/password-user.input';
 import { SearchUsersInput } from './dto/search-users.input';
 import { UsersResponse } from './entities/usersResponse.entity';
 import { StateInput } from 'src/constants/state.input';
 import { CheckAbilities } from 'src/ability/ability.decorator';
 import { Actions } from 'src/ability/ability.factory';
 import { LimitEntity } from 'src/constants/limitEntity';
+import { UpdatePasswordUser } from './dto/update-password-user.input';
+import { Months } from 'src/constants/reportsResults.entity';
 
 @UseGuards(AccessAuthGuard)
 @Resolver(() => User)
@@ -22,14 +23,8 @@ export class UsersResolver {
 
   @Mutation(()=> User)
   @CheckAbilities({actions: Actions.Create, subject: User})
-  cresteUser(@Args('creteUserInput') createUserInput: CreateUserInput){
-    return this.usersService.createUser(createUserInput);
-  }
-
-  @Query(() => UsersResponse, { name: 'searchUsers' })
-  @CheckAbilities({actions: Actions.Search, subject: User})
-  async usersSearch(@Args('searchQuery') searchUsersInput: SearchUsersInput) {
-    return this.usersService.search(searchUsersInput);
+  createUser(@Args('createUserInput') createUserInput: CreateUserInput){
+    return this.usersService.createUser(createUserInput, null);
   }
 
   @Query(() => UsersResponse, { name: 'users' })
@@ -52,7 +47,7 @@ export class UsersResolver {
 
   @Mutation(() => String, {name: 'passwordUser'})
   @CheckAbilities({actions: Actions.Update, subject: User})
-  async passwordUser(@Args('passwordUserInput') passwordUserInput: PasswordUserInput) {
+  async passwordUser(@Args('passwordUserInput') passwordUserInput: UpdatePasswordUser) {
     return this.usersService.passwordUser(passwordUserInput.id, passwordUserInput);
   }
 
@@ -66,6 +61,12 @@ export class UsersResolver {
   @CheckAbilities({actions: Actions.Delete, subject: User})
   async removeUser(@Args('id', {type: ()=> ID}) id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Query(() => Months, { name: 'usersReport' })
+  @CheckAbilities({actions: Actions.Read, subject: User})
+  usersReports(@Args('date', {type: ()=> String}) date: string) {
+    return this.usersService.usersReport(date);
   }
 
 }

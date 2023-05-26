@@ -34,7 +34,5 @@ export declare class DriversController {
     createDriver(createDriverInput: CreateDriverInput, file: any): Promise<import("mongoose").Document<unknown, import("../models/drivers.schema").IDriversQueryHelpers, import("../models/drivers.schema").DriversDocument> & Omit<import("../models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    updateDriver(updateDriverInput: UpdateDriverInput, file: any): Promise<{
-        message: string;
-    }>;
+    updateDriver(updateDriverInput: UpdateDriverInput, file: any): Promise<string>;
 }

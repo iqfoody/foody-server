@@ -17,6 +17,11 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 const meals_schema_1 = require("./meals.schema");
 let OrderItems = class OrderItems {
+    meal;
+    additions;
+    addIngredients;
+    removeIngredients;
+    quantity;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Meals', required: [true, "Meals required"] }),
@@ -44,6 +49,28 @@ OrderItems = __decorate([
 exports.OrderItems = OrderItems;
 exports.OrderItemSchema = mongoose_1.SchemaFactory.createForClass(OrderItems);
 let Orders = class Orders {
+    user;
+    restaurant;
+    address;
+    meals;
+    driver;
+    totalPrice;
+    type;
+    deliveryPrice;
+    recievedPrice;
+    tableware;
+    hasRating;
+    details;
+    paymentMethod;
+    state;
+    promoCode;
+    discount;
+    discountType;
+    walletAmount;
+    walletPoints;
+    pointsBack;
+    totalPoints;
+    price;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Users', required: [true, "user required"] }),
@@ -121,6 +148,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number }),
     __metadata("design:type", Number)
 ], Orders.prototype, "walletPoints", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number }),
+    __metadata("design:type", Number)
+], Orders.prototype, "pointsBack", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, minlength: [0, "Min total price 1"] }),
     __metadata("design:type", Number)

@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let FavoritesService = class FavoritesService {
+    FavoritesModel;
     constructor(FavoritesModel) {
         this.FavoritesModel = FavoritesModel;
     }
@@ -33,26 +34,29 @@ let FavoritesService = class FavoritesService {
         return this.FavoritesModel.findOne({ user }, { meals: 1, restaurants: 1, _id: 0 }).populate([{ path: "meals", select: { title: 1, titleEN: 1, titleKR: 1, image: 1 } }, { path: "restaurants", select: { title: 1, titleEN: 1, titleKR: 1, time: 1, image: 1, rate: 1, rating: 1 } }]);
     }
     async addFavorite(updateFavoriteInput, user) {
-        var _a;
         const favorite = await this.FavoritesModel.findOne({ user });
         if (!favorite)
             throw new common_1.NotFoundException('favorites not found');
         if (updateFavoriteInput.type === "Meal") {
-            if (!(updateFavoriteInput === null || updateFavoriteInput === void 0 ? void 0 : updateFavoriteInput.meal))
+            if (!updateFavoriteInput?.meal)
                 throw new common_1.BadRequestException("meal required");
-            let meals = favorite === null || favorite === void 0 ? void 0 : favorite.meals;
-            const index = (_a = favorite === null || favorite === void 0 ? void 0 : favorite.meals) === null || _a === void 0 ? void 0 : _a.findIndex(id => id == user);
+            if (!(0, mongoose_2.isValidObjectId)(updateFavoriteInput.meal))
+                throw new common_1.BadRequestException("There isn't meal with this id");
+            let meals = favorite?.meals;
+            const index = favorite?.meals?.findIndex(id => id == user);
             if (index === -1) {
                 meals.push(updateFavoriteInput.meal);
             }
             else {
-                meals = meals === null || meals === void 0 ? void 0 : meals.filter(id => id !== updateFavoriteInput.meal);
+                meals = meals?.filter(id => id !== updateFavoriteInput.meal);
             }
             await this.FavoritesModel.findByIdAndUpdate(favorite._id, { meals });
         }
         else if (updateFavoriteInput.type === "Restaurant") {
-            if (!(updateFavoriteInput === null || updateFavoriteInput === void 0 ? void 0 : updateFavoriteInput.restaurant))
+            if (!updateFavoriteInput?.restaurant)
                 throw new common_1.BadRequestException("restaurant required");
+            if (!(0, mongoose_2.isValidObjectId)(updateFavoriteInput.restaurant))
+                throw new common_1.BadRequestException("There isn't restaurant with this id");
             let restaurants = favorite.restaurants;
             const index = favorite.restaurants.findIndex(id => id === user);
             if (index === -1) {

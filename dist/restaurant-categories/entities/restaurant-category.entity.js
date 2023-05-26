@@ -13,6 +13,12 @@ exports.RestaurantCategory = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const restaurant_entity_1 = require("../../restaurants/entities/restaurant.entity");
 let RestaurantCategory = class RestaurantCategory {
+    _id;
+    restaurant;
+    title;
+    titleEN;
+    titleKR;
+    position;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

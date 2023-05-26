@@ -23,7 +23,11 @@ const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
+const ordersResponse_entity_1 = require("./entities/ordersResponse.entity");
+const homeResponse_entity_1 = require("../constants/homeResponse.entity");
+const reportsResults_entity_1 = require("../constants/reportsResults.entity");
 let OrdersResolver = class OrdersResolver {
+    ordersService;
     constructor(ordersService) {
         this.ordersService = ordersService;
     }
@@ -33,6 +37,12 @@ let OrdersResolver = class OrdersResolver {
     findAll(limitEntity) {
         return this.ordersService.findAll(limitEntity);
     }
+    homeValues() {
+        return this.ordersService.home();
+    }
+    findAllUserOrders(limitEntity) {
+        return this.ordersService.findUserOrders(limitEntity);
+    }
     findOne(id) {
         return this.ordersService.findOne(id);
     }
@@ -41,6 +51,12 @@ let OrdersResolver = class OrdersResolver {
     }
     removeOrder(id) {
         return this.ordersService.remove(id);
+    }
+    profitsReports(date) {
+        return this.ordersService.profitsReport(date);
+    }
+    ordersReports(date) {
+        return this.ordersService.ordersReport(date);
     }
 };
 __decorate([
@@ -52,13 +68,28 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], OrdersResolver.prototype, "createOrder", null);
 __decorate([
-    (0, graphql_1.Query)(() => [order_entity_1.Order], { name: 'orders' }),
+    (0, graphql_1.Query)(() => ordersResponse_entity_1.OrdersResponse, { name: 'orders' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
     __param(0, (0, graphql_1.Args)('limitEntity', { type: () => limitEntity_1.LimitEntity })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
     __metadata("design:returntype", void 0)
 ], OrdersResolver.prototype, "findAll", null);
+__decorate([
+    (0, graphql_1.Query)(() => homeResponse_entity_1.HomeResponse),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], OrdersResolver.prototype, "homeValues", null);
+__decorate([
+    (0, graphql_1.Query)(() => ordersResponse_entity_1.OrdersResponse, { name: 'ordersUser' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    __param(0, (0, graphql_1.Args)('limitEntity', { type: () => limitEntity_1.LimitEntity })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
+    __metadata("design:returntype", void 0)
+], OrdersResolver.prototype, "findAllUserOrders", null);
 __decorate([
     (0, graphql_1.Query)(() => order_entity_1.Order, { name: 'order' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
@@ -83,6 +114,22 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], OrdersResolver.prototype, "removeOrder", null);
+__decorate([
+    (0, graphql_1.Query)(() => reportsResults_entity_1.Months, { name: 'profitsReport' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    __param(0, (0, graphql_1.Args)('date', { type: () => String })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], OrdersResolver.prototype, "profitsReports", null);
+__decorate([
+    (0, graphql_1.Query)(() => reportsResults_entity_1.Months, { name: 'ordersReport' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    __param(0, (0, graphql_1.Args)('date', { type: () => String })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], OrdersResolver.prototype, "ordersReports", null);
 OrdersResolver = __decorate([
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, graphql_1.Resolver)(() => order_entity_1.Order),

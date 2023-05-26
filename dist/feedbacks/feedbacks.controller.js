@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const feedbacks_service_1 = require("./feedbacks.service");
 const create_feedback_input_1 = require("./dto/create-feedback.input");
 let FeedbacksController = class FeedbacksController {
+    feedbacksService;
     constructor(feedbacksService) {
         this.feedbacksService = feedbacksService;
     }

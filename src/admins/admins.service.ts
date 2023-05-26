@@ -23,10 +23,14 @@ export class AdminsService {
     return admin;
   }
 
-  async create(_id: string, createAdminInput: CreateAdminInput) {
+  async create(_id: string, createAdminInput: CreateAdminInput, file: any) {
     const superAdmin = await this.AdminsModel.findOne({$and: [{_id}, {type: "Admin"}]});
     if(!superAdmin) throw new ForbiddenException("Access Denied");
     const admin = new this.AdminsModel(createAdminInput);
+    if(file){
+      const result = await this.awsService.createImage(file, admin._id);
+      admin.image = result?.Key;
+    }
     await admin.save();
     if(admin?.image) admin.image = this.awsService.getUrl(admin?.image);
     return admin;
@@ -63,7 +67,12 @@ export class AdminsService {
     return;
   }
 
-  async update(id: string, updateAdminInput: UpdateAdminInput): Promise<Response> {
+  async updateAdmin(_id: string, updateAdminInput: UpdateAdminInput) {
+    await this.AdminsModel.findOneAndUpdate({$and: [{_id}, {type: "Admin"} ]}, updateAdminInput);
+    return;
+  }
+
+  async update(id: string, updateAdminInput: UpdateAdminInput) {
     let E0011 = await this.findByEmail(updateAdminInput.email);
     if(E0011 && id != E0011._id) throw new Error('email E0002')
     if(updateAdminInput?.image){
@@ -71,7 +80,7 @@ export class AdminsService {
       if(image) this.awsService.removeImage(image);
     }
     await this.AdminsModel.findByIdAndUpdate(id, updateAdminInput);
-    return {message: "account updated"};
+    return "admin updated";
   }
 
   async passwordAdmin(id: string, updatePasswordAdmin: UpdatePasswordUser) {

@@ -20,14 +20,14 @@ export class DriversController {
     @Post('/')
     @CheckAbilities({actions: Actions.Create, subject: Driver})
     @UseInterceptors(FileInterceptor('image'))
-    async createDriver(@Body('createDriverInput') createDriverInput: CreateDriverInput, @UploadedFile() file) {
+    async createDriver(@Body() createDriverInput: CreateDriverInput, @UploadedFile() file) {
       return this.driverService.create(createDriverInput, file);
     }
 
     @Put('/')
     @CheckAbilities({actions: Actions.Update, subject: Driver})
     @UseInterceptors(FileInterceptor('image'))
-    async updateDriver(@Body('updateDriverInput') updateDriverInput: UpdateDriverInput, @UploadedFile() file) {
+    async updateDriver(@Body() updateDriverInput: UpdateDriverInput, @UploadedFile() file) {
         const result = await this.awsService.createImage(file, updateDriverInput.id);
       return this.driverService.update(updateDriverInput.id, {...updateDriverInput, image: result?.Key});
     }

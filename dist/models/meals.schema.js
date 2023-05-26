@@ -16,6 +16,9 @@ exports.MealsSchema = exports.Meals = exports.MealAdditionsSchema = exports.Meal
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let MealIngredients = class MealIngredients {
+    title;
+    titleEN;
+    titleKR;
 };
 __decorate([
     (0, mongoose_1.Prop)({ required: [true, "title required"] }),
@@ -35,6 +38,10 @@ MealIngredients = __decorate([
 exports.MealIngredients = MealIngredients;
 exports.MealIngredientsSchema = mongoose_1.SchemaFactory.createForClass(MealIngredients);
 let MealAdditions = class MealAdditions {
+    title;
+    titleEN;
+    titleKR;
+    price;
 };
 __decorate([
     (0, mongoose_1.Prop)({ required: [true, "title required"] }),
@@ -58,6 +65,24 @@ MealAdditions = __decorate([
 exports.MealAdditions = MealAdditions;
 exports.MealAdditionsSchema = mongoose_1.SchemaFactory.createForClass(MealAdditions);
 let Meals = class Meals {
+    restaurant;
+    tag;
+    restaurantCategory;
+    title;
+    titleEN;
+    titleKR;
+    description;
+    descriptionEN;
+    descriptionKR;
+    image;
+    additions;
+    ingredients;
+    price;
+    previousPrice;
+    points;
+    pointsBack;
+    position;
+    state;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Restaurants", required: [true, "restaurant requird"] }),
@@ -96,7 +121,7 @@ __decorate([
     __metadata("design:type", String)
 ], Meals.prototype, "descriptionKR", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: [true, "image required"] }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Meals.prototype, "image", void 0);
 __decorate([

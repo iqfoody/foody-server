@@ -18,51 +18,55 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const aws_service_1 = require("../aws/aws.service");
 let AdvertisementsService = class AdvertisementsService {
+    AdvertisementsModel;
+    awsService;
     constructor(AdvertisementsModel, awsService) {
         this.AdvertisementsModel = AdvertisementsModel;
         this.awsService = awsService;
+    }
+    async findAdvertisements() {
+        const advertisements = await this.AdvertisementsModel.find({ state: "Active" }, { title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1, target: 1, _id: 0 });
+        for (const single of advertisements) {
+            if (single?.image)
+                single.image = this.awsService.getUrl(single.image);
+        }
+        return advertisements;
+    }
+    async findAdvertisement(id) {
+        if (!(0, mongoose_2.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't advertisement with this id");
+        const advertisement = await this.AdvertisementsModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }, { title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1, target: 1, _id: 0 });
+        if (advertisement?.image)
+            advertisement.image = this.awsService.getUrl(advertisement.image);
+        return advertisement;
     }
     async create(createAdvertisementInput, file) {
         if (!file)
             return new common_1.BadRequestException("image required");
         const position = await this.AdvertisementsModel.countDocuments();
-        const advertisement = new this.AdvertisementsModel(Object.assign(Object.assign({}, createAdvertisementInput), { position }));
+        const advertisement = new this.AdvertisementsModel({ ...createAdvertisementInput, position });
         const result = await this.awsService.createImage(file, advertisement._id);
-        advertisement.image = result === null || result === void 0 ? void 0 : result.Key;
+        advertisement.image = result?.Key;
         await advertisement.save();
-        advertisement.image = this.awsService.getUrl(result === null || result === void 0 ? void 0 : result.Key);
+        advertisement.image = this.awsService.getUrl(result?.Key);
         return advertisement;
     }
     async findAll() {
         const advertisements = await this.AdvertisementsModel.find();
         for (const single of advertisements) {
-            if (single === null || single === void 0 ? void 0 : single.image)
-                single.image = this.awsService.getUrl(single.image);
-        }
-        return advertisements;
-    }
-    async findAdvertisements() {
-        const advertisements = await this.AdvertisementsModel.find({ state: "Active" }, { title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1, target: 1, _id: 0 });
-        for (const single of advertisements) {
-            if (single === null || single === void 0 ? void 0 : single.image)
+            if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
         }
         return advertisements;
     }
     async findOne(id) {
         const advertisement = await this.AdvertisementsModel.findById(id);
-        if (advertisement === null || advertisement === void 0 ? void 0 : advertisement.image)
-            advertisement.image = this.awsService.getUrl(advertisement.image);
-        return advertisement;
-    }
-    async findAdvertisement(id) {
-        const advertisement = await this.AdvertisementsModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }, { title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1, target: 1, _id: 0 });
-        if (advertisement === null || advertisement === void 0 ? void 0 : advertisement.image)
+        if (advertisement?.image)
             advertisement.image = this.awsService.getUrl(advertisement.image);
         return advertisement;
     }
     async update(id, updateAdvertisementInput) {
-        if (updateAdvertisementInput === null || updateAdvertisementInput === void 0 ? void 0 : updateAdvertisementInput.image) {
+        if (updateAdvertisementInput?.image) {
             const { image } = await this.AdvertisementsModel.findOne({ _id: updateAdvertisementInput.id }, { image: 1, _id: 0 });
             this.awsService.removeImage(image);
         }

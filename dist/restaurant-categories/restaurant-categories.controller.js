@@ -16,6 +16,7 @@ exports.RestaurantCategoriesController = void 0;
 const common_1 = require("@nestjs/common");
 const restaurant_categories_service_1 = require("./restaurant-categories.service");
 let RestaurantCategoriesController = class RestaurantCategoriesController {
+    restaurantCategoriesService;
     constructor(restaurantCategoriesService) {
         this.restaurantCategoriesService = restaurantCategoriesService;
     }

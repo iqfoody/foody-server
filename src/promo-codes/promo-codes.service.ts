@@ -1,9 +1,10 @@
-import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { CreatePromoCodeInput } from './dto/create-promo-code.input';
 import { UpdatePromoCodeInput } from './dto/update-promo-code.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PromoCodesDocument } from 'src/models/promoCodes.schema';
+import { StateInput } from 'src/constants/state.input';
 
 @Injectable()
 export class PromoCodesService {
@@ -11,25 +12,16 @@ export class PromoCodesService {
     @InjectModel("PromoCodes") private PromoCodesModel: Model<PromoCodesDocument>,
   ) {}
 
-  create(createPromoCodeInput: CreatePromoCodeInput) {
-    return this.PromoCodesModel.create(createPromoCodeInput);
-  }
-
-  findAll() {
-    return this.PromoCodesModel.find();
-  }
+  //? application...
 
   findPromoCodes(user: string) {
     return this.PromoCodesModel.find({$and: [{user}, {state: "Active"}]});
   }
 
-  findOne(id: string) {
-    return this.PromoCodesModel.findById(id);
-  }
-
   async check(name: string, user: string) {
+    if(!name) throw new BadRequestException("this promo code isn't valid")
     const promoCode = await this.PromoCodesModel.findOne({$and: [{name}, {user}, {public: false}, {state: "Active"}]});
-    if(promoCode && promoCode?.users && promoCode?.users?.includes(user as any)){
+    if(promoCode && promoCode?.users && promoCode?.users?.includes(user as any) || new Date(promoCode?.expire) < new Date()){
       throw new NotAcceptableException('Promo code expired');
     } else if(promoCode) {
       return {_id: promoCode._id, name: promoCode.name, discount: promoCode?.discount, type: promoCode.type};
@@ -65,8 +57,33 @@ export class PromoCodesService {
     return new NotFoundException('Promo code not found');
   }
 
+  //? dashboard...
+
+  async create(createPromoCodeInput: CreatePromoCodeInput) {
+    const { name, user, type, discount, isPublic, expire } = createPromoCodeInput;
+    if(isPublic){
+      return this.PromoCodesModel.create({name, type, discount, isPublic, expire});
+    } else {
+      const promoCode = await this.PromoCodesModel.create(createPromoCodeInput);
+      return promoCode.populate("user");
+    }
+  }
+
+  findAll() {
+    return this.PromoCodesModel.find().populate("user").sort({_id: -1});
+  }
+
+  findOne(id: string) {
+    return this.PromoCodesModel.findById(id).populate("user");
+  }
+
   async update(id: string, updatePromoCodeInput: UpdatePromoCodeInput) {
     await this.PromoCodesModel.findByIdAndUpdate(id, updatePromoCodeInput);
+    return "Success";
+  }
+
+  async state(stateInput: StateInput) {
+    await this.PromoCodesModel.findByIdAndUpdate(stateInput.id, stateInput);
     return "Success";
   }
 

@@ -24,6 +24,8 @@ const driver_entity_1 = require("./entities/driver.entity");
 const create_driver_input_1 = require("./dto/create-driver.input");
 const update_driver_input_1 = require("./dto/update-driver.input");
 let DriversController = class DriversController {
+    driverService;
+    awsService;
     constructor(driverService, awsService) {
         this.driverService = driverService;
         this.awsService = awsService;
@@ -33,14 +35,14 @@ let DriversController = class DriversController {
     }
     async updateDriver(updateDriverInput, file) {
         const result = await this.awsService.createImage(file, updateDriverInput.id);
-        return this.driverService.update(updateDriverInput.id, Object.assign(Object.assign({}, updateDriverInput), { image: result === null || result === void 0 ? void 0 : result.Key }));
+        return this.driverService.update(updateDriverInput.id, { ...updateDriverInput, image: result?.Key });
     }
 };
 __decorate([
     (0, common_1.Post)('/'),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: driver_entity_1.Driver }),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)('createDriverInput')),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_driver_input_1.CreateDriverInput, Object]),
@@ -50,7 +52,7 @@ __decorate([
     (0, common_1.Put)('/'),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: driver_entity_1.Driver }),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)('updateDriverInput')),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_driver_input_1.UpdateDriverInput, Object]),

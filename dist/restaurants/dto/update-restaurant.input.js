@@ -13,6 +13,9 @@ exports.UpdateRestaurantInput = void 0;
 const create_restaurant_input_1 = require("./create-restaurant.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateRestaurantInput = class UpdateRestaurantInput extends (0, graphql_1.PartialType)(create_restaurant_input_1.CreateRestaurantInput) {
+    id;
+    rating;
+    rates;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),

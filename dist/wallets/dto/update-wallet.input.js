@@ -13,6 +13,9 @@ exports.UpdateWalletInput = void 0;
 const create_wallet_input_1 = require("./create-wallet.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateWalletInput = class UpdateWalletInput extends (0, graphql_1.PartialType)(create_wallet_input_1.CreateWalletInput) {
+    id;
+    amount;
+    points;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),

@@ -13,6 +13,9 @@ exports.UpdateFavoriteInput = void 0;
 const create_favorite_input_1 = require("./create-favorite.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateFavoriteInput = class UpdateFavoriteInput extends (0, graphql_1.PartialType)(create_favorite_input_1.CreateFavoriteInput) {
+    type;
+    restaurant;
+    meal;
 };
 __decorate([
     (0, graphql_1.Field)(),

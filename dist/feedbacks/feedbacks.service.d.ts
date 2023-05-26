@@ -25,17 +25,17 @@
 import { CreateFeedbackInput } from './dto/create-feedback.input';
 import { Model } from 'mongoose';
 import { FeedbacksDocument } from 'src/models/feedbacks.schema';
+import { LimitEntity } from 'src/constants/limitEntity';
 export declare class FeedbacksService {
     private FeedbacksModel;
     constructor(FeedbacksModel: Model<FeedbacksDocument>);
-    create(createFeedbackInput: CreateFeedbackInput): Promise<import("mongoose").Document<unknown, {}, FeedbacksDocument> & Omit<import("src/models/feedbacks.schema").Feedbacks & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
-    findAll(): import("mongoose").Query<(import("mongoose").Document<unknown, {}, FeedbacksDocument> & Omit<import("src/models/feedbacks.schema").Feedbacks & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[], import("mongoose").Document<unknown, {}, FeedbacksDocument> & Omit<import("src/models/feedbacks.schema").Feedbacks & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, FeedbacksDocument>;
+    create(createFeedbackInput: CreateFeedbackInput): Promise<string>;
+    findAll(limitEntity: LimitEntity): Promise<{
+        data: (import("mongoose").Document<unknown, {}, FeedbacksDocument> & Omit<import("src/models/feedbacks.schema").Feedbacks & import("mongoose").Document<any, any, any> & {
+            _id: import("mongoose").Types.ObjectId;
+        }, never>)[];
+        pages: number;
+    }>;
     findOne(id: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, FeedbacksDocument> & Omit<import("src/models/feedbacks.schema").Feedbacks & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, import("mongoose").Document<unknown, {}, FeedbacksDocument> & Omit<import("src/models/feedbacks.schema").Feedbacks & import("mongoose").Document<any, any, any> & {

@@ -16,6 +16,11 @@ exports.RestaurantCategoriesSchema = exports.RestaurantCategories = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let RestaurantCategories = class RestaurantCategories {
+    restaurant;
+    title;
+    titleEN;
+    titleKR;
+    position;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Restaurants", required: [true, "restaurant requird"] }),

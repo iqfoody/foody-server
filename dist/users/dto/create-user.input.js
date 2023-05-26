@@ -12,6 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateUserInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateUserInput = class CreateUserInput {
+    name;
+    phoneNumber;
+    email;
+    password;
+    type;
+    city;
+    image;
+    deviceToken;
+    ip;
+    platform;
+    refreshToken;
 };
 __decorate([
     (0, graphql_1.Field)(),

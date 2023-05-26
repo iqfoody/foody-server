@@ -13,6 +13,7 @@ exports.UpdateRestaurantCategoryInput = void 0;
 const create_restaurant_category_input_1 = require("./create-restaurant-category.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateRestaurantCategoryInput = class UpdateRestaurantCategoryInput extends (0, graphql_1.PartialType)(create_restaurant_category_input_1.CreateRestaurantCategoryInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

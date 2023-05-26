@@ -22,17 +22,18 @@ const order_entity_1 = require("./entities/order.entity");
 const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const create_rate_order_input_1 = require("./dto/create-rate-order.input");
 let OrdersController = class OrdersController {
+    ordersService;
     constructor(ordersService) {
         this.ordersService = ordersService;
     }
-    async getOrderes(req) {
-        return this.ordersService.findOrders(req.user._id, "Pending");
+    async getOrderes(req, state) {
+        return this.ordersService.findOrders(req.user._id, state);
     }
     async createOrder(createOrderInput, req) {
-        return this.ordersService.createOrder(Object.assign(Object.assign({}, createOrderInput), { user: req.user._id }));
+        return this.ordersService.createOrder({ ...createOrderInput, user: req.user._id });
     }
     async ratingOrder(id, createRateOrderInput, req) {
-        return this.ordersService.rateOrder({ user: req.user._id, order: id, rate: createRateOrderInput.rate, description: createRateOrderInput === null || createRateOrderInput === void 0 ? void 0 : createRateOrderInput.description });
+        return this.ordersService.rateOrder({ user: req.user._id, order: id, rate: createRateOrderInput.rate, description: createRateOrderInput?.description });
     }
     async cancelOrder(id, req) {
         return this.ordersService.cancelOrder(id, req.user._id);
@@ -51,11 +52,12 @@ let OrdersController = class OrdersController {
     }
 };
 __decorate([
-    (0, common_1.Get)('/'),
+    (0, common_1.Get)('/history'),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: order_entity_1.Order }),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)('state')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "getOrderes", null);
 __decorate([
@@ -68,7 +70,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "createOrder", null);
 __decorate([
-    (0, common_1.Post)('/rating/:id'),
+    (0, common_1.Post)('/rate/:id'),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Edit, subject: order_entity_1.Order }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('createRateOrderInput')),
@@ -115,7 +117,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "getOrder", null);
 __decorate([
-    (0, common_1.Delete)('/'),
+    (0, common_1.Delete)('/:id'),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Remove, subject: order_entity_1.Order }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Req)()),

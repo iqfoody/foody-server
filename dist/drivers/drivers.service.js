@@ -16,73 +16,25 @@ exports.DriversService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const aws_service_1 = require("../aws/aws.service");
+const bcryptjs_1 = require("bcryptjs");
 let DriversService = class DriversService {
+    DriversModel;
+    awsService;
     constructor(DriversModel, awsService) {
         this.DriversModel = DriversModel;
         this.awsService = awsService;
     }
     async login(loginInput) {
         const driver = await this.DriversModel.login(loginInput);
-        if (driver === null || driver === void 0 ? void 0 : driver.image)
-            driver.image = this.awsService.getUrl(driver === null || driver === void 0 ? void 0 : driver.image);
-        return driver;
-    }
-    async create(createDriverInput, file) {
-        const driver = new this.DriversModel(createDriverInput);
-        if (file) {
-            const result = await this.awsService.createImage(file, driver._id);
-            driver.image = result === null || result === void 0 ? void 0 : result.Key;
-        }
-        await driver.save();
-        if (driver === null || driver === void 0 ? void 0 : driver.image)
-            driver.image = this.awsService.getUrl(driver.image);
-        return driver;
-    }
-    async findAll() {
-        const drivers = await this.DriversModel.find();
-        for (const driver of drivers) {
-            if (driver === null || driver === void 0 ? void 0 : driver.image)
-                driver.image = this.awsService.getUrl(driver === null || driver === void 0 ? void 0 : driver.image);
-        }
-        return drivers;
-    }
-    async findOne(id) {
-        const driver = await this.DriversModel.findById(id);
-        if (driver === null || driver === void 0 ? void 0 : driver.image)
-            driver.image = this.awsService.getUrl(driver === null || driver === void 0 ? void 0 : driver.image);
+        if (driver?.image)
+            driver.image = this.awsService.getUrl(driver?.image);
         return driver;
     }
     async info(id) {
         const driver = await this.DriversModel.findById(id);
-        if (driver === null || driver === void 0 ? void 0 : driver.image)
-            driver.image = this.awsService.getUrl(driver === null || driver === void 0 ? void 0 : driver.image);
+        if (driver?.image)
+            driver.image = this.awsService.getUrl(driver?.image);
         return driver;
-    }
-    async findByPhoneNumber(phoneNumber) {
-        const driver = await this.DriversModel.findOne({ phoneNumber });
-        if (driver === null || driver === void 0 ? void 0 : driver.image)
-            driver.image = this.awsService.getUrl(driver === null || driver === void 0 ? void 0 : driver.image);
-        return driver;
-    }
-    async updateAny(id, updateAdminInput) {
-        await this.DriversModel.findByIdAndUpdate(id, updateAdminInput);
-        return;
-    }
-    async update(id, updateDriverInput) {
-        let E0011 = await this.findByPhoneNumber(updateDriverInput.phoneNumber);
-        if (E0011 && id != E0011._id)
-            throw new Error('phoneNumber E0011');
-        if (updateDriverInput.image) {
-            const { image } = await this.DriversModel.findOne({ _id: updateDriverInput.id }, { image: 1, _id: 0 });
-            if (image)
-                this.awsService.removeImage(image);
-        }
-        await this.DriversModel.findByIdAndUpdate(id, updateDriverInput);
-        return { message: "account updated" };
-    }
-    async state(stateInput) {
-        await this.DriversModel.findOneAndUpdate({ $and: [{ _id: stateInput.id }, { type: { $ne: "Admin" } }] }, stateInput);
-        return { message: "success" };
     }
     async logout(id) {
         await this.DriversModel.findByIdAndUpdate(id, { refreshToken: null });
@@ -96,12 +48,75 @@ let DriversService = class DriversService {
             throw new common_1.ForbiddenException('Access Denied');
         return driver;
     }
+    async create(createDriverInput, file) {
+        let E0011 = await this.findByPhoneNumber(createDriverInput.phoneNumber);
+        if (E0011)
+            throw new Error('phoneNumber E0011');
+        const driver = new this.DriversModel(createDriverInput);
+        if (file) {
+            const result = await this.awsService.createImage(file, driver._id);
+            driver.image = result?.Key;
+        }
+        await driver.save();
+        if (driver?.image)
+            driver.image = this.awsService.getUrl(driver.image);
+        return driver;
+    }
+    async findAll() {
+        const drivers = await this.DriversModel.find();
+        for (const driver of drivers) {
+            if (driver?.image)
+                driver.image = this.awsService.getUrl(driver?.image);
+        }
+        return drivers;
+    }
+    async findOne(id) {
+        const driver = await this.DriversModel.findById(id);
+        if (driver?.image)
+            driver.image = this.awsService.getUrl(driver?.image);
+        return driver;
+    }
+    async findByPhoneNumber(phoneNumber) {
+        const driver = await this.DriversModel.findOne({ phoneNumber });
+        if (driver?.image)
+            driver.image = this.awsService.getUrl(driver?.image);
+        return driver;
+    }
+    async updateAny(id, updateAdminInput) {
+        await this.DriversModel.findByIdAndUpdate(id, updateAdminInput);
+        return;
+    }
+    async update(id, updateDriverInput) {
+        let E0011 = await this.findByPhoneNumber(updateDriverInput.phoneNumber);
+        if (E0011 && id != E0011._id)
+            throw new Error('phoneNumber E0011');
+        if (updateDriverInput?.image) {
+            const { image } = await this.DriversModel.findOne({ _id: updateDriverInput.id }, { image: 1, _id: 0 });
+            if (image)
+                this.awsService.removeImage(image);
+        }
+        await this.DriversModel.findByIdAndUpdate(id, updateDriverInput);
+        return "account updated";
+    }
+    async password(id, updatePasswordDriver) {
+        const salt = await (0, bcryptjs_1.genSalt)();
+        const hashed = await (0, bcryptjs_1.hash)(updatePasswordDriver.password, salt);
+        await this.DriversModel.findByIdAndUpdate(id, { password: hashed, refreshToken: null });
+        return "Success";
+    }
+    async state(stateInput) {
+        await this.DriversModel.findOneAndUpdate({ $and: [{ _id: stateInput.id }, { type: { $ne: "Admin" } }] }, stateInput);
+        return "success";
+    }
     async remove(_id) {
         const { image } = await this.DriversModel.findOne({ _id }, { image: 1, _id: 0 });
         await this.DriversModel.findByIdAndDelete(_id);
         if (image)
             this.awsService.removeImage(image);
-        return { message: "success" };
+        return "success";
+    }
+    async home() {
+        return this.DriversModel.countDocuments();
     }
 };
 DriversService = __decorate([

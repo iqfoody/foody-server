@@ -13,13 +13,30 @@ exports.Restaurant = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const category_entity_1 = require("../../categories/entities/category.entity");
 let Restaurant = class Restaurant {
+    _id;
+    category;
+    title;
+    titleEN;
+    titleKR;
+    description;
+    descriptionEN;
+    descriptionKR;
+    image;
+    rating;
+    rates;
+    time;
+    deliveryPrice;
+    position;
+    state;
+    createdAt;
+    updatedAt;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
     __metadata("design:type", String)
 ], Restaurant.prototype, "_id", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String || category_entity_1.Category, { nullable: true }),
+    (0, graphql_1.Field)(() => category_entity_1.Category, { nullable: true }),
     __metadata("design:type", Object)
 ], Restaurant.prototype, "category", void 0);
 __decorate([
@@ -74,6 +91,14 @@ __decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", String)
 ], Restaurant.prototype, "state", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", Date)
+], Restaurant.prototype, "createdAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Date, { nullable: true }),
+    __metadata("design:type", Date)
+], Restaurant.prototype, "updatedAt", void 0);
 Restaurant = __decorate([
     (0, graphql_1.ObjectType)()
 ], Restaurant);

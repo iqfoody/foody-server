@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { PromoCodesService } from './promo-codes.service';
 import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
 import { CheckAbilities } from 'src/ability/ability.decorator';
@@ -14,13 +14,13 @@ export class PromoCodesController {
 
     @Get('/')
     @CheckAbilities({actions: Actions.Info, subject: PromoCode})
-    async getOrderes(@Req() req){
+    async getPromoCodes(@Req() req){
         return this.promoCodesService.findPromoCodes(req.user._id);
     }
 
-    @Patch('/:id')
+    @Get('/:promoCode')
     @CheckAbilities({actions: Actions.Info, subject: PromoCode})
-    async checkPromoCode(@Param('id') name: string, @Req() req){
+    async checkPromoCode(@Param('promoCode') name: string, @Req() req){
         return this.promoCodesService.check(name, req.user._id);
     }
 }

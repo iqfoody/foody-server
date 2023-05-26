@@ -16,6 +16,7 @@ exports.FirebaseService = void 0;
 const common_1 = require("@nestjs/common");
 const firebase_admin_1 = __importDefault(require("firebase-admin"));
 let FirebaseService = class FirebaseService {
+    firebase;
     constructor() {
         this.firebase = firebase_admin_1.default.initializeApp({
             credential: firebase_admin_1.default.credential.cert({

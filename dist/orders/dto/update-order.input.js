@@ -13,6 +13,7 @@ exports.UpdateOrderInput = void 0;
 const create_order_input_1 = require("./create-order.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateOrderInput = class UpdateOrderInput extends (0, graphql_1.PartialType)(create_order_input_1.CreateOrderInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

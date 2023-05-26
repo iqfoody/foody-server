@@ -18,52 +18,56 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const aws_service_1 = require("../aws/aws.service");
 let TagsService = class TagsService {
+    TagsModel;
+    awsService;
     constructor(TagsModel, awsService) {
         this.TagsModel = TagsModel;
         this.awsService = awsService;
     }
+    async findTags() {
+        const tags = await this.TagsModel.find({ state: "Active" }, { title: 1, titleEN: 1, titleKR: 1 });
+        for (const single of tags) {
+            if (single?.image)
+                single.image = this.awsService.getUrl(single.image);
+        }
+        return tags;
+    }
+    async findTag(id) {
+        if (!(0, mongoose_2.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't tag with this id");
+        const tag = await this.TagsModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }, { title: 1, titleEN: 1, titleKR: 1 });
+        if (tag?.image)
+            tag.image = this.awsService.getUrl(tag.image);
+        return tag;
+    }
     async create(createTagInput, file) {
         const position = await this.TagsModel.countDocuments();
-        const tag = new this.TagsModel(Object.assign(Object.assign({}, createTagInput), { position }));
+        const tag = new this.TagsModel({ ...createTagInput, position });
         if (file) {
             const result = await this.awsService.createImage(file, tag._id);
-            tag.image = result === null || result === void 0 ? void 0 : result.Key;
+            tag.image = result?.Key;
         }
         await tag.save();
-        if (tag === null || tag === void 0 ? void 0 : tag.image)
+        if (tag?.image)
             tag.image = this.awsService.getUrl(tag.image);
         return tag;
     }
     async findAll() {
         const tags = await this.TagsModel.find();
         for (const single of tags) {
-            if (single === null || single === void 0 ? void 0 : single.image)
-                single.image = this.awsService.getUrl(single.image);
-        }
-        return tags;
-    }
-    async findTags() {
-        const tags = await this.TagsModel.find({ state: "Active" }, { title: 1, titleEN: 1, titleKR: 1 });
-        for (const single of tags) {
-            if (single === null || single === void 0 ? void 0 : single.image)
+            if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
         }
         return tags;
     }
     async findOne(id) {
         const tag = await this.TagsModel.findById(id);
-        if (tag === null || tag === void 0 ? void 0 : tag.image)
-            tag.image = this.awsService.getUrl(tag.image);
-        return tag;
-    }
-    async findTag(id) {
-        const tag = await this.TagsModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }, { title: 1, titleEN: 1, titleKR: 1 });
-        if (tag === null || tag === void 0 ? void 0 : tag.image)
+        if (tag?.image)
             tag.image = this.awsService.getUrl(tag.image);
         return tag;
     }
     async update(id, updateTagInput) {
-        if (updateTagInput === null || updateTagInput === void 0 ? void 0 : updateTagInput.image) {
+        if (updateTagInput?.image) {
             const { image } = await this.TagsModel.findOne({ _id: updateTagInput.id }, { image: 1, _id: 0 });
             this.awsService.removeImage(image);
         }

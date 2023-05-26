@@ -22,7 +22,10 @@ const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
+const state_input_1 = require("../constants/state.input");
+const position_input_1 = require("../constants/position.input");
 let TagsResolver = class TagsResolver {
+    tagsService;
     constructor(tagsService) {
         this.tagsService = tagsService;
     }
@@ -37,6 +40,12 @@ let TagsResolver = class TagsResolver {
     }
     updateTag(updateTagInput) {
         return this.tagsService.update(updateTagInput.id, updateTagInput);
+    }
+    StateTag(stateInput) {
+        return this.tagsService.state(stateInput);
+    }
+    positionTag(updatePositionInput) {
+        return this.tagsService.position(updatePositionInput);
     }
     removeTag(id) {
         return this.tagsService.remove(id);
@@ -66,7 +75,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TagsResolver.prototype, "findOne", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => tag_entity_1.Tag),
+    (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: tag_entity_1.Tag }),
     __param(0, (0, graphql_1.Args)('updateTagInput')),
     __metadata("design:type", Function),
@@ -74,7 +83,23 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TagsResolver.prototype, "updateTag", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => tag_entity_1.Tag),
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: tag_entity_1.Tag }),
+    __param(0, (0, graphql_1.Args)('stateInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [state_input_1.StateInput]),
+    __metadata("design:returntype", void 0)
+], TagsResolver.prototype, "StateTag", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: tag_entity_1.Tag }),
+    __param(0, (0, graphql_1.Args)('updatePositionInput', { type: () => [position_input_1.UpdatePositionInput] })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array]),
+    __metadata("design:returntype", void 0)
+], TagsResolver.prototype, "positionTag", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: tag_entity_1.Tag }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),

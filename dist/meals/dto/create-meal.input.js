@@ -14,6 +14,22 @@ const graphql_1 = require("@nestjs/graphql");
 const create_meal_ingredient_input_1 = require("./create-meal-ingredient.input");
 const create_meal_addition_input_1 = require("./create-meal-addition.input");
 let CreateMealInput = class CreateMealInput {
+    restaurant;
+    tag;
+    restaurantCategory;
+    title;
+    titleEN;
+    titleKR;
+    description;
+    descriptionEN;
+    descriptionKR;
+    image;
+    additions;
+    ingredients;
+    price;
+    previousPrice;
+    points;
+    pointsBack;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),

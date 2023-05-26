@@ -41,5 +41,5 @@ export declare class AuthService {
         refreshToken: string;
         user: any;
     }>;
-    getNewAccessToken(user: any): Promise<string>;
+    getNewAccessToken(user: any, metadata: string): Promise<string>;
 }

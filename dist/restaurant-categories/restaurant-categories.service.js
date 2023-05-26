@@ -17,17 +17,18 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let RestaurantCategoriesService = class RestaurantCategoriesService {
+    RestaurantCategoriesModel;
     constructor(RestaurantCategoriesModel) {
         this.RestaurantCategoriesModel = RestaurantCategoriesModel;
+    }
+    findForRestaurant(restaurant) {
+        return this.RestaurantCategoriesModel.find({ restaurant }).select(['-__v', '-position', '-restaurant']);
     }
     create(createRestaurantCategoryInput) {
         return this.RestaurantCategoriesModel.create(createRestaurantCategoryInput);
     }
-    findAll() {
-        return this.RestaurantCategoriesModel.find();
-    }
-    findForRestaurant(restaurant) {
-        return this.RestaurantCategoriesModel.find({ restaurant }).select(['-__v', '-position', '-restaurant']);
+    findAll(restaurant) {
+        return this.RestaurantCategoriesModel.find({ restaurant });
     }
     findOne(id) {
         return this.RestaurantCategoriesModel.findById(id);
@@ -36,8 +37,18 @@ let RestaurantCategoriesService = class RestaurantCategoriesService {
         await this.RestaurantCategoriesModel.findByIdAndUpdate(id, updateRestaurantCategoryInput);
         return "Success";
     }
+    async position(updatePositionInput) {
+        for (const single of updatePositionInput) {
+            await this.RestaurantCategoriesModel.findByIdAndUpdate(single.id, { position: single.position });
+        }
+        return "success";
+    }
     async remove(id) {
         await this.RestaurantCategoriesModel.findByIdAndDelete(id);
+        return "Success";
+    }
+    async clean(id) {
+        await this.RestaurantCategoriesModel.deleteMany({ restaurant: id });
         return "Success";
     }
 };

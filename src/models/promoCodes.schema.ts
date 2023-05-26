@@ -24,7 +24,7 @@ export class PromoCodes {
   discount: number;
 
   @Prop({type: mongoose.Schema.Types.Boolean, default: true})
-  public: boolean;
+  isPublic: boolean;
 
   @Prop({type: mongoose.Schema.Types.Date, required: [true, "expire required"]})
   expire: Date;

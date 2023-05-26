@@ -17,7 +17,7 @@ export class CreatePromoCodeInput {
   discount: number;
 
   @Field(()=> Boolean, {nullable: true})
-  public?: boolean;
+  isPublic?: boolean;
 
   @Field(()=> Date)
   expire: Date;

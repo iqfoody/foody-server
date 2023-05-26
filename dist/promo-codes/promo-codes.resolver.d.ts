@@ -26,15 +26,16 @@
 import { PromoCodesService } from './promo-codes.service';
 import { CreatePromoCodeInput } from './dto/create-promo-code.input';
 import { UpdatePromoCodeInput } from './dto/update-promo-code.input';
+import { StateInput } from 'src/constants/state.input';
 export declare class PromoCodesResolver {
     private readonly promoCodesService;
     constructor(promoCodesService: PromoCodesService);
     createPromoCode(createPromoCodeInput: CreatePromoCodeInput): Promise<import("mongoose").Document<unknown, {}, import("../models/promoCodes.schema").PromoCodesDocument> & Omit<import("../models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    findAll(): import("mongoose").Query<(import("mongoose").Document<unknown, {}, import("../models/promoCodes.schema").PromoCodesDocument> & Omit<import("../models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
+    findAll(): import("mongoose").Query<Omit<import("mongoose").Document<unknown, {}, import("../models/promoCodes.schema").PromoCodesDocument> & Omit<import("../models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>)[], import("mongoose").Document<unknown, {}, import("../models/promoCodes.schema").PromoCodesDocument> & Omit<import("../models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
+    }, never>, never>[], import("mongoose").Document<unknown, {}, import("../models/promoCodes.schema").PromoCodesDocument> & Omit<import("../models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, import("../models/promoCodes.schema").PromoCodesDocument>;
     findOne(id: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, import("../models/promoCodes.schema").PromoCodesDocument> & Omit<import("../models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
@@ -43,5 +44,6 @@ export declare class PromoCodesResolver {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, import("../models/promoCodes.schema").PromoCodesDocument>;
     updatePromoCode(updatePromoCodeInput: UpdatePromoCodeInput): Promise<string>;
+    statePromoCode(stateInput: StateInput): Promise<string>;
     removePromoCode(id: string): Promise<string>;
 }

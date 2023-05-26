@@ -13,6 +13,7 @@ exports.UpdateSearchInput = void 0;
 const create_search_input_1 = require("./create-search.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateSearchInput = class UpdateSearchInput extends (0, graphql_1.PartialType)(create_search_input_1.CreateSearchInput) {
+    id;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int),

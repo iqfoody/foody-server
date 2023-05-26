@@ -24,24 +24,33 @@ const ability_factory_1 = require("../ability/ability.factory");
 const advertisement_entity_1 = require("./entities/advertisement.entity");
 const update_advertisement_input_1 = require("./dto/update-advertisement.input");
 let AdvertisementsController = class AdvertisementsController {
+    advertisementsService;
+    awsService;
     constructor(advertisementsService, awsService) {
         this.advertisementsService = advertisementsService;
         this.awsService = awsService;
     }
-    async getAdvertisements() {
-        return this.advertisementsService.findAdvertisements();
-    }
     async getAdvertisement(id) {
         return this.advertisementsService.findAdvertisement(id);
+    }
+    async getAdvertisements() {
+        return this.advertisementsService.findAdvertisements();
     }
     async createAdvertisement(createAdvertisementInput, file) {
         return this.advertisementsService.create(createAdvertisementInput, file);
     }
     async updateAdvertisement(updateAdvertisementInput, file) {
         const result = await this.awsService.createImage(file, updateAdvertisementInput.id);
-        return this.advertisementsService.update(updateAdvertisementInput.id, Object.assign(Object.assign({}, updateAdvertisementInput), { image: result === null || result === void 0 ? void 0 : result.Key }));
+        return this.advertisementsService.update(updateAdvertisementInput.id, { ...updateAdvertisementInput, image: result?.Key });
     }
 };
+__decorate([
+    (0, common_1.Get)('/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdvertisementsController.prototype, "getAdvertisement", null);
 __decorate([
     (0, common_1.Get)('/'),
     __metadata("design:type", Function),
@@ -49,18 +58,11 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AdvertisementsController.prototype, "getAdvertisements", null);
 __decorate([
-    (0, common_1.Get)('/s/:id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], AdvertisementsController.prototype, "getAdvertisement", null);
-__decorate([
     (0, common_1.Post)('/'),
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: advertisement_entity_1.Advertisement }),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)('createAdvertisementInput')),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_advertisement_input_1.CreateAdvertisementInput, Object]),
@@ -71,7 +73,7 @@ __decorate([
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: advertisement_entity_1.Advertisement }),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)('updateAdvertisementInput')),
+    __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_advertisement_input_1.UpdateAdvertisementInput, Object]),

@@ -8,7 +8,7 @@ export class Restaurant {
   @Field(() => ID)
   _id: string;
 
-  @Field(()=> String || Category, {nullable: true})
+  @Field(()=> Category, {nullable: true})
   category?: string | Category;
 
   @Field()
@@ -49,5 +49,11 @@ export class Restaurant {
 
   @Field()
   state: publicStatus;
+
+  @Field(()=> Date, { nullable: true})
+  createdAt?: Date;
+
+  @Field(()=> Date, { nullable: true})
+  updatedAt?: Date;
 
 }

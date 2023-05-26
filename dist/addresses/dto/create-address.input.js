@@ -12,6 +12,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateAddressInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateAddressInput = class CreateAddressInput {
+    user;
+    title;
+    country;
+    city;
+    address;
+    building;
+    apartment;
+    description;
+    latitude;
+    longitude;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
@@ -33,6 +43,14 @@ __decorate([
     (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)
 ], CreateAddressInput.prototype, "address", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], CreateAddressInput.prototype, "building", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], CreateAddressInput.prototype, "apartment", void 0);
 __decorate([
     (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)

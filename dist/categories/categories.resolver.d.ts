@@ -25,6 +25,8 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { CategoriesService } from './categories.service';
 import { UpdateCategoryInput } from './dto/update-category.input';
+import { StateInput } from 'src/constants/state.input';
+import { UpdatePositionInput } from 'src/constants/position.input';
 export declare class CategoriesResolver {
     private readonly categoriesService;
     constructor(categoriesService: CategoriesService);
@@ -35,5 +37,7 @@ export declare class CategoriesResolver {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     updateCategory(updateCategoryInput: UpdateCategoryInput): Promise<string>;
+    positionCategory(updatePositionInput: UpdatePositionInput[]): Promise<string>;
+    stateCategory(stateInput: StateInput): Promise<string>;
     removeCategory(id: string): Promise<string>;
 }

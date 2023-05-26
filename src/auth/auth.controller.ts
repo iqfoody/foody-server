@@ -22,12 +22,12 @@ export class AuthController {
 
     @Post('/login')
     @UseGuards(GqlAuthGuard)
-    async login(@Body() loginInput: LoginInput, @Req() req){
+    async login(@Body('loginUserInput') loginInput: LoginInput, @Req() req){
         return this.authService.login(req, loginInput);
     }
 
     @Post('/signup')
-    async signup(@Body() createUserInput: CreateUserInput, @Req() req){
+    async signup(@Body('createUserInput') createUserInput: CreateUserInput, @Req() req){
         return this.authService.signup(createUserInput, req);
     }
 

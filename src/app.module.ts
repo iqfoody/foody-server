@@ -27,6 +27,7 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
 import { TagsModule } from './tags/tags.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { SearchesModule } from './searches/searches.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 
 @Module({
@@ -69,7 +70,8 @@ import { SearchesModule } from './searches/searches.module';
     RestaurantsModule,
     TagsModule,
     WalletsModule,
-    SearchesModule
+    SearchesModule,
+    TransactionsModule
   ],
   controllers: [AppController],
   providers: [AppService],

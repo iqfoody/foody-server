@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 let WalletsService = class WalletsService {
+    WalletsModel;
     constructor(WalletsModel) {
         this.WalletsModel = WalletsModel;
     }

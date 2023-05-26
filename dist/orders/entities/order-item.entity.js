@@ -13,6 +13,11 @@ exports.OrderItem = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const meal_entity_1 = require("../../meals/entities/meal.entity");
 let OrderItem = class OrderItem {
+    meal;
+    additions;
+    addIngredients;
+    removeIngredients;
+    quantity;
 };
 __decorate([
     (0, graphql_1.Field)(() => String || meal_entity_1.Meal),

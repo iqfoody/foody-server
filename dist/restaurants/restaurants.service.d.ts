@@ -30,16 +30,12 @@ import { AwsService } from 'src/aws/aws.service';
 import { StateInput } from 'src/constants/state.input';
 import { UpdatePositionInput } from 'src/constants/position.input';
 import { LimitEntity } from 'src/constants/limitEntity';
+import { RestaurantCategoriesService } from 'src/restaurant-categories/restaurant-categories.service';
 export declare class RestaurantsService {
     private RestaurantsModel;
+    private readonly restaurantCategoriesService;
     private readonly awsService;
-    constructor(RestaurantsModel: Model<RestaurantsDocument>, awsService: AwsService);
-    create(createRestaurantInput: CreateRestaurantInput, file: any): Promise<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
-    findAll(): Promise<(import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[]>;
+    constructor(RestaurantsModel: Model<RestaurantsDocument>, restaurantCategoriesService: RestaurantCategoriesService, awsService: AwsService);
     findRestaurnats(): Promise<Omit<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, never>[]>;
@@ -52,10 +48,19 @@ export declare class RestaurantsService {
     findForCategory(category: string, orderBy?: string): Promise<(import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    findOne(id: string): Promise<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
+    findRestaurant(id: string): Promise<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    findRestaurant(id: string): Promise<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
+    searchRestaurant(query: string): Promise<(import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>)[]>;
+    create(createRestaurantInput: CreateRestaurantInput, file: any): Promise<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
+    findAll(): Promise<Omit<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, never>[]>;
+    findOne(id: string): Promise<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     update(id: string, updateRestaurantInput: UpdateRestaurantInput): Promise<string>;
@@ -75,4 +80,5 @@ export declare class RestaurantsService {
     }, never>, import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, RestaurantsDocument>;
+    home(): Promise<number>;
 }

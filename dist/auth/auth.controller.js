@@ -27,6 +27,9 @@ const ability_factory_1 = require("../ability/ability.factory");
 const user_entity_1 = require("../users/entities/user.entity");
 const driver_entity_1 = require("../drivers/entities/driver.entity");
 let AuthController = class AuthController {
+    authService;
+    usersService;
+    driversService;
     constructor(authService, usersService, driversService) {
         this.authService = authService;
         this.usersService = usersService;
@@ -63,7 +66,7 @@ let AuthController = class AuthController {
 __decorate([
     (0, common_1.Post)('/login'),
     (0, common_1.UseGuards)(gqlAuth_guard_1.GqlAuthGuard),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)('loginUserInput')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [login_input_1.LoginInput, Object]),
@@ -71,7 +74,7 @@ __decorate([
 ], AuthController.prototype, "login", null);
 __decorate([
     (0, common_1.Post)('/signup'),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)('createUserInput')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_input_1.CreateUserInput, Object]),

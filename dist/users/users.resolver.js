@@ -20,22 +20,20 @@ const create_user_input_1 = require("./dto/create-user.input");
 const update_user_input_1 = require("./dto/update-user.input");
 const common_1 = require("@nestjs/common");
 const accessAuth_guard_1 = require("../guards/accessAuth.guard");
-const password_user_input_1 = require("./dto/password-user.input");
-const search_users_input_1 = require("./dto/search-users.input");
 const usersResponse_entity_1 = require("./entities/usersResponse.entity");
 const state_input_1 = require("../constants/state.input");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
 const limitEntity_1 = require("../constants/limitEntity");
+const update_password_user_input_1 = require("./dto/update-password-user.input");
+const reportsResults_entity_1 = require("../constants/reportsResults.entity");
 let UsersResolver = class UsersResolver {
+    usersService;
     constructor(usersService) {
         this.usersService = usersService;
     }
-    cresteUser(createUserInput) {
-        return this.usersService.createUser(createUserInput);
-    }
-    async usersSearch(searchUsersInput) {
-        return this.usersService.search(searchUsersInput);
+    createUser(createUserInput) {
+        return this.usersService.createUser(createUserInput, null);
     }
     async findAll(limitEntity) {
         return this.usersService.findAllUsers(limitEntity);
@@ -55,23 +53,18 @@ let UsersResolver = class UsersResolver {
     async removeUser(id) {
         return this.usersService.remove(id);
     }
+    usersReports(date) {
+        return this.usersService.usersReport(date);
+    }
 };
 __decorate([
     (0, graphql_1.Mutation)(() => user_entity_1.User),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: user_entity_1.User }),
-    __param(0, (0, graphql_1.Args)('creteUserInput')),
+    __param(0, (0, graphql_1.Args)('createUserInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_input_1.CreateUserInput]),
     __metadata("design:returntype", void 0)
-], UsersResolver.prototype, "cresteUser", null);
-__decorate([
-    (0, graphql_1.Query)(() => usersResponse_entity_1.UsersResponse, { name: 'searchUsers' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Search, subject: user_entity_1.User }),
-    __param(0, (0, graphql_1.Args)('searchQuery')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [search_users_input_1.SearchUsersInput]),
-    __metadata("design:returntype", Promise)
-], UsersResolver.prototype, "usersSearch", null);
+], UsersResolver.prototype, "createUser", null);
 __decorate([
     (0, graphql_1.Query)(() => usersResponse_entity_1.UsersResponse, { name: 'users' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: user_entity_1.User }),
@@ -101,7 +94,7 @@ __decorate([
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: user_entity_1.User }),
     __param(0, (0, graphql_1.Args)('passwordUserInput')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [password_user_input_1.PasswordUserInput]),
+    __metadata("design:paramtypes", [update_password_user_input_1.UpdatePasswordUser]),
     __metadata("design:returntype", Promise)
 ], UsersResolver.prototype, "passwordUser", null);
 __decorate([
@@ -120,6 +113,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersResolver.prototype, "removeUser", null);
+__decorate([
+    (0, graphql_1.Query)(() => reportsResults_entity_1.Months, { name: 'usersReport' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: user_entity_1.User }),
+    __param(0, (0, graphql_1.Args)('date', { type: () => String })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], UsersResolver.prototype, "usersReports", null);
 UsersResolver = __decorate([
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, graphql_1.Resolver)(() => user_entity_1.User),

@@ -33,19 +33,19 @@ export declare class TagsService {
     private TagsModel;
     private readonly awsService;
     constructor(TagsModel: Model<TagsDocument>, awsService: AwsService);
+    findTags(): Promise<(import("mongoose").Document<unknown, {}, TagsDocument> & Omit<import("src/models/tags.schema").Tags & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>)[]>;
+    findTag(id: string): Promise<import("mongoose").Document<unknown, {}, TagsDocument> & Omit<import("src/models/tags.schema").Tags & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
     create(createTagInput: CreateTagInput, file: any): Promise<import("mongoose").Document<unknown, {}, TagsDocument> & Omit<import("src/models/tags.schema").Tags & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, TagsDocument> & Omit<import("src/models/tags.schema").Tags & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    findTags(): Promise<(import("mongoose").Document<unknown, {}, TagsDocument> & Omit<import("src/models/tags.schema").Tags & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[]>;
     findOne(id: string): Promise<import("mongoose").Document<unknown, {}, TagsDocument> & Omit<import("src/models/tags.schema").Tags & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
-    findTag(id: string): Promise<import("mongoose").Document<unknown, {}, TagsDocument> & Omit<import("src/models/tags.schema").Tags & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     update(id: string, updateTagInput: UpdateTagInput): Promise<string>;

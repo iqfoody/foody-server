@@ -30,16 +30,13 @@ import { AwsService } from 'src/aws/aws.service';
 import { StateInput } from 'src/constants/state.input';
 import { UpdatePositionInput } from 'src/constants/position.input';
 import { LimitEntity } from 'src/constants/limitEntity';
+import { CreateMealObject } from './dto/create-meal-object.input';
+import { UpdateMealObject } from './dto/update-meal-object.input';
+import { RemoveMealObject } from './dto/remove-mea-object.input';
 export declare class MealsService {
     private MealsModel;
     private readonly awsService;
     constructor(MealsModel: Model<MealsDocument>, awsService: AwsService);
-    create(createMealInput: CreateMealInput, file: any): Promise<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
-    findAll(): Promise<(import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[]>;
     findForRestaurant(restaurant: string): Promise<(import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
@@ -52,23 +49,40 @@ export declare class MealsService {
     findForTag(tag: string): Promise<(import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    findForRestaurantCategory(restaurantCategories: string): Promise<(import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+    findForRestaurantCategory(restaurantCategory: string): Promise<(import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    findOne(id: string): Promise<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+    findMeal(id: string): Promise<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    findMeal(id: string): Promise<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+    searchMeals(query: string): Promise<(import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>)[]>;
+    create(createMealInput: CreateMealInput): Promise<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
+    createImage(id: string, image: string): Promise<string>;
+    findAll(limitEntity: LimitEntity): Promise<{
+        data: (import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+            _id: import("mongoose").Types.ObjectId;
+        }, never>)[];
+        pages: number;
+    }>;
+    findOne(id: string): Promise<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     update(id: string, updateMealInput: UpdateMealInput): Promise<string>;
     state(stateInput: StateInput): Promise<string>;
     position(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     remove(id: string): Promise<string>;
-    findExtention(_id: string): Promise<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+    findExtention(_id: string, restaurant: string): Promise<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     search(query: string): Promise<(import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
+    home(): Promise<number>;
+    createMealObject(createMealObject: CreateMealObject): Promise<any>;
+    updateMealObject(updateMealObject: UpdateMealObject): Promise<string>;
+    removeMealObject(removeMealObject: RemoveMealObject): Promise<string>;
 }

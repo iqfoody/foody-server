@@ -13,6 +13,8 @@ exports.UsersResponse = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const user_entity_1 = require("./user.entity");
 let UsersResponse = class UsersResponse {
+    data;
+    pages;
 };
 __decorate([
     (0, graphql_1.Field)(() => [user_entity_1.User]),

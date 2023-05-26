@@ -9,6 +9,7 @@ import { StateInput } from 'src/constants/state.input';
 import { CheckAbilities } from 'src/ability/ability.decorator';
 import { Actions } from 'src/ability/ability.factory';
 import { PasswordUserInput } from 'src/users/dto/password-user.input';
+import { UpdatePasswordUser } from 'src/users/dto/update-password-user.input';
 
 @UseGuards(AccessAuthGuard)
 @Resolver(() => Admin)
@@ -18,7 +19,7 @@ export class AdminsResolver {
   @Mutation(() => Admin)
   @CheckAbilities({actions: Actions.Create, subject: Admin})
   createAdmin(@Args('createAdminInput') createAdminInput: CreateAdminInput, @Context() context) {
-    return this.adminsService.create(context.req.user._id, createAdminInput);
+    return this.adminsService.create(context.req.user._id, createAdminInput, null);
   }
 
   @Query(() => [Admin], { name: 'admins' })
@@ -47,7 +48,7 @@ export class AdminsResolver {
 
   @Mutation(() => String, {name: 'passwordAdmin'})
   @CheckAbilities({actions: Actions.Update, subject: Admin})
-  async passwordUser(@Args('passwordAdminInput') passwordAdminInput: PasswordUserInput) {
+  async passwordUser(@Args('passwordAdminInput') passwordAdminInput: UpdatePasswordUser) {
     return this.adminsService.passwordAdmin(passwordAdminInput.id, passwordAdminInput);
   }
 

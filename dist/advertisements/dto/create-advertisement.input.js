@@ -12,6 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateAdvertisementInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateAdvertisementInput = class CreateAdvertisementInput {
+    target;
+    user;
+    title;
+    titleEN;
+    titleKR;
+    image;
+    type;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),

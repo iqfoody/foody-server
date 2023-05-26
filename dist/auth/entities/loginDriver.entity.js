@@ -13,6 +13,9 @@ exports.LoginDriver = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const driver_entity_1 = require("../../drivers/entities/driver.entity");
 let LoginDriver = class LoginDriver {
+    accessToken;
+    refreshToken;
+    driver;
 };
 __decorate([
     (0, graphql_1.Field)(),

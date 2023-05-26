@@ -22,15 +22,27 @@ const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
+const limitEntity_1 = require("../constants/limitEntity");
+const state_input_1 = require("../constants/state.input");
+const position_input_1 = require("../constants/position.input");
+const mealsResponse_entity_1 = require("./entities/mealsResponse.entity");
+const create_meal_object_input_1 = require("./dto/create-meal-object.input");
+const update_meal_object_input_1 = require("./dto/update-meal-object.input");
+const remove_mea_object_input_1 = require("./dto/remove-mea-object.input");
+const meal_addition_entity_1 = require("./entities/meal-addition.entity");
 let MealsResolver = class MealsResolver {
+    mealsService;
     constructor(mealsService) {
         this.mealsService = mealsService;
     }
     createMeal(createMealInput) {
-        return this.mealsService.create(createMealInput, null);
+        return this.mealsService.create(createMealInput);
     }
-    findAll() {
-        return this.mealsService.findAll();
+    findAll(limitEntity) {
+        return this.mealsService.findAll(limitEntity);
+    }
+    search(query) {
+        return this.mealsService.search(query);
     }
     findOne(id) {
         return this.mealsService.findOne(id);
@@ -38,8 +50,23 @@ let MealsResolver = class MealsResolver {
     updateMeal(updateMealInput) {
         return this.mealsService.update(updateMealInput.id, updateMealInput);
     }
+    stateMeal(stateInput) {
+        return this.mealsService.state(stateInput);
+    }
+    positionMeal(updatePositionInput) {
+        return this.mealsService.position(updatePositionInput);
+    }
     removeMeal(id) {
         return this.mealsService.remove(id);
+    }
+    createMealObject(createMealObject) {
+        return this.mealsService.createMealObject(createMealObject);
+    }
+    updateMealObject(updateMealObject) {
+        return this.mealsService.updateMealObject(updateMealObject);
+    }
+    removeMealObject(removeMealObject) {
+        return this.mealsService.removeMealObject(removeMealObject);
     }
 };
 __decorate([
@@ -51,12 +78,21 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], MealsResolver.prototype, "createMeal", null);
 __decorate([
-    (0, graphql_1.Query)(() => [meal_entity_1.Meal], { name: 'meals' }),
+    (0, graphql_1.Query)(() => mealsResponse_entity_1.MealsResponse, { name: 'meals' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: meal_entity_1.Meal }),
+    __param(0, (0, graphql_1.Args)('limitEntity')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
     __metadata("design:returntype", void 0)
 ], MealsResolver.prototype, "findAll", null);
+__decorate([
+    (0, graphql_1.Query)(() => [meal_entity_1.Meal], { name: 'searchMeals' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: meal_entity_1.Meal }),
+    __param(0, (0, graphql_1.Args)('query', { type: () => String })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], MealsResolver.prototype, "search", null);
 __decorate([
     (0, graphql_1.Query)(() => meal_entity_1.Meal, { name: 'meal' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: meal_entity_1.Meal }),
@@ -66,7 +102,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], MealsResolver.prototype, "findOne", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => meal_entity_1.Meal),
+    (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
     __param(0, (0, graphql_1.Args)('updateMealInput')),
     __metadata("design:type", Function),
@@ -74,13 +110,53 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], MealsResolver.prototype, "updateMeal", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => meal_entity_1.Meal),
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
+    __param(0, (0, graphql_1.Args)('stateInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [state_input_1.StateInput]),
+    __metadata("design:returntype", void 0)
+], MealsResolver.prototype, "stateMeal", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
+    __param(0, (0, graphql_1.Args)('updatePositionInput', { type: () => [position_input_1.UpdatePositionInput] })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array]),
+    __metadata("design:returntype", void 0)
+], MealsResolver.prototype, "positionMeal", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: meal_entity_1.Meal }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], MealsResolver.prototype, "removeMeal", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => meal_addition_entity_1.MealAddition),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
+    __param(0, (0, graphql_1.Args)('createMealObject')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_meal_object_input_1.CreateMealObject]),
+    __metadata("design:returntype", void 0)
+], MealsResolver.prototype, "createMealObject", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
+    __param(0, (0, graphql_1.Args)('updateMealObject')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [update_meal_object_input_1.UpdateMealObject]),
+    __metadata("design:returntype", void 0)
+], MealsResolver.prototype, "updateMealObject", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
+    __param(0, (0, graphql_1.Args)('removeMealObject')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [remove_mea_object_input_1.RemoveMealObject]),
+    __metadata("design:returntype", void 0)
+], MealsResolver.prototype, "removeMealObject", null);
 MealsResolver = __decorate([
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, graphql_1.Resolver)(() => meal_entity_1.Meal),

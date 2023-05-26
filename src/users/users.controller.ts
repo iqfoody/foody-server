@@ -9,6 +9,7 @@ import { User } from './entities/user.entity';
 import { PasswordUserInput } from './dto/password-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { UpdateUserInfo } from './dto/update-info.input';
+import { CreateUserInput } from './dto/create-user.input';
 
 @UseGuards(AccessAuthGuard)
 @Controller('users')
@@ -18,9 +19,9 @@ export class UsersController {
       private readonly awsService: AwsService,
       ) {}
 
-    @Put('/update')
-    @UseInterceptors(FileInterceptor('imageUrl'))
+    @Put('/profile')
     @CheckAbilities({actions: Actions.UpdateInfo, subject: User})
+    @UseInterceptors(FileInterceptor('image'))
     async update(@Body() updateUserInfo: UpdateUserInfo, @UploadedFile() file, @Req() req){
         if(file){
           const result = await this.awsService.createImage(file, req.user._id);
@@ -35,4 +36,20 @@ export class UsersController {
     async password(@Body() passwordUserInput: PasswordUserInput, @Req() req){
         return this.usersService.password(req.user._id, passwordUserInput);
     }
+
+    @Post('/')
+    @CheckAbilities({actions: Actions.Create, subject: User})
+    @UseInterceptors(FileInterceptor('image'))
+    async createUser(@Body() createUserInput: CreateUserInput, @UploadedFile() file) {
+      return this.usersService.createUser(createUserInput, file);
+    }
+
+    @Put('/')
+    @CheckAbilities({actions: Actions.Update, subject: User})
+    @UseInterceptors(FileInterceptor('image'))
+    async updateUser(@Body() updateUserInput: UpdateUserInput, @UploadedFile() file) {
+        const result = await this.awsService.createImage(file, updateUserInput.id);
+      return this.usersService.updateUser(updateUserInput.id, {...updateUserInput, image: result?.Key});
+    }
+
 }

@@ -12,13 +12,13 @@ export class Meal {
   @Field(() => ID)
   _id: string;
 
-  @Field(()=> String || Restaurant)
+  @Field(()=> Restaurant)
   restaurant: string | Restaurant;
 
-  @Field(()=> String || Tag, {nullable: true})
+  @Field(()=> Tag, {nullable: true})
   tag?: string | Tag;
 
-  @Field(()=> String || RestaurantCategory)
+  @Field(()=> RestaurantCategory)
   restaurantCategory: string | RestaurantCategory;
 
   @Field()
@@ -39,8 +39,8 @@ export class Meal {
   @Field({nullable: true})
   descriptionKR?: string;
 
-  @Field()
-  image: string;
+  @Field({nullable: true})
+  image?: string;
 
   @Field(()=> [MealAddition], {nullable: true})
   additions?: MealAddition[];
@@ -65,5 +65,11 @@ export class Meal {
 
   @Field()
   state: mealStatus;
+  
+  @Field(()=> Date, { nullable: true})
+  createdAt?: Date;
+
+  @Field(()=> Date, { nullable: true})
+  updatedAt?: Date;
 
 }

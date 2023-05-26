@@ -13,6 +13,11 @@ exports.UpdateAdminInput = void 0;
 const create_admin_input_1 = require("./create-admin.input");
 const graphql_1 = require("@nestjs/graphql");
 let UpdateAdminInput = class UpdateAdminInput extends (0, graphql_1.PartialType)(create_admin_input_1.CreateAdminInput) {
+    id;
+    ip;
+    platform;
+    refreshToken;
+    deviceToken;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),

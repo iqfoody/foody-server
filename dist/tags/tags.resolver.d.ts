@@ -26,6 +26,8 @@
 import { TagsService } from './tags.service';
 import { CreateTagInput } from './dto/create-tag.input';
 import { UpdateTagInput } from './dto/update-tag.input';
+import { StateInput } from 'src/constants/state.input';
+import { UpdatePositionInput } from 'src/constants/position.input';
 export declare class TagsResolver {
     private readonly tagsService;
     constructor(tagsService: TagsService);
@@ -39,5 +41,7 @@ export declare class TagsResolver {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     updateTag(updateTagInput: UpdateTagInput): Promise<string>;
+    StateTag(stateInput: StateInput): Promise<string>;
+    positionTag(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     removeTag(id: string): Promise<string>;
 }
