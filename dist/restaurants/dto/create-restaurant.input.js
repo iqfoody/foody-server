@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateRestaurantInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateRestaurantInput = class CreateRestaurantInput {
-    category;
     title;
     titleEN;
     titleKR;
@@ -23,10 +22,6 @@ let CreateRestaurantInput = class CreateRestaurantInput {
     time;
     deliveryPrice;
 };
-__decorate([
-    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
-    __metadata("design:type", String)
-], CreateRestaurantInput.prototype, "category", void 0);
 __decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", String)

@@ -41,7 +41,7 @@ export class AdvertisementsController {
     @CheckAbilities({actions: Actions.Update, subject: Advertisement})
     @UseInterceptors(FileInterceptor('image'))
     async updateAdvertisement(@Body() updateAdvertisementInput: UpdateAdvertisementInput, @UploadedFile() file) {
-        const result = await this.awsService.createImage(file, updateAdvertisementInput.id);
+        const result = file ? await this.awsService.createImage(file, updateAdvertisementInput.id) : undefined;
       return this.advertisementsService.update(updateAdvertisementInput.id, {...updateAdvertisementInput, image: result?.Key});
     }
 }

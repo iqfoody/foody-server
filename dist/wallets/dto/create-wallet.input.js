@@ -12,12 +12,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateWalletInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateWalletInput = class CreateWalletInput {
-    _id;
+    user;
+    driver;
+    admin;
 };
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.ID),
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
     __metadata("design:type", String)
-], CreateWalletInput.prototype, "_id", void 0);
+], CreateWalletInput.prototype, "user", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
+    __metadata("design:type", String)
+], CreateWalletInput.prototype, "driver", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
+    __metadata("design:type", String)
+], CreateWalletInput.prototype, "admin", void 0);
 CreateWalletInput = __decorate([
     (0, graphql_1.InputType)()
 ], CreateWalletInput);

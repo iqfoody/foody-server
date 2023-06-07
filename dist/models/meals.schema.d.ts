@@ -3,6 +3,7 @@ import { mealStatus } from 'src/constants/types.type';
 import { Restaurants } from './restaurants.schema';
 import { Tags } from './tags.schema';
 import { RestaurantCategories } from './restaurantCategories.schema';
+import { Categories } from './categories.schema';
 export type MealsDocument = Meals & Document;
 export declare class MealIngredients {
     title: string;
@@ -26,6 +27,7 @@ export declare const MealAdditionsSchema: mongoose.Schema<MealAdditions, mongoos
     _id: mongoose.Types.ObjectId;
 }, never>>;
 export declare class Meals {
+    category: string | Categories;
     restaurant: string | Restaurants;
     tag: string | Tags;
     restaurantCategory: string | RestaurantCategories;

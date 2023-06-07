@@ -14,12 +14,14 @@ const admins_controller_1 = require("./admins.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const admins_schema_1 = require("../models/admins.schema");
 const aws_module_1 = require("../aws/aws.module");
+const wallets_module_1 = require("../wallets/wallets.module");
 let AdminsModule = class AdminsModule {
 };
 AdminsModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: "Admins", schema: admins_schema_1.AdminsSchema },]),
+            (0, common_1.forwardRef)(() => wallets_module_1.WalletsModule),
             aws_module_1.AwsModule,
         ],
         providers: [admins_resolver_1.AdminsResolver, admins_service_1.AdminsService],

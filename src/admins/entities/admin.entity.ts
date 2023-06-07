@@ -1,11 +1,15 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { adminTypes, publicStatus } from 'src/constants/types.type';
+import { Wallet } from 'src/wallets/entities/wallet.entity';
 
 @ObjectType()
 export class Admin {
 
   @Field(() => ID)
   _id: string;
+
+  @Field(() => Wallet)
+  wallet: string | Wallet;
 
   @Field()
   name: string;

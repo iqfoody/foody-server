@@ -25,7 +25,7 @@ let AdvertisementsService = class AdvertisementsService {
         this.awsService = awsService;
     }
     async findAdvertisements() {
-        const advertisements = await this.AdvertisementsModel.find({ state: "Active" }, { title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1, target: 1, _id: 0 });
+        const advertisements = await this.AdvertisementsModel.find({ state: "Active" }, { title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1, restaurant: 1, meal: 1 });
         for (const single of advertisements) {
             if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
@@ -35,7 +35,7 @@ let AdvertisementsService = class AdvertisementsService {
     async findAdvertisement(id) {
         if (!(0, mongoose_2.isValidObjectId)(id))
             throw new common_1.BadRequestException("There isn't advertisement with this id");
-        const advertisement = await this.AdvertisementsModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }, { title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1, target: 1, _id: 0 });
+        const advertisement = await this.AdvertisementsModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }, { title: 1, titleEN: 1, titleKR: 1, image: 1, type: 1 });
         if (advertisement?.image)
             advertisement.image = this.awsService.getUrl(advertisement.image);
         return advertisement;
@@ -60,9 +60,19 @@ let AdvertisementsService = class AdvertisementsService {
         return advertisements;
     }
     async findOne(id) {
-        const advertisement = await this.AdvertisementsModel.findById(id);
+        const advertisement = await this.AdvertisementsModel.findById(id).populate([
+            { path: "restaurant", select: { title: 1, titleEN: 1, titleKR: 1, image: 1 } },
+            { path: "meal", select: { title: 1, titleEN: 1, titleKR: 1, image: 1 } },
+            { path: "user", select: { name: 1, phoneNumber: 1, image: 1 } },
+        ]);
         if (advertisement?.image)
             advertisement.image = this.awsService.getUrl(advertisement.image);
+        if (advertisement?.restaurant?.image)
+            advertisement.restaurant.image = this.awsService.getUrl(advertisement.restaurant.image);
+        if (advertisement?.meal?.image)
+            advertisement.meal.image = this.awsService.getUrl(advertisement.meal.image);
+        if (advertisement?.user?.image)
+            advertisement.user.image = this.awsService.getUrl(advertisement.user.image);
         return advertisement;
     }
     async update(id, updateAdvertisementInput) {

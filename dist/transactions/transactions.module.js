@@ -15,9 +15,9 @@ const wallets_module_1 = require("../wallets/wallets.module");
 const mongoose_1 = require("@nestjs/mongoose");
 const transactions_schema_1 = require("../models/transactions.schema");
 const admins_module_1 = require("../admins/admins.module");
-const orders_module_1 = require("../orders/orders.module");
 const users_module_1 = require("../users/users.module");
 const aws_module_1 = require("../aws/aws.module");
+const orders_module_1 = require("../orders/orders.module");
 let TransactionsModule = class TransactionsModule {
 };
 TransactionsModule = __decorate([

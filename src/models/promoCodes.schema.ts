@@ -23,6 +23,9 @@ export class PromoCodes {
   @Prop({type: mongoose.Schema.Types.Number, required: [true, "Discount required"]})
   discount: number;
 
+  @Prop({type: mongoose.Schema.Types.Number, default: 0})
+  usageTimes: number;
+
   @Prop({type: mongoose.Schema.Types.Boolean, default: true})
   isPublic: boolean;
 

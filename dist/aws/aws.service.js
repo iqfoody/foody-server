@@ -16,17 +16,25 @@ const aws_sdk_1 = require("aws-sdk");
 const client_cloudfront_1 = require("@aws-sdk/client-cloudfront");
 let AwsService = class AwsService {
     s3;
+    sns;
     cloudFront;
     bucketImages;
     errorParams;
     cloudFrontKeyID;
     cloudFrontPrivateKey;
     distributionId;
+    otps;
     constructor() {
         const region = process.env.AWS_BUCKET_REGION;
         const accessKeyId = process.env.AWS_ACCESS_KEY_LOCAL;
         const secretAccessKey = process.env.AWS_SECRET_KEY_LOCAL;
+        this.otps = [];
         this.s3 = new aws_sdk_1.S3({
+            region,
+            accessKeyId,
+            secretAccessKey
+        });
+        this.sns = new aws_sdk_1.SNS({
             region,
             accessKeyId,
             secretAccessKey
@@ -91,6 +99,60 @@ let AwsService = class AwsService {
         };
         const invalidationCommand = new client_cloudfront_1.CreateInvalidationCommand(invalidationParams);
         this.cloudFront.send(invalidationCommand);
+    }
+    async sendOtp(phoneNumber) {
+        const challengeAnswer = Math.random().toString(10).substring(2, 8);
+        const options = {
+            Message: "Your foody account OTP: " + challengeAnswer,
+            PhoneNumber: phoneNumber,
+        };
+        const listPhones = await this.sns.listSMSSandboxPhoneNumbers().promise();
+        const list = listPhones?.PhoneNumbers?.reduce((prev, current) => [...prev, current?.PhoneNumber], []);
+        if (list?.includes(phoneNumber)) {
+            const list = this.otps.find(ot => ot.phoneNumber === phoneNumber);
+            if (list)
+                return "Sended";
+            this.otps.push({ phoneNumber, otp: challengeAnswer });
+            console.log(this.otps);
+            return this.sns.publish(options, (err, data) => {
+                if (err)
+                    return err;
+                if (data)
+                    return "Sended";
+            }).promise();
+        }
+        else {
+            return this.sns.createSMSSandboxPhoneNumber({ PhoneNumber: phoneNumber }).promise();
+        }
+    }
+    async verifyOtp(phoneNumber, otp) {
+        const listPhones = await this.sns.listSMSSandboxPhoneNumbers().promise();
+        const list = listPhones?.PhoneNumbers?.reduce((prev, current) => [...prev, current?.PhoneNumber], []);
+        if (list?.includes(phoneNumber)) {
+            const prevOtp = this.otps?.find(ot => ot.otp === otp);
+            if (prevOtp) {
+                this.otps = this.otps.filter(ot => ot.phoneNumber !== phoneNumber);
+                return "Verified";
+            }
+            else
+                throw new common_1.UnauthorizedException("Access Denied");
+        }
+        else {
+            const result = await this.sns.verifySMSSandboxPhoneNumber({ PhoneNumber: phoneNumber, OneTimePassword: `${otp}` }, (err, data) => {
+                if (err)
+                    throw new common_1.UnauthorizedException("Access Denied");
+                if (data)
+                    return "Verified";
+            }).promise();
+            return result;
+        }
+    }
+    async message() {
+        const options = {
+            Message: "Hi hassan, how are you?",
+            PhoneNumber: "+9647714103179",
+        };
+        return this.sns.publish(options).promise();
     }
 };
 AwsService = __decorate([

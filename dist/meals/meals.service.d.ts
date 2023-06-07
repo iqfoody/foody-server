@@ -46,6 +46,9 @@ export declare class MealsService {
         }, never>)[];
         pages: number;
     }>;
+    findForCategory(category: string, orderBy?: string): Promise<(import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>)[]>;
     findForTag(tag: string): Promise<(import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
@@ -63,6 +66,12 @@ export declare class MealsService {
     }, never>>;
     createImage(id: string, image: string): Promise<string>;
     findAll(limitEntity: LimitEntity): Promise<{
+        data: Omit<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+            _id: import("mongoose").Types.ObjectId;
+        }, never>, never>[];
+        pages: number;
+    }>;
+    findAllForRestaurant(limitEntity: LimitEntity): Promise<{
         data: (import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
             _id: import("mongoose").Types.ObjectId;
         }, never>)[];

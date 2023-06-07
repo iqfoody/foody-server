@@ -23,6 +23,9 @@ export class PromoCode {
   @Field(()=> Int)
   discount: number;
 
+  @Field(()=> Int)
+  usageTimes: number;
+
   @Field(()=> Boolean)
   isPublic: boolean;
 

@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { CreateDriverInput } from './dto/create-driver.input';
 import { UpdateDriverInput } from './dto/update-driver.input';
 import { InjectModel } from '@nestjs/mongoose';
@@ -9,11 +9,13 @@ import { StateInput } from 'src/constants/state.input';
 import { Response } from 'src/constants/response.entity';
 import { genSalt, hash } from 'bcryptjs';
 import { UpdatePasswordUser } from 'src/users/dto/update-password-user.input';
+import { WalletsService } from 'src/wallets/wallets.service';
 
 @Injectable()
 export class DriversService {
   constructor(
     @InjectModel("Drivers") private DriversModel: IDriversModel,
+    @Inject(forwardRef(() => WalletsService)) private walletsService: WalletsService,
     private readonly awsService: AwsService,
   ) {}
 
@@ -53,13 +55,16 @@ export class DriversService {
       const result = await this.awsService.createImage(file, driver._id);
       driver.image = result?.Key;
     }
+    // create wallet...
+    const wallet = await this.walletsService.create({driver: driver._id});
+    driver.wallet = wallet._id;
     await driver.save();
     if(driver?.image) driver.image = this.awsService.getUrl(driver.image);
     return driver;
   }
 
   async findAll() {
-    const drivers = await this.DriversModel.find();
+    const drivers = await this.DriversModel.find().populate("wallet");
     for(const driver of drivers){
       if(driver?.image) driver.image = this.awsService.getUrl(driver?.image);
     }
@@ -67,7 +72,7 @@ export class DriversService {
   }
 
   async findOne(id: string) {
-    const driver = await this.DriversModel.findById(id);
+    const driver = await this.DriversModel.findById(id).populate("wallet");
     if(driver?.image) driver.image = this.awsService.getUrl(driver?.image);
     return driver;
   }
@@ -109,6 +114,7 @@ export class DriversService {
   async remove(_id: string) {
     const { image } = await this.DriversModel.findOne({_id}, {image: 1, _id: 0});
     await this.DriversModel.findByIdAndDelete(_id);
+    await this.walletsService.removeDriver(_id);
     if(image) this.awsService.removeImage(image);
     return "success";
   }

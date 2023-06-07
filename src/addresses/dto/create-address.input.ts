@@ -14,6 +14,9 @@ export class CreateAddressInput {
   country?: string;
 
   @Field({nullable: true})
+  phoneNumber?: string;
+
+  @Field({nullable: true})
   city?: province;
 
   @Field({ nullable: true })

@@ -16,7 +16,6 @@ exports.WalletsResolver = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const wallets_service_1 = require("./wallets.service");
 const wallet_entity_1 = require("./entities/wallet.entity");
-const update_wallet_input_1 = require("./dto/update-wallet.input");
 const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
 const ability_decorator_1 = require("../ability/ability.decorator");
@@ -29,9 +28,6 @@ let WalletsResolver = class WalletsResolver {
     findOne(id) {
         return this.walletsService.findOne(id);
     }
-    updateWallet(updateWalletInput) {
-        return this.walletsService.update(updateWalletInput.id, updateWalletInput);
-    }
 };
 __decorate([
     (0, graphql_1.Query)(() => wallet_entity_1.Wallet, { name: 'wallet' }),
@@ -41,14 +37,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], WalletsResolver.prototype, "findOne", null);
-__decorate([
-    (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: wallet_entity_1.Wallet }),
-    __param(0, (0, graphql_1.Args)('updateWalletInput')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_wallet_input_1.UpdateWalletInput]),
-    __metadata("design:returntype", void 0)
-], WalletsResolver.prototype, "updateWallet", null);
 WalletsResolver = __decorate([
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, graphql_1.Resolver)(() => wallet_entity_1.Wallet),

@@ -15,6 +15,7 @@ let CreateAddressInput = class CreateAddressInput {
     user;
     title;
     country;
+    phoneNumber;
     city;
     address;
     building;
@@ -35,6 +36,10 @@ __decorate([
     (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)
 ], CreateAddressInput.prototype, "country", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], CreateAddressInput.prototype, "phoneNumber", void 0);
 __decorate([
     (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)

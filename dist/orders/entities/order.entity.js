@@ -42,6 +42,7 @@ let Order = class Order {
     pointsBack;
     createdAt;
     updatedAt;
+    no;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
@@ -143,6 +144,10 @@ __decorate([
     (0, graphql_1.Field)(() => Date, { nullable: true }),
     __metadata("design:type", Date)
 ], Order.prototype, "updatedAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], Order.prototype, "no", void 0);
 Order = __decorate([
     (0, graphql_1.ObjectType)()
 ], Order);

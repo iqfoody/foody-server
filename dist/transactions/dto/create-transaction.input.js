@@ -14,23 +14,27 @@ const graphql_1 = require("@nestjs/graphql");
 let CreateTransactionInput = class CreateTransactionInput {
     user;
     admin;
+    driver;
     order;
     type;
     procedure;
     amount;
-    previous;
     description;
     paymentMethod;
     state;
 };
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.ID),
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
     __metadata("design:type", String)
 ], CreateTransactionInput.prototype, "user", void 0);
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
     __metadata("design:type", String)
 ], CreateTransactionInput.prototype, "admin", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
+    __metadata("design:type", String)
+], CreateTransactionInput.prototype, "driver", void 0);
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
     __metadata("design:type", String)
@@ -47,10 +51,6 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int),
     __metadata("design:type", Number)
 ], CreateTransactionInput.prototype, "amount", void 0);
-__decorate([
-    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
-    __metadata("design:type", Number)
-], CreateTransactionInput.prototype, "previous", void 0);
 __decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", String)

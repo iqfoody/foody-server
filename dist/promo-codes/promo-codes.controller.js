@@ -24,30 +24,31 @@ let PromoCodesController = class PromoCodesController {
     constructor(promoCodesService) {
         this.promoCodesService = promoCodesService;
     }
+    async checkPromoCode(name, req) {
+        console.log(name);
+        return this.promoCodesService.check(name, req.user._id);
+    }
     async getPromoCodes(req) {
         return this.promoCodesService.findPromoCodes(req.user._id);
-    }
-    async checkPromoCode(name, req) {
-        return this.promoCodesService.check(name, req.user._id);
     }
 };
 __decorate([
     (0, common_1.Get)('/'),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: promo_code_entity_1.PromoCode }),
+    __param(0, (0, common_1.Query)('promoCode')),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], PromoCodesController.prototype, "checkPromoCode", null);
+__decorate([
+    (0, common_1.Get)('/self'),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: promo_code_entity_1.PromoCode }),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PromoCodesController.prototype, "getPromoCodes", null);
-__decorate([
-    (0, common_1.Get)('/:promoCode'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: promo_code_entity_1.PromoCode }),
-    __param(0, (0, common_1.Param)('promoCode')),
-    __param(1, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
-], PromoCodesController.prototype, "checkPromoCode", null);
 PromoCodesController = __decorate([
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, common_1.Controller)('promo-codes'),

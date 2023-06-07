@@ -28,6 +28,7 @@ import { TagsModule } from './tags/tags.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { SearchesModule } from './searches/searches.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { SettingsModule } from './settings/settings.module';
 
 
 @Module({
@@ -71,7 +72,8 @@ import { TransactionsModule } from './transactions/transactions.module';
     TagsModule,
     WalletsModule,
     SearchesModule,
-    TransactionsModule
+    TransactionsModule,
+    SettingsModule
   ],
   controllers: [AppController],
   providers: [AppService],

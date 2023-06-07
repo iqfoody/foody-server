@@ -21,6 +21,7 @@ let PromoCodes = class PromoCodes {
     user;
     type;
     discount;
+    usageTimes;
     isPublic;
     expire;
     state;
@@ -45,6 +46,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, required: [true, "Discount required"] }),
     __metadata("design:type", Number)
 ], PromoCodes.prototype, "discount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0 }),
+    __metadata("design:type", Number)
+], PromoCodes.prototype, "usageTimes", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Boolean, default: true }),
     __metadata("design:type", Boolean)

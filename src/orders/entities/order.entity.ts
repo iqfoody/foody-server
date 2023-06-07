@@ -84,4 +84,8 @@ export class Order {
   @Field(()=> Date, {nullable: true})
   updatedAt?: Date
 
+  @Field(()=> Int, {nullable: true})
+  no?: number;
+
+
 }

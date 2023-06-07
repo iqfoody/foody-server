@@ -33,6 +33,12 @@ export class MealsResolver {
     return this.mealsService.findAll(limitEntity);
   }
 
+  @Query(() => MealsResponse, { name: 'mealsRestaurant' })
+  @CheckAbilities({actions: Actions.Read, subject: Meal})
+  findAllForRestaurant(@Args('limitEntity') limitEntity: LimitEntity) {
+    return this.mealsService.findAllForRestaurant(limitEntity);
+  }
+
   @Query(() => [Meal], { name: 'searchMeals' })
   @CheckAbilities({actions: Actions.Read, subject: Meal})
   search(@Args('query', {type: ()=> String}) query: string) {

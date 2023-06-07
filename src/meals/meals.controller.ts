@@ -16,11 +16,6 @@ export class MealsController {
         private readonly awsService: AwsService,
     ){}
 
-    @Get('/:id')
-    async getMeal(@Param('id') id: string){
-        return this.mealsService.findMeal(id);
-    }
-
     @Get('/main')
     //@Query('limit') limit: number, @Query('page') page: number
     async getMealsInfinty(){
@@ -40,6 +35,11 @@ export class MealsController {
     @Get('/restaurantCategory/:id')
     async getrestaurantCategory(@Param('id') restaurantCategory: string){
         return this.mealsService.findForRestaurantCategory(restaurantCategory);
+    }
+
+    @Get('/:id')
+    async getMeal(@Param('id') id: string){
+        return this.mealsService.findMeal(id);
     }
 
     // dashboard...

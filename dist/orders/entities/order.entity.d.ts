@@ -30,4 +30,5 @@ export declare class Order {
     pointsBack?: number;
     createdAt?: Date;
     updatedAt?: Date;
+    no?: number;
 }

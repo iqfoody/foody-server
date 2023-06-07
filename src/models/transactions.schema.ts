@@ -7,11 +7,14 @@ export type TransactionsDocument = Transactions & Document;
 @Schema({timestamps: true})
 export class Transactions {
 
-  @Prop({type: mongoose.Schema.Types.ObjectId, ref:"Users", required: [true, "user id is required"]})
+  @Prop({type: mongoose.Schema.Types.ObjectId, ref:"Users"})
   user: string;
 
   @Prop({type: mongoose.Schema.Types.ObjectId, ref:"Admins"})
   admin: string;
+
+  @Prop({type: mongoose.Schema.Types.ObjectId, ref:"Drivers"})
+  driver: string;
 
   @Prop({type: mongoose.Schema.Types.ObjectId, ref:"Orders"})
   order: string;

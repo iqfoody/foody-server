@@ -17,11 +17,14 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const aws_service_1 = require("../aws/aws.service");
 const bcryptjs_1 = require("bcryptjs");
+const wallets_service_1 = require("../wallets/wallets.service");
 let DriversService = class DriversService {
     DriversModel;
+    walletsService;
     awsService;
-    constructor(DriversModel, awsService) {
+    constructor(DriversModel, walletsService, awsService) {
         this.DriversModel = DriversModel;
+        this.walletsService = walletsService;
         this.awsService = awsService;
     }
     async login(loginInput) {
@@ -57,13 +60,15 @@ let DriversService = class DriversService {
             const result = await this.awsService.createImage(file, driver._id);
             driver.image = result?.Key;
         }
+        const wallet = await this.walletsService.create({ driver: driver._id });
+        driver.wallet = wallet._id;
         await driver.save();
         if (driver?.image)
             driver.image = this.awsService.getUrl(driver.image);
         return driver;
     }
     async findAll() {
-        const drivers = await this.DriversModel.find();
+        const drivers = await this.DriversModel.find().populate("wallet");
         for (const driver of drivers) {
             if (driver?.image)
                 driver.image = this.awsService.getUrl(driver?.image);
@@ -71,7 +76,7 @@ let DriversService = class DriversService {
         return drivers;
     }
     async findOne(id) {
-        const driver = await this.DriversModel.findById(id);
+        const driver = await this.DriversModel.findById(id).populate("wallet");
         if (driver?.image)
             driver.image = this.awsService.getUrl(driver?.image);
         return driver;
@@ -111,6 +116,7 @@ let DriversService = class DriversService {
     async remove(_id) {
         const { image } = await this.DriversModel.findOne({ _id }, { image: 1, _id: 0 });
         await this.DriversModel.findByIdAndDelete(_id);
+        await this.walletsService.removeDriver(_id);
         if (image)
             this.awsService.removeImage(image);
         return "success";
@@ -122,7 +128,9 @@ let DriversService = class DriversService {
 DriversService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)("Drivers")),
-    __metadata("design:paramtypes", [Object, aws_service_1.AwsService])
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => wallets_service_1.WalletsService))),
+    __metadata("design:paramtypes", [Object, wallets_service_1.WalletsService,
+        aws_service_1.AwsService])
 ], DriversService);
 exports.DriversService = DriversService;
 //# sourceMappingURL=drivers.service.js.map

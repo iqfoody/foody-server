@@ -84,13 +84,13 @@ export class Orders {
   @Prop()
   discountType: promoCodeTypes;
   
-  //* delete
+  //! delete
   @Prop({type: mongoose.Schema.Types.Number})
   walletAmount: number;
 
   @Prop({type: mongoose.Schema.Types.Number})
   walletPoints: number;
-  //* end delete.
+  //! end delete.
 
   @Prop({type: mongoose.Schema.Types.Number})
   pointsBack: number;
@@ -100,6 +100,9 @@ export class Orders {
 
   @Prop({type: mongoose.Schema.Types.Number, minlength: [0, "Min total price 1"]})
   price: number;
+
+  @Prop({type: mongoose.Schema.Types.Number, default: 0})
+  no: number;
 
 }
 

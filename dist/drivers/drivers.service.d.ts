@@ -30,10 +30,12 @@ import { AwsService } from 'src/aws/aws.service';
 import { LoginInput } from 'src/auth/dto/login.input';
 import { StateInput } from 'src/constants/state.input';
 import { UpdatePasswordUser } from 'src/users/dto/update-password-user.input';
+import { WalletsService } from 'src/wallets/wallets.service';
 export declare class DriversService {
     private DriversModel;
+    private walletsService;
     private readonly awsService;
-    constructor(DriversModel: IDriversModel, awsService: AwsService);
+    constructor(DriversModel: IDriversModel, walletsService: WalletsService, awsService: AwsService);
     login(loginInput: LoginInput): Promise<import("src/models/drivers.schema").DriversDocument>;
     info(id: string): Promise<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
@@ -45,9 +47,9 @@ export declare class DriversService {
     create(createDriverInput: CreateDriverInput, file: any): Promise<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    findAll(): Promise<(import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
+    findAll(): Promise<Omit<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>)[]>;
+    }, never>, never>[]>;
     findOne(id: string): Promise<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;

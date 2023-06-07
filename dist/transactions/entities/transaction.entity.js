@@ -12,12 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Transaction = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const admin_entity_1 = require("../../admins/entities/admin.entity");
+const driver_entity_1 = require("../../drivers/entities/driver.entity");
 const order_entity_1 = require("../../orders/entities/order.entity");
 const user_entity_1 = require("../../users/entities/user.entity");
 let Transaction = class Transaction {
     _id;
     user;
     admin;
+    driver;
     order;
     type;
     procedure;
@@ -34,13 +36,17 @@ __decorate([
     __metadata("design:type", String)
 ], Transaction.prototype, "_id", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => user_entity_1.User),
+    (0, graphql_1.Field)(() => user_entity_1.User, { nullable: true }),
     __metadata("design:type", Object)
 ], Transaction.prototype, "user", void 0);
 __decorate([
     (0, graphql_1.Field)(() => admin_entity_1.Admin, { nullable: true }),
     __metadata("design:type", Object)
 ], Transaction.prototype, "admin", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => driver_entity_1.Driver, { nullable: true }),
+    __metadata("design:type", Object)
+], Transaction.prototype, "driver", void 0);
 __decorate([
     (0, graphql_1.Field)(() => order_entity_1.Order, { nullable: true }),
     __metadata("design:type", Object)

@@ -16,11 +16,26 @@ exports.WalletsSchema = exports.Wallets = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let Wallets = class Wallets {
+    user;
+    driver;
+    admin;
     points;
     amount;
 };
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0 }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Users" }),
+    __metadata("design:type", String)
+], Wallets.prototype, "user", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Drivers" }),
+    __metadata("design:type", String)
+], Wallets.prototype, "driver", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Admins" }),
+    __metadata("design:type", String)
+], Wallets.prototype, "admin", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0, minlength: [0, "Minus points is zero"] }),
     __metadata("design:type", Number)
 ], Wallets.prototype, "points", void 0);
 __decorate([
@@ -28,7 +43,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Wallets.prototype, "amount", void 0);
 Wallets = __decorate([
-    (0, mongoose_1.Schema)()
+    (0, mongoose_1.Schema)({ timestamps: true })
 ], Wallets);
 exports.Wallets = Wallets;
 exports.WalletsSchema = mongoose_1.SchemaFactory.createForClass(Wallets);

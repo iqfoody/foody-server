@@ -18,6 +18,9 @@ export class Address {
   country?: string;
 
   @Field({nullable: true})
+  phoneNumber?: string;
+
+  @Field({nullable: true})
   city?: province;
 
   @Field({ nullable: true })
@@ -32,10 +35,10 @@ export class Address {
   @Field({nullable: true})
   description?: string;
 
-  @Field(()=> Float)
+  @Field(()=> Float, {nullable: true})
   latitude?: number;
 
-  @Field(()=> Float)
+  @Field(()=> Float, {nullable: true})
   longitude?: number;
 
 }

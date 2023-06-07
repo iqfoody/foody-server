@@ -14,12 +14,14 @@ const categories_controller_1 = require("./categories.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const categories_schema_1 = require("../models/categories.schema");
 const aws_module_1 = require("../aws/aws.module");
+const meals_module_1 = require("../meals/meals.module");
 let CategoriesModule = class CategoriesModule {
 };
 CategoriesModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: "Categories", schema: categories_schema_1.CategoriesSchema }]),
+            (0, common_1.forwardRef)(() => meals_module_1.MealsModule),
             aws_module_1.AwsModule,
         ],
         providers: [categories_resolver_1.CategoriesResolver, categories_service_1.CategoriesService],

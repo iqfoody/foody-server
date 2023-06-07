@@ -12,7 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateAdvertisementInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateAdvertisementInput = class CreateAdvertisementInput {
-    target;
+    meal;
+    restaurant;
     user;
     title;
     titleEN;
@@ -22,8 +23,12 @@ let CreateAdvertisementInput = class CreateAdvertisementInput {
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
-    __metadata("design:type", String)
-], CreateAdvertisementInput.prototype, "target", void 0);
+    __metadata("design:type", Object)
+], CreateAdvertisementInput.prototype, "meal", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
+    __metadata("design:type", Object)
+], CreateAdvertisementInput.prototype, "restaurant", void 0);
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
     __metadata("design:type", String)

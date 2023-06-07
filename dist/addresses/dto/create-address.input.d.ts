@@ -3,6 +3,7 @@ export declare class CreateAddressInput {
     user: string;
     title: string;
     country?: string;
+    phoneNumber?: string;
     city?: province;
     address?: string;
     building?: string;

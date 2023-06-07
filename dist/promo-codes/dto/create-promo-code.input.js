@@ -16,6 +16,7 @@ let CreatePromoCodeInput = class CreatePromoCodeInput {
     user;
     type;
     discount;
+    usageTimes;
     isPublic;
     expire;
 };
@@ -35,6 +36,10 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int),
     __metadata("design:type", Number)
 ], CreatePromoCodeInput.prototype, "discount", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], CreatePromoCodeInput.prototype, "usageTimes", void 0);
 __decorate([
     (0, graphql_1.Field)(() => Boolean, { nullable: true }),
     __metadata("design:type", Boolean)

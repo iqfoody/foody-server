@@ -6,10 +6,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RestaurantsSchema } from 'src/models/restaurants.schema';
 import { AwsModule } from 'src/aws/aws.module';
 import { RestaurantCategoriesModule } from 'src/restaurant-categories/restaurant-categories.module';
+import { MealsModule } from 'src/meals/meals.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: "Restaurants", schema: RestaurantsSchema }]),
+    forwardRef(() => MealsModule),
     forwardRef(() => RestaurantCategoriesModule),
     AwsModule,
   ],

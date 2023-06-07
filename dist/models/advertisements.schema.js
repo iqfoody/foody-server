@@ -22,7 +22,8 @@ let Advertisements = class Advertisements {
     titleKR;
     image;
     type;
-    target;
+    restaurant;
+    meal;
     position;
     state;
 };
@@ -51,9 +52,13 @@ __decorate([
     __metadata("design:type", String)
 ], Advertisements.prototype, "type", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Restaurants" }),
     __metadata("design:type", String)
-], Advertisements.prototype, "target", void 0);
+], Advertisements.prototype, "restaurant", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Meals" }),
+    __metadata("design:type", String)
+], Advertisements.prototype, "meal", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0 }),
     __metadata("design:type", Number)

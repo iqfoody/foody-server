@@ -6,9 +6,9 @@ import { WalletsModule } from 'src/wallets/wallets.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TransactionsSchema } from 'src/models/transactions.schema';
 import { AdminsModule } from 'src/admins/admins.module';
-import { OrdersModule } from 'src/orders/orders.module';
 import { UsersModule } from 'src/users/users.module';
 import { AwsModule } from 'src/aws/aws.module';
+import { OrdersModule } from 'src/orders/orders.module';
 
 @Module({
   imports: [

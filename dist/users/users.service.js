@@ -82,8 +82,9 @@ let UsersService = class UsersService {
             if (email)
                 throw new common_1.NotAcceptableException("email E0011");
         }
-        const wallet = await this.walletsService.create();
-        const user = new this.UsersModel({ ...createUserInput, wallet: wallet._id });
+        const user = new this.UsersModel(createUserInput);
+        const wallet = await this.walletsService.create({ user: user._id });
+        user.wallet = wallet._id;
         if (file) {
             const result = await this.awsService.createImage(file, user._id);
             user.image = result?.Key;
@@ -141,8 +142,9 @@ let UsersService = class UsersService {
         return user;
     }
     async create(createUserInput) {
-        const wallet = await this.walletsService.create();
-        const user = new this.UsersModel({ ...createUserInput, wallet: wallet._id });
+        const user = new this.UsersModel(createUserInput);
+        const wallet = await this.walletsService.create({ user: user._id });
+        user.wallet = wallet._id;
         await user.save();
         await this.favoritesService.create({ user: user._id });
         return user.populate({ path: "wallet", select: { points: 1, amount: 1, _id: 0 } });
@@ -246,8 +248,10 @@ let UsersService = class UsersService {
             { $match: { $and: [{ createdAt: { $gte: year } }, { createdAt: { $lte: new Date() } }] } },
             { $group: { _id: "createAt", total: { $push: "$createdAt" }, } },
         ]);
-        for (const single of users[0]?.total) {
-            result = { ...result, [`m${new Date(single).getMonth()}`]: { ...result[`m${new Date(single).getMonth()}`], [`d${new Date(single).getDate()}`]: result[`m${new Date(single).getMonth()}`][`d${new Date(single).getDate()}`] + 1 } };
+        if (users?.length) {
+            for (const single of users[0]?.total) {
+                result = { ...result, [`m${new Date(single).getMonth()}`]: { ...result[`m${new Date(single).getMonth()}`], [`d${new Date(single).getDate()}`]: result[`m${new Date(single).getMonth()}`][`d${new Date(single).getDate()}`] + 1 } };
+            }
         }
         return result;
     }

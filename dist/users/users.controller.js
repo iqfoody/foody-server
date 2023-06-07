@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
-const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const users_service_1 = require("./users.service");
 const aws_service_1 = require("../aws/aws.service");
 const ability_decorator_1 = require("../ability/ability.decorator");
@@ -50,6 +49,12 @@ let UsersController = class UsersController {
     async updateUser(updateUserInput, file) {
         const result = await this.awsService.createImage(file, updateUserInput.id);
         return this.usersService.updateUser(updateUserInput.id, { ...updateUserInput, image: result?.Key });
+    }
+    async sendOtp(otp) {
+        return this.awsService.sendOtp(otp.phoneNumber);
+    }
+    async verifyOtp(otp) {
+        return this.awsService.verifyOtp(otp.phoneNumber, otp.otp);
     }
 };
 __decorate([
@@ -92,8 +97,21 @@ __decorate([
     __metadata("design:paramtypes", [update_user_input_1.UpdateUserInput, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateUser", null);
+__decorate([
+    (0, common_1.Post)('/test'),
+    __param(0, (0, common_1.Body)('otp')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "sendOtp", null);
+__decorate([
+    (0, common_1.Post)('/test1'),
+    __param(0, (0, common_1.Body)('otp')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "verifyOtp", null);
 UsersController = __decorate([
-    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         aws_service_1.AwsService])

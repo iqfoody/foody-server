@@ -4,6 +4,7 @@ import { genSalt, hash, compare } from 'bcryptjs'
 import { province, publicStatus } from 'src/constants/types.type';
 import { LoginInput } from 'src/auth/dto/login.input';
 import { BadRequestException } from '@nestjs/common';
+import { Wallets } from './wallets.schema';
 
 export type DriversDocument = Drivers & Document;
 @Schema({
@@ -29,6 +30,10 @@ export type DriversDocument = Drivers & Document;
   },
 })
 export class Drivers {
+
+  @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Wallets", required: [true, "wallet required"]})
+  wallet: string | Wallets;
+
   @Prop({ required: [true, 'name field required'] })
   name: string;
 

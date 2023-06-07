@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateRestaurantInput } from './dto/create-restaurant.input';
 import { UpdateRestaurantInput } from './dto/update-restaurant.input';
 import { InjectModel } from '@nestjs/mongoose';
@@ -9,12 +9,14 @@ import { StateInput } from 'src/constants/state.input';
 import { UpdatePositionInput } from 'src/constants/position.input';
 import { LimitEntity } from 'src/constants/limitEntity';
 import { RestaurantCategoriesService } from 'src/restaurant-categories/restaurant-categories.service';
+import { MealsService } from 'src/meals/meals.service';
 
 @Injectable()
 export class RestaurantsService {
   constructor(
     @InjectModel("Restaurants") private RestaurantsModel: Model<RestaurantsDocument>,
-    private readonly restaurantCategoriesService: RestaurantCategoriesService,
+    @Inject(forwardRef(()=> MealsService)) private mealsService: MealsService,
+    @Inject(forwardRef(()=> RestaurantCategoriesService)) private restaurantCategoriesService: RestaurantCategoriesService,
     private readonly awsService: AwsService,
   ) {}
 
@@ -23,7 +25,7 @@ export class RestaurantsService {
   //? application...
 
   async findRestaurnats() {
-    const restaurants = await this.RestaurantsModel.find({state: "Active"}).select(['-position','-state', '-__v', '-createdAt', '-updatedAt']).populate({path: "category", select: {title: 1, titleEN: 1, titleKR: 1, _id: 0}});
+    const restaurants = await this.RestaurantsModel.find({state: "Active"}).select(['-position','-state', '-__v', '-createdAt', '-updatedAt']);
     for(const single of restaurants){
       if(single?.image) single.image = this.awsService.getUrl(single.image);
     }
@@ -33,31 +35,22 @@ export class RestaurantsService {
   async findRestaurnatsInfinty(limitEntity: LimitEntity) {
     const skipIndex = limitEntity.page * limitEntity.limit;
     const total = await this.RestaurantsModel.countDocuments({state: "Active"});
-    const restaurants = await this.RestaurantsModel.find({state: "Active"}).select(['-position','-state', '-__v', '-createdAt', '-updatedAt']).limit(limitEntity.limit).skip(skipIndex).sort({position: -1}).populate({path: "category", select: {title: 1, titleEN: 1, titleKR: 1, _id: 0}});
+    const restaurants = await this.RestaurantsModel.find({state: "Active"}).select(['-position','-state', '-__v', '-createdAt', '-updatedAt']).limit(limitEntity.limit).skip(skipIndex).sort({position: -1});
     for(const single of restaurants){
       if(single?.image) single.image = this.awsService.getUrl(single.image);
     }
     return {data: restaurants, pages: Math.ceil(total / limitEntity.limit)};
   }
 
-  async findForCategory(category: string, orderBy?: string) {
-    if(!isValidObjectId(category)) throw new BadRequestException("There isn't restaurants with this category id");
-    let sort :any = {position: 1};
-    if(orderBy === 'highestPrice') { sort = { price: -1}}
-    else if (orderBy === 'lowestPrice') { sort = { price: 1}}
-    else if (orderBy === 'recently') { sort = { _id: -1}}
-    const restaurants = await this.RestaurantsModel.find({$and: [{category}, {state: "Active"}]}).select(['-position','-state', '-__v', '-createdAt', '-updatedAt', '-category']).sort(sort);
-    for(const single of restaurants){
-      if(single?.image) single.image = this.awsService.getUrl(single.image);
-    }
-    return restaurants;
-  }
-
   async findRestaurant(id: string) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't restaurant with this id");
-    const restaurant = await this.RestaurantsModel.findOne({$and: [{_id: id}, {state: "Active"}]}).select(['-position','-state', '-__v', '-createdAt', '-updatedAt', '-category']);
-    if(restaurant?.image) restaurant.image = this.awsService.getUrl(restaurant.image);
-    return restaurant;
+    const restaurant = await this.RestaurantsModel.findOne({$and: [{_id: id}, {state: "Active"}]}).select(['-position','-state', '-__v', '-createdAt', '-updatedAt']);
+    if(!restaurant) return;
+    const categories = await this.restaurantCategoriesService.findForRestaurant(restaurant._id);
+    const meals = await this.mealsService.findForRestaurant(restaurant._id);
+    const { _doc: restRestaurant }: any = restaurant;
+    if(restRestaurant?.image) restRestaurant.image = this.awsService.getUrl(restRestaurant.image);
+    return {...restRestaurant, categories, meals};
   }
 
   async searchRestaurant(query: string){
@@ -81,7 +74,7 @@ export class RestaurantsService {
   }
 
   async findAll() {
-    const restaurants = await this.RestaurantsModel.find().populate("category");
+    const restaurants = await this.RestaurantsModel.find();
     for(const single of restaurants){
       if(single?.image) single.image = this.awsService.getUrl(single.image);
     }
@@ -89,7 +82,7 @@ export class RestaurantsService {
   }
 
   async findOne(id: string) {
-    const restaurant = await this.RestaurantsModel.findById(id).populate({path: "category", select: {_id: 1}});
+    const restaurant = await this.RestaurantsModel.findById(id);
     if(restaurant?.image) restaurant.image = this.awsService.getUrl(restaurant.image);
     return restaurant;
   }

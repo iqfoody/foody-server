@@ -1,8 +1,10 @@
 import mongoose, { Document, Model, Query } from 'mongoose';
 import { adminTypes, publicStatus } from 'src/constants/types.type';
 import { LoginInput } from 'src/auth/dto/login.input';
+import { Wallets } from './wallets.schema';
 export type AdminsDocument = Admins & Document;
 export declare class Admins {
+    wallet: string | Wallets;
     name: string;
     email: string;
     password: string;

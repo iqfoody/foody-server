@@ -1,8 +1,10 @@
 import mongoose, { Document, Model, Query } from 'mongoose';
 import { province, publicStatus } from 'src/constants/types.type';
 import { LoginInput } from 'src/auth/dto/login.input';
+import { Wallets } from './wallets.schema';
 export type DriversDocument = Drivers & Document;
 export declare class Drivers {
+    wallet: string | Wallets;
     name: string;
     phoneNumber: string;
     password: string;

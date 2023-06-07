@@ -1,8 +1,11 @@
-import { User } from 'aws-sdk/clients/budgets';
 import { advertisementsTypes, publicStatus } from 'src/constants/types.type';
+import { Meal } from 'src/meals/entities/meal.entity';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { User } from 'src/users/entities/user.entity';
 export declare class Advertisement {
     _id: string;
-    target?: string;
+    meal?: string | Meal;
+    restaurant?: string | Restaurant;
     user?: string | User;
     title: string;
     titleEN: string;

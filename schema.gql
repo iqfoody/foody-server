@@ -4,9 +4,19 @@
 
 type Wallet {
   _id: ID!
+  user: ID
+  driver: ID
+  admin: ID
   points: Int!
   amount: Int!
+  createdAt: Timestamp
+  updatedAt: Timestamp
 }
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
 
 type User {
   _id: ID!
@@ -30,11 +40,6 @@ type User {
   deviceToken: String
 }
 
-"""
-`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
-scalar Timestamp
-
 type UsersResponse {
   data: [User!]!
   pages: Int!
@@ -42,6 +47,7 @@ type UsersResponse {
 
 type Admin {
   _id: ID!
+  wallet: Wallet!
   name: String!
   email: String!
   password: String!
@@ -58,6 +64,7 @@ type Admin {
 
 type Driver {
   _id: ID!
+  wallet: Wallet!
   name: String!
   phoneNumber: String!
   country: String
@@ -77,28 +84,18 @@ type Address {
   user: String!
   title: String!
   country: String
+  phoneNumber: String
   city: String
   address: String
   building: String
   apartment: String
   description: String
-  latitude: Float!
-  longitude: Float!
-}
-
-type Category {
-  _id: ID!
-  title: String!
-  titleEN: String!
-  titleKR: String
-  image: String!
-  position: Int!
-  state: String!
+  latitude: Float
+  longitude: Float
 }
 
 type Restaurant {
   _id: ID!
-  category: Category
   title: String!
   titleEN: String!
   titleKR: String
@@ -150,8 +147,19 @@ type RestaurantCategory {
   position: Int!
 }
 
+type Category {
+  _id: ID!
+  title: String!
+  titleEN: String!
+  titleKR: String
+  image: String!
+  position: Int!
+  state: String!
+}
+
 type Meal {
   _id: ID!
+  category: Category
   restaurant: Restaurant!
   tag: Tag
   restaurantCategory: RestaurantCategory!
@@ -187,14 +195,14 @@ type Feedback {
   message: String!
   name: String
   phoneNumber: String
-  user: String
+  user: User
 }
 
 type OrderItem {
-  meal: String!
-  additions: [String!]
-  addIngredients: [String!]
-  removeIngredients: [String!]
+  meal: Meal!
+  additions: [MealAddition!]
+  addIngredients: [MealIngredient!]
+  removeIngredients: [MealIngredient!]
   quantity: Int!
 }
 
@@ -224,6 +232,7 @@ type Order {
   pointsBack: Int
   createdAt: Timestamp
   updatedAt: Timestamp
+  no: Int
 }
 
 type PromoCode {
@@ -233,6 +242,7 @@ type PromoCode {
   user: User
   type: String!
   discount: Int!
+  usageTimes: Int!
   isPublic: Boolean!
   expire: Timestamp!
   state: String!
@@ -305,8 +315,9 @@ type LoginAdmin {
 
 type Advertisement {
   _id: ID!
-  target: ID
-  user: String
+  meal: Meal
+  restaurant: Restaurant
+  user: User
   title: String!
   titleEN: String!
   titleKR: String
@@ -316,13 +327,13 @@ type Advertisement {
   state: String!
 }
 
-type FeedbacksLimit {
-  data: [Feedback!]!
+type MealsResponse {
+  data: [Meal!]!
   pages: Int!
 }
 
-type MealsResponse {
-  data: [Meal!]!
+type FeedbacksLimit {
+  data: [Feedback!]!
   pages: Int!
 }
 
@@ -376,8 +387,9 @@ type HomeResponse {
 
 type Transaction {
   _id: ID!
-  user: User!
+  user: User
   admin: Admin
+  driver: Driver
   order: Order
   type: String!
   procedure: String!
@@ -400,6 +412,11 @@ type Search {
   exampleField: Int!
 }
 
+type Setting {
+  _id: ID!
+  support: String
+}
+
 type Query {
   users(limitEntity: LimitEntity!): UsersResponse!
   user(id: ID!): User!
@@ -419,16 +436,18 @@ type Query {
   advertisement(id: ID!): Advertisement!
   categories: [Category!]!
   category(id: ID!): Category!
-  feedbacks(limitEntity: LimitEntity!): FeedbacksLimit!
-  feedback(id: ID!): Feedback!
   meals(limitEntity: LimitEntity!): MealsResponse!
+  mealsRestaurant(limitEntity: LimitEntity!): MealsResponse!
   searchMeals(query: String!): [Meal!]!
   meal(id: ID!): Meal!
+  feedbacks(limitEntity: LimitEntity!): FeedbacksLimit!
+  feedback(id: ID!): Feedback!
   notifications: [Notification!]!
   notification(id: Int!): Notification!
   orders(limitEntity: LimitEntity!): OrdersResponse!
   homeValues: HomeResponse!
   ordersUser(limitEntity: LimitEntity!): OrdersResponse!
+  ordersDriver(limitEntity: LimitEntity!): OrdersResponse!
   order(id: ID!): Order!
   profitsReport(date: String!): Months!
   ordersReport(date: String!): Months!
@@ -444,13 +463,20 @@ type Query {
   transactions(limitEntity: LimitEntity!): TransactionResponse!
   amountTransactions(limitEntity: LimitEntity!): TransactionResponse!
   pointsTransactions(limitEntity: LimitEntity!): TransactionResponse!
-  userTransactions(limitEntity: LimitEntity!): TransactionResponse!
+  amountUserTransactions(limitEntity: LimitEntity!): TransactionResponse!
+  amountDriverTransactions(limitEntity: LimitEntity!): TransactionResponse!
   adminTransactions(limitEntity: LimitEntity!): TransactionResponse!
+  amountAdminTransactions(limitEntity: LimitEntity!): TransactionResponse!
+  pointsAdminTransactions(limitEntity: LimitEntity!): TransactionResponse!
+  pointsUserTransactions(limitEntity: LimitEntity!): TransactionResponse!
   transaction(id: String!): Transaction!
   tags: [Tag!]!
   tag(id: ID!): Tag!
   searchUsers(searchQuery: SearchInput!): UsersResponse!
   search(id: Int!): Search!
+  settings: [Setting!]!
+  support: Setting!
+  setting(id: ID!): Setting!
 }
 
 input LimitEntity {
@@ -472,7 +498,6 @@ type Mutation {
   passwordUser(passwordUserInput: UpdatePasswordUser!): String!
   stateUser(stateInput: StateInput!): String!
   removeUser(id: ID!): String!
-  updateWallet(updateWalletInput: UpdateWalletInput!): String!
   createFavorite(createFavoriteInput: CreateFavoriteInput!): Favorite!
   removeFavorite(id: ID!): Favorite!
   createAddress(createAddressInput: CreateAddressInput!): Address!
@@ -498,7 +523,6 @@ type Mutation {
   positionCategory(updatePositionInput: [UpdatePositionInput!]!): String!
   stateCategory(stateInput: StateInput!): String!
   removeCategory(id: ID!): String!
-  removeFeedback(id: ID!): String!
   createMeal(createMealInput: CreateMealInput!): Meal!
   updateMeal(updateMealInput: UpdateMealInput!): String!
   stateMeal(stateInput: StateInput!): String!
@@ -507,6 +531,7 @@ type Mutation {
   createMealObject(createMealObject: CreateMealObject!): MealAddition!
   updateMealObject(updateMealObject: UpdateMealObject!): String!
   removeMealObject(removeMealObject: RemoveMealObject!): String!
+  removeFeedback(id: ID!): String!
   createNotification(createNotificationInput: CreateNotificationInput!): Notification!
   updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
   removeNotification(id: Int!): Notification!
@@ -531,12 +556,16 @@ type Mutation {
   removeRestaurantCategory(id: ID!): String!
   createTransaction(createTransactionInput: CreateTransactionInput!): Transaction!
   updateTransaction(updateTransactionInput: UpdateTransactionInput!): Transaction!
+  resetAdminWallet(resetAdminWallet: ResetAdminWallet!): String!
   removeTransaction(id: String!): Transaction!
   createTag(createTagInput: CreateTagInput!): Tag!
   updateTag(updateTagInput: UpdateTagInput!): String!
-  StateTag(stateInput: StateInput!): String!
+  stateTag(stateInput: StateInput!): String!
   positionTag(updatePositionInput: [UpdatePositionInput!]!): String!
   removeTag(id: ID!): String!
+  createSetting(createSettingInput: CreateSettingInput!): Setting!
+  updateSetting(updateSettingInput: UpdateSettingInput!): String!
+  removeSetting(id: ID!): String!
 }
 
 input CreateUserInput {
@@ -579,13 +608,6 @@ input StateInput {
   state: String!
 }
 
-input UpdateWalletInput {
-  _id: ID
-  id: ID
-  amount: Int
-  points: Int
-}
-
 input CreateFavoriteInput {
   user: ID!
 }
@@ -594,6 +616,7 @@ input CreateAddressInput {
   user: ID!
   title: String!
   country: String
+  phoneNumber: String
   city: String
   address: String
   building: String
@@ -607,6 +630,7 @@ input UpdateAddressInput {
   user: ID
   title: String
   country: String
+  phoneNumber: String
   city: String
   address: String
   building: String
@@ -668,7 +692,8 @@ input UpdateDriverInput {
 }
 
 input UpdateAdvertisementInput {
-  target: ID
+  meal: ID
+  restaurant: ID
   user: ID
   title: String
   titleEN: String
@@ -692,6 +717,7 @@ input UpdateCategoryInput {
 }
 
 input CreateMealInput {
+  category: ID
   restaurant: ID!
   tag: ID
   restaurantCategory: ID!
@@ -724,6 +750,7 @@ input CreateMealIngredientInput {
 }
 
 input UpdateMealInput {
+  category: ID
   restaurant: ID
   tag: ID
   restaurantCategory: ID
@@ -787,6 +814,7 @@ input CreateOrderInput {
   details: String
   paymentMethod: String
   promoCode: String
+  no: Int
 }
 
 input CreateOrderItemInput {
@@ -807,6 +835,7 @@ input UpdateOrderInput {
   details: String
   paymentMethod: String
   promoCode: String
+  no: Int
   id: ID!
 }
 
@@ -815,6 +844,7 @@ input CreatePromoCodeInput {
   user: ID
   type: String!
   discount: Int!
+  usageTimes: Int
   isPublic: Boolean
   expire: Timestamp!
 }
@@ -824,6 +854,7 @@ input UpdatePromoCodeInput {
   user: ID
   type: String
   discount: Int
+  usageTimes: Int
   isPublic: Boolean
   expire: Timestamp
   id: ID!
@@ -847,7 +878,6 @@ input UpdateRateInput {
 }
 
 input CreateRestaurantInput {
-  category: ID
   title: String!
   titleEN: String!
   titleKR: String
@@ -860,7 +890,6 @@ input CreateRestaurantInput {
 }
 
 input UpdateRestaurantInput {
-  category: ID
   title: String
   titleEN: String
   titleKR: String
@@ -891,13 +920,13 @@ input UpdateRestaurantCategoryInput {
 }
 
 input CreateTransactionInput {
-  user: ID!
+  user: ID
   admin: ID
+  driver: ID
   order: ID
   type: String!
   procedure: String!
   amount: Int!
-  previous: Int
   description: String!
   paymentMethod: String
   state: String
@@ -906,15 +935,20 @@ input CreateTransactionInput {
 input UpdateTransactionInput {
   user: ID
   admin: ID
+  driver: ID
   order: ID
   type: String
   procedure: String
   amount: Int
-  previous: Int
   description: String
   paymentMethod: String
   state: String
   id: ID!
+}
+
+input ResetAdminWallet {
+  admin: ID!
+  type: String!
 }
 
 input CreateTagInput {
@@ -929,5 +963,14 @@ input UpdateTagInput {
   titleEN: String
   titleKR: String
   image: String
+  id: ID!
+}
+
+input CreateSettingInput {
+  support: String!
+}
+
+input UpdateSettingInput {
+  support: String
   id: ID!
 }

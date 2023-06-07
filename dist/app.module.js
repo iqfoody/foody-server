@@ -40,6 +40,7 @@ const tags_module_1 = require("./tags/tags.module");
 const wallets_module_1 = require("./wallets/wallets.module");
 const searches_module_1 = require("./searches/searches.module");
 const transactions_module_1 = require("./transactions/transactions.module");
+const settings_module_1 = require("./settings/settings.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -82,7 +83,8 @@ AppModule = __decorate([
             tags_module_1.TagsModule,
             wallets_module_1.WalletsModule,
             searches_module_1.SearchesModule,
-            transactions_module_1.TransactionsModule
+            transactions_module_1.TransactionsModule,
+            settings_module_1.SettingsModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

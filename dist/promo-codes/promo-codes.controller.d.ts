@@ -27,13 +27,12 @@ import { PromoCodesService } from './promo-codes.service';
 export declare class PromoCodesController {
     private readonly promoCodesService;
     constructor(promoCodesService: PromoCodesService);
-    getPromoCodes(req: any): Promise<(import("mongoose").Document<unknown, {}, import("../models/promoCodes.schema").PromoCodesDocument> & Omit<import("../models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[]>;
-    checkPromoCode(name: string, req: any): Promise<import("@nestjs/common").NotFoundException | {
-        _id: any;
+    checkPromoCode(name: string, req: any): Promise<{
         name: string;
         discount: number;
         type: import("../constants/types.type").promoCodeTypes;
     }>;
+    getPromoCodes(req: any): Promise<(import("mongoose").Document<unknown, {}, import("../models/promoCodes.schema").PromoCodesDocument> & Omit<import("../models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>)[]>;
 }

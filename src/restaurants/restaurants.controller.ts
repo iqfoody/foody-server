@@ -32,11 +32,6 @@ export class RestaurantsController {
         return this.restaurantsService.findRestaurnatsInfinty({limit, page});
     }
 
-    @Get('/category/:id')
-    async getRestaurantsForCategory(@Param('id') category: string, @Query('orderBy') orderby: string){
-        return this.restaurantsService.findForCategory(category, orderby);
-    }
-
     // dashboard...
 
     @Post('/')

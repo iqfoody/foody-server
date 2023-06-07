@@ -29,9 +29,6 @@ let MealsController = class MealsController {
         this.mealsService = mealsService;
         this.awsService = awsService;
     }
-    async getMeal(id) {
-        return this.mealsService.findMeal(id);
-    }
     async getMealsInfinty() {
         return this.mealsService.findMealsInfinty({ limit: 10, page: 0 });
     }
@@ -44,6 +41,9 @@ let MealsController = class MealsController {
     async getrestaurantCategory(restaurantCategory) {
         return this.mealsService.findForRestaurantCategory(restaurantCategory);
     }
+    async getMeal(id) {
+        return this.mealsService.findMeal(id);
+    }
     async createMeal(id, file) {
         const result = await this.awsService.createImage(file, id);
         return this.mealsService.createImage(id, result?.Key);
@@ -53,13 +53,6 @@ let MealsController = class MealsController {
         return this.mealsService.update(updateMealInput.id, { ...updateMealInput, image: result?.Key });
     }
 };
-__decorate([
-    (0, common_1.Get)('/:id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], MealsController.prototype, "getMeal", null);
 __decorate([
     (0, common_1.Get)('/main'),
     __metadata("design:type", Function),
@@ -87,6 +80,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], MealsController.prototype, "getrestaurantCategory", null);
+__decorate([
+    (0, common_1.Get)('/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], MealsController.prototype, "getMeal", null);
 __decorate([
     (0, common_1.Post)('/:id'),
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),

@@ -43,6 +43,9 @@ let OrdersResolver = class OrdersResolver {
     findAllUserOrders(limitEntity) {
         return this.ordersService.findUserOrders(limitEntity);
     }
+    findAllDriverOrders(limitEntity) {
+        return this.ordersService.findDriverOrders(limitEntity);
+    }
     findOne(id) {
         return this.ordersService.findOne(id);
     }
@@ -90,6 +93,14 @@ __decorate([
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
     __metadata("design:returntype", void 0)
 ], OrdersResolver.prototype, "findAllUserOrders", null);
+__decorate([
+    (0, graphql_1.Query)(() => ordersResponse_entity_1.OrdersResponse, { name: 'ordersDriver' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    __param(0, (0, graphql_1.Args)('limitEntity', { type: () => limitEntity_1.LimitEntity })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
+    __metadata("design:returntype", void 0)
+], OrdersResolver.prototype, "findAllDriverOrders", null);
 __decorate([
     (0, graphql_1.Query)(() => order_entity_1.Order, { name: 'order' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),

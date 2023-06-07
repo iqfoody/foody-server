@@ -4,11 +4,14 @@ import { paymentMethodsType, procedureTypes, transactionTypes } from 'src/consta
 @InputType()
 export class CreateTransactionInput {
   
-  @Field(() => ID)
-  user: string;
+  @Field(() => ID, {nullable: true})
+  user?: string;
 
   @Field(() => ID, {nullable: true})
   admin?: string;
+
+  @Field(() => ID, {nullable: true})
+  driver?: string;
 
   @Field(() => ID, {nullable: true})
   order?: string;
@@ -21,9 +24,6 @@ export class CreateTransactionInput {
 
   @Field(()=> Int)
   amount: number;
-
-  @Field(()=> Int, {nullable: true})
-  previous?: number;
 
   @Field()
   description: string;

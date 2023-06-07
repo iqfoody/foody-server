@@ -23,15 +23,18 @@ const platform_express_1 = require("@nestjs/platform-express");
 const category_entity_1 = require("./entities/category.entity");
 const create_category_input_1 = require("./dto/create-category.input");
 const update_category_input_1 = require("./dto/update-category.input");
+const meals_service_1 = require("../meals/meals.service");
 let CategoriesController = class CategoriesController {
     categoriesService;
+    mealsService;
     awsService;
-    constructor(categoriesService, awsService) {
+    constructor(categoriesService, mealsService, awsService) {
         this.categoriesService = categoriesService;
+        this.mealsService = mealsService;
         this.awsService = awsService;
     }
-    async getCategory(id) {
-        return this.categoriesService.findCategory(id);
+    async getRestaurantsForCategory(category, orderby) {
+        return this.mealsService.findForCategory(category, orderby);
     }
     async getCategories() {
         return this.categoriesService.findCategories();
@@ -47,10 +50,11 @@ let CategoriesController = class CategoriesController {
 __decorate([
     (0, common_1.Get)('/:id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Query)('orderBy')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
-], CategoriesController.prototype, "getCategory", null);
+], CategoriesController.prototype, "getRestaurantsForCategory", null);
 __decorate([
     (0, common_1.Get)('/'),
     __metadata("design:type", Function),
@@ -82,6 +86,7 @@ __decorate([
 CategoriesController = __decorate([
     (0, common_1.Controller)('categories'),
     __metadata("design:paramtypes", [categories_service_1.CategoriesService,
+        meals_service_1.MealsService,
         aws_service_1.AwsService])
 ], CategoriesController);
 exports.CategoriesController = CategoriesController;

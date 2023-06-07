@@ -11,7 +11,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { UpdateUserInfo } from './dto/update-info.input';
 import { CreateUserInput } from './dto/create-user.input';
 
-@UseGuards(AccessAuthGuard)
+//@UseGuards(AccessAuthGuard)
 @Controller('users')
 export class UsersController {
     constructor(
@@ -50,6 +50,16 @@ export class UsersController {
     async updateUser(@Body() updateUserInput: UpdateUserInput, @UploadedFile() file) {
         const result = await this.awsService.createImage(file, updateUserInput.id);
       return this.usersService.updateUser(updateUserInput.id, {...updateUserInput, image: result?.Key});
+    }
+
+    @Post('/test')
+    async sendOtp(@Body('otp') otp: {phoneNumber: string}){
+      return this.awsService.sendOtp(otp.phoneNumber);
+    }
+
+    @Post('/test1')
+    async verifyOtp(@Body('otp') otp: {phoneNumber: string, otp: string}){
+      return this.awsService.verifyOtp(otp.phoneNumber, otp.otp);
     }
 
 }

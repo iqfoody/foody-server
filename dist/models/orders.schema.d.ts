@@ -43,6 +43,7 @@ export declare class Orders {
     pointsBack: number;
     totalPoints: number;
     price: number;
+    no: number;
 }
 export declare const OrdersSchema: mongoose.Schema<Orders, mongoose.Model<Orders, any, any, any, mongoose.Document<unknown, any, Orders> & Omit<Orders & {
     _id: mongoose.Types.ObjectId;

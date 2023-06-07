@@ -16,8 +16,10 @@ const meal_addition_entity_1 = require("./meal-addition.entity");
 const meal_ingredient_entity_1 = require("./meal-ingredient.entity");
 const tag_entity_1 = require("../../tags/entities/tag.entity");
 const restaurant_category_entity_1 = require("../../restaurant-categories/entities/restaurant-category.entity");
+const category_entity_1 = require("../../categories/entities/category.entity");
 let Meal = class Meal {
     _id;
+    category;
     restaurant;
     tag;
     restaurantCategory;
@@ -43,6 +45,10 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
     __metadata("design:type", String)
 ], Meal.prototype, "_id", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => category_entity_1.Category, { nullable: true }),
+    __metadata("design:type", Object)
+], Meal.prototype, "category", void 0);
 __decorate([
     (0, graphql_1.Field)(() => restaurant_entity_1.Restaurant),
     __metadata("design:type", Object)

@@ -17,6 +17,7 @@ import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { Tag } from 'src/tags/entities/tag.entity';
 import { Wallet } from 'src/wallets/entities/wallet.entity';
 import { Transaction } from 'src/transactions/entities/transaction.entity';
+import { Setting } from 'src/settings/entities/setting.entity';
 export declare enum Actions {
     Manage = "manage",
     Create = "create",
@@ -35,7 +36,7 @@ export declare enum Actions {
     Refresh = "refresh",
     Complete = "complete"
 }
-export type Subjects = InferSubjects<typeof User | typeof Admin | typeof Driver | typeof Address | typeof Advertisement | typeof Category | typeof Favorite | typeof Feedback | typeof Meal | typeof Order | typeof PromoCode | typeof Rate | typeof RestaurantCategory | typeof Restaurant | typeof Tag | typeof Wallet | typeof Transaction> | 'all';
+export type Subjects = InferSubjects<typeof User | typeof Admin | typeof Driver | typeof Address | typeof Advertisement | typeof Category | typeof Favorite | typeof Feedback | typeof Meal | typeof Order | typeof PromoCode | typeof Rate | typeof RestaurantCategory | typeof Restaurant | typeof Tag | typeof Wallet | typeof Transaction | typeof Setting> | 'all';
 export type AppAbility = MongoAbility<[Actions, Subjects], MongoQuery>;
 export declare const conditionsMatcher: ConditionsMatcher<MongoQuery<import("@casl/ability/dist/types/types").AnyObject>>;
 export declare const fieldMatcher: FieldMatcher;

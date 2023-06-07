@@ -5,12 +5,16 @@ import { MealIngredient } from './meal-ingredient.entity';
 import { mealStatus } from 'src/constants/types.type';
 import { Tag } from 'src/tags/entities/tag.entity';
 import { RestaurantCategory } from 'src/restaurant-categories/entities/restaurant-category.entity';
+import { Category } from 'src/categories/entities/category.entity';
 
 @ObjectType()
 export class Meal {
 
   @Field(() => ID)
   _id: string;
+
+  @Field(()=> Category, {nullable: true})
+  category?: string | Category;
 
   @Field(()=> Restaurant)
   restaurant: string | Restaurant;

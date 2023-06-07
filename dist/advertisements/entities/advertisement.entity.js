@@ -11,9 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Advertisement = void 0;
 const graphql_1 = require("@nestjs/graphql");
+const meal_entity_1 = require("../../meals/entities/meal.entity");
+const restaurant_entity_1 = require("../../restaurants/entities/restaurant.entity");
+const user_entity_1 = require("../../users/entities/user.entity");
 let Advertisement = class Advertisement {
     _id;
-    target;
+    meal;
+    restaurant;
     user;
     title;
     titleEN;
@@ -28,12 +32,16 @@ __decorate([
     __metadata("design:type", String)
 ], Advertisement.prototype, "_id", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
-    __metadata("design:type", String)
-], Advertisement.prototype, "target", void 0);
+    (0, graphql_1.Field)(() => meal_entity_1.Meal, { nullable: true }),
+    __metadata("design:type", Object)
+], Advertisement.prototype, "meal", void 0);
 __decorate([
-    (0, graphql_1.Field)({ nullable: true }),
-    __metadata("design:type", String)
+    (0, graphql_1.Field)(() => restaurant_entity_1.Restaurant, { nullable: true }),
+    __metadata("design:type", Object)
+], Advertisement.prototype, "restaurant", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => user_entity_1.User, { nullable: true }),
+    __metadata("design:type", Object)
 ], Advertisement.prototype, "user", void 0);
 __decorate([
     (0, graphql_1.Field)(),

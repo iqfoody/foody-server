@@ -27,51 +27,55 @@ let PromoCodesService = class PromoCodesService {
     async check(name, user) {
         if (!name)
             throw new common_1.BadRequestException("this promo code isn't valid");
-        const promoCode = await this.PromoCodesModel.findOne({ $and: [{ name }, { user }, { public: false }, { state: "Active" }] });
-        if (promoCode && promoCode?.users && promoCode?.users?.includes(user) || new Date(promoCode?.expire) < new Date()) {
-            throw new common_1.NotAcceptableException('Promo code expired');
-        }
-        else if (promoCode) {
-            return { _id: promoCode._id, name: promoCode.name, discount: promoCode?.discount, type: promoCode.type };
-        }
-        else {
-            const publicPromoCode = await this.PromoCodesModel.findOne({ $and: [{ name }, { public: true }, { state: "Active" }] });
-            if (publicPromoCode && publicPromoCode?.users && publicPromoCode?.users.includes(user)) {
+        const promoCode = await this.PromoCodesModel.findOne({ $and: [{ name }, { expire: { $gte: new Date() } }, { state: "Active" }] });
+        if (promoCode) {
+            if (promoCode?.users && promoCode?.users.includes(user))
                 throw new common_1.NotAcceptableException('Promo code had used');
+            if (promoCode?.usageTimes && promoCode?.usageTimes > 0 && promoCode?.usageTimes <= promoCode?.users?.length)
+                throw new common_1.NotAcceptableException('Promo code had expired');
+            if (promoCode.isPublic) {
+                return { name: promoCode.name, discount: promoCode?.discount, type: promoCode.type };
             }
-            else if (publicPromoCode) {
-                return { _id: publicPromoCode._id, name: publicPromoCode.name, discount: publicPromoCode.discount, type: publicPromoCode.type };
+            else {
+                if (promoCode?.user && user == promoCode?.user) {
+                    return { name: promoCode.name, discount: promoCode?.discount, type: promoCode.type };
+                }
+                else
+                    throw new common_1.NotFoundException('Promo code not found');
             }
         }
-        return new common_1.NotFoundException('Promo code not found');
+        else
+            throw new common_1.NotFoundException('Promo code not found');
     }
     async usePromoCode(name, user) {
-        const promoCode = await this.PromoCodesModel.findOne({ $and: [{ name }, { user }, { public: false }, { state: "Active" }] });
-        if (promoCode && promoCode?.users && promoCode?.users?.includes(user)) {
-            return new common_1.NotAcceptableException('Promo code expired');
-        }
-        else if (promoCode) {
-            promoCode.users.push(user);
-            await this.PromoCodesModel.findByIdAndUpdate(promoCode._id, { users: promoCode.users });
-            return "Verifyed";
-        }
-        else {
-            const publicPromoCode = await this.PromoCodesModel.findOne({ $and: [{ name }, { public: true }, { state: "Active" }] });
-            if (publicPromoCode && publicPromoCode?.users && publicPromoCode?.users.includes(user)) {
-                return new common_1.NotAcceptableException('Promo code had used');
-            }
-            else if (publicPromoCode) {
-                publicPromoCode.users.push(user);
-                await this.PromoCodesModel.findByIdAndUpdate(publicPromoCode._id, { users: publicPromoCode.users });
+        const promoCode = await this.PromoCodesModel.findOne({ $and: [{ name }, { expire: { $gte: new Date() } }, { state: "Active" }] });
+        if (promoCode) {
+            if (promoCode?.users && promoCode?.users.includes(user))
+                throw new common_1.NotAcceptableException('Promo code had used');
+            if (promoCode?.usageTimes && promoCode?.usageTimes > 0 && promoCode?.usageTimes <= promoCode?.users?.length)
+                throw new common_1.NotAcceptableException('Promo code had expired');
+            if (promoCode.isPublic) {
+                promoCode.users.push(user);
+                await this.PromoCodesModel.findByIdAndUpdate(promoCode._id, { users: promoCode.users });
                 return "Verifyed";
             }
+            else {
+                if (promoCode?.user && user == promoCode?.user) {
+                    promoCode.users.push(user);
+                    await this.PromoCodesModel.findByIdAndUpdate(promoCode._id, { users: promoCode.users });
+                    return "Verifyed";
+                }
+                else
+                    throw new common_1.NotFoundException('Promo code not found');
+            }
         }
-        return new common_1.NotFoundException('Promo code not found');
+        else
+            throw new common_1.NotFoundException('Promo code not found');
     }
     async create(createPromoCodeInput) {
-        const { name, user, type, discount, isPublic, expire } = createPromoCodeInput;
+        const { name, user, type, discount, isPublic, expire, usageTimes } = createPromoCodeInput;
         if (isPublic) {
-            return this.PromoCodesModel.create({ name, type, discount, isPublic, expire });
+            return this.PromoCodesModel.create({ name, type, discount, isPublic, expire, usageTimes });
         }
         else {
             const promoCode = await this.PromoCodesModel.create(createPromoCodeInput);

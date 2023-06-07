@@ -41,7 +41,7 @@ export declare class TagsResolver {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     updateTag(updateTagInput: UpdateTagInput): Promise<string>;
-    StateTag(stateInput: StateInput): Promise<string>;
+    stateTag(stateInput: StateInput): Promise<string>;
     positionTag(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     removeTag(id: string): Promise<string>;
 }

@@ -27,12 +27,11 @@ import { TransactionsService } from './transactions.service';
 import { CreateTransactionInput } from './dto/create-transaction.input';
 import { UpdateTransactionInput } from './dto/update-transaction.input';
 import { LimitEntity } from 'src/constants/limitEntity';
+import { ResetAdminWallet } from 'src/admins/dto/reset-admin-wallet.input';
 export declare class TransactionsResolver {
     private readonly transactionsService;
     constructor(transactionsService: TransactionsService);
-    createTransaction(createTransactionInput: CreateTransactionInput): Promise<import("mongoose").Document<unknown, {}, import("../models/transactions.schema").TransactionsDocument> & Omit<import("../models/transactions.schema").Transactions & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    createTransaction(createTransactionInput: CreateTransactionInput, context: any): Promise<any>;
     findAll(limitEntity: LimitEntity): Promise<{
         data: any;
         pages: number;
@@ -45,11 +44,27 @@ export declare class TransactionsResolver {
         data: any;
         pages: number;
     }>;
-    findForUser(limitEntity: LimitEntity): Promise<{
+    findAmountUser(limitEntity: LimitEntity): Promise<{
         data: any;
         pages: number;
     }>;
-    findForAdmin(limitEntity: LimitEntity): Promise<{
+    findAmountDriver(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    findAllAdmin(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    findAmountAdmin(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    findPointsAdmin(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    findPointsUser(limitEntity: LimitEntity): Promise<{
         data: any;
         pages: number;
     }>;
@@ -59,5 +74,6 @@ export declare class TransactionsResolver {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, import("../models/transactions.schema").TransactionsDocument>;
     updateTransaction(updateTransactionInput: UpdateTransactionInput): Promise<string>;
+    resetAdminWallet(resetAdminWallet: ResetAdminWallet, context: any): Promise<string>;
     removeTransaction(id: string): Promise<string>;
 }

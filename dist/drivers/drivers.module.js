@@ -14,12 +14,14 @@ const drivers_controller_1 = require("./drivers.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const drivers_schema_1 = require("../models/drivers.schema");
 const aws_module_1 = require("../aws/aws.module");
+const wallets_module_1 = require("../wallets/wallets.module");
 let DriversModule = class DriversModule {
 };
 DriversModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: "Drivers", schema: drivers_schema_1.DriversSchema },]),
+            (0, common_1.forwardRef)(() => wallets_module_1.WalletsModule),
             aws_module_1.AwsModule,
         ],
         providers: [drivers_resolver_1.DriversResolver, drivers_service_1.DriversService],

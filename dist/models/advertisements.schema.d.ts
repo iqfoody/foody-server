@@ -9,7 +9,8 @@ export declare class Advertisements {
     titleKR: string;
     image: string;
     type: advertisementsTypes;
-    target: string;
+    restaurant: string;
+    meal: string;
     position: number;
     state: publicStatus;
 }

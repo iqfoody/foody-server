@@ -1,15 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { publicStatus } from 'src/constants/types.type';
-import { Categories } from './categories.schema';
 
 export type RestaurantsDocument = Restaurants & Document;
 
 @Schema({timestamps: true})
 export class Restaurants {
-
-  @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Categories'})
-  category: string | Categories;
 
   @Prop({type: mongoose.Schema.Types.String ,required: [true, "title required"], index: {name: "text", description: "text", text: true}})
   title: string;
@@ -32,7 +28,7 @@ export class Restaurants {
   @Prop({required: [true, "image required"]})
   image: string;
 
-  @Prop({maxLength: 5, minlength: 0, type: mongoose.Schema.Types.Decimal128, default: 5})
+  @Prop({maxLength: 5, minlength: 0, type: mongoose.Schema.Types.Number, default: 5.0})
   rating: number;
 
   @Prop({type: mongoose.Schema.Types.Number, default: 1})

@@ -71,6 +71,7 @@ let Orders = class Orders {
     pointsBack;
     totalPoints;
     price;
+    no;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Users', required: [true, "user required"] }),
@@ -160,6 +161,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, minlength: [0, "Min total price 1"] }),
     __metadata("design:type", Number)
 ], Orders.prototype, "price", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0 }),
+    __metadata("design:type", Number)
+], Orders.prototype, "no", void 0);
 Orders = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Orders);

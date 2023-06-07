@@ -17,6 +17,7 @@ let Address = class Address {
     user;
     title;
     country;
+    phoneNumber;
     city;
     address;
     building;
@@ -44,6 +45,10 @@ __decorate([
 __decorate([
     (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)
+], Address.prototype, "phoneNumber", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
 ], Address.prototype, "city", void 0);
 __decorate([
     (0, graphql_1.Field)({ nullable: true }),
@@ -62,11 +67,11 @@ __decorate([
     __metadata("design:type", String)
 ], Address.prototype, "description", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Float),
+    (0, graphql_1.Field)(() => graphql_1.Float, { nullable: true }),
     __metadata("design:type", Number)
 ], Address.prototype, "latitude", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Float),
+    (0, graphql_1.Field)(() => graphql_1.Float, { nullable: true }),
     __metadata("design:type", Number)
 ], Address.prototype, "longitude", void 0);
 Address = __decorate([

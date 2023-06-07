@@ -17,11 +17,14 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const aws_service_1 = require("../aws/aws.service");
 const bcryptjs_1 = require("bcryptjs");
+const wallets_service_1 = require("../wallets/wallets.service");
 let AdminsService = class AdminsService {
     AdminsModel;
+    walletsService;
     awsService;
-    constructor(AdminsModel, awsService) {
+    constructor(AdminsModel, walletsService, awsService) {
         this.AdminsModel = AdminsModel;
+        this.walletsService = walletsService;
         this.awsService = awsService;
     }
     async login(loginInput) {
@@ -39,13 +42,15 @@ let AdminsService = class AdminsService {
             const result = await this.awsService.createImage(file, admin._id);
             admin.image = result?.Key;
         }
+        const wallet = await this.walletsService.create({ admin: admin._id });
+        admin.wallet = wallet._id;
         await admin.save();
         if (admin?.image)
             admin.image = this.awsService.getUrl(admin?.image);
         return admin;
     }
     async findAll() {
-        const admins = await this.AdminsModel.find({ type: { $ne: "Admin" } });
+        const admins = await this.AdminsModel.find({ type: { $ne: "Admin" } }).populate("wallet");
         for (const admin of admins) {
             if (admin?.image)
                 admin.image = this.awsService.getUrl(admin?.image);
@@ -53,7 +58,7 @@ let AdminsService = class AdminsService {
         return admins;
     }
     async findOne(_id) {
-        const admin = await this.AdminsModel.findOne({ $and: [{ _id }, { type: { $ne: "Admin" } }] });
+        const admin = await this.AdminsModel.findOne({ $and: [{ _id }, { type: { $ne: "Admin" } }] }).populate("wallet");
         if (admin?.image)
             admin.image = this.awsService.getUrl(admin?.image);
         return admin;
@@ -115,6 +120,7 @@ let AdminsService = class AdminsService {
     async remove(_id) {
         const { image } = await this.AdminsModel.findOne({ $and: [{ _id }, { type: { $ne: "Admin" } }] }, { image: 1, _id: 0 });
         await this.AdminsModel.findOneAndDelete({ $and: [{ _id }, { type: { $ne: "Admin" } }] });
+        await this.walletsService.removeAdmin(_id);
         if (image)
             this.awsService.removeImage(image);
         return "success";
@@ -123,7 +129,9 @@ let AdminsService = class AdminsService {
 AdminsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)("Admins")),
-    __metadata("design:paramtypes", [Object, aws_service_1.AwsService])
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => wallets_service_1.WalletsService))),
+    __metadata("design:paramtypes", [Object, wallets_service_1.WalletsService,
+        aws_service_1.AwsService])
 ], AdminsService);
 exports.AdminsService = AdminsService;
 //# sourceMappingURL=admins.service.js.map

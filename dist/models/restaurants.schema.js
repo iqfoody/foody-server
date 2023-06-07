@@ -16,7 +16,6 @@ exports.RestaurantsSchema = exports.Restaurants = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let Restaurants = class Restaurants {
-    category;
     title;
     titleEN;
     titleKR;
@@ -31,10 +30,6 @@ let Restaurants = class Restaurants {
     position;
     state;
 };
-__decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Categories' }),
-    __metadata("design:type", Object)
-], Restaurants.prototype, "category", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.String, required: [true, "title required"], index: { name: "text", description: "text", text: true } }),
     __metadata("design:type", String)
@@ -64,7 +59,7 @@ __decorate([
     __metadata("design:type", String)
 ], Restaurants.prototype, "image", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ maxLength: 5, minlength: 0, type: mongoose_2.default.Schema.Types.Decimal128, default: 5 }),
+    (0, mongoose_1.Prop)({ maxLength: 5, minlength: 0, type: mongoose_2.default.Schema.Types.Number, default: 5.0 }),
     __metadata("design:type", Number)
 ], Restaurants.prototype, "rating", void 0);
 __decorate([

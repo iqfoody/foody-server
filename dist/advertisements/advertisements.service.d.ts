@@ -40,15 +40,13 @@ export declare class AdvertisementsService {
     findAdvertisement(id: string): Promise<import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    create(createAdvertisementInput: CreateAdvertisementInput, file: any): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
+    create(createAdvertisementInput: CreateAdvertisementInput, file: any): Promise<(import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>)>;
+    }, never>) | BadRequestException>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    findOne(id: string): Promise<import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    findOne(id: string): Promise<any>;
     update(id: string, updateAdvertisementInput: UpdateAdvertisementInput): Promise<string>;
     state(stateInput: StateInput): Promise<string>;
     position(updatePositionInput: UpdatePositionInput[]): Promise<string>;

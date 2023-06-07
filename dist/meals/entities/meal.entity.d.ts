@@ -4,8 +4,10 @@ import { MealIngredient } from './meal-ingredient.entity';
 import { mealStatus } from 'src/constants/types.type';
 import { Tag } from 'src/tags/entities/tag.entity';
 import { RestaurantCategory } from 'src/restaurant-categories/entities/restaurant-category.entity';
+import { Category } from 'src/categories/entities/category.entity';
 export declare class Meal {
     _id: string;
+    category?: string | Category;
     restaurant: string | Restaurant;
     tag?: string | Tag;
     restaurantCategory: string | RestaurantCategory;

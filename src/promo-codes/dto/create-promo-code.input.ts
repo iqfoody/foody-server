@@ -16,6 +16,9 @@ export class CreatePromoCodeInput {
   @Field(()=> Int)
   discount: number;
 
+  @Field(()=> Int, {nullable: true})
+  usageTimes?: number;
+
   @Field(()=> Boolean, {nullable: true})
   isPublic?: boolean;
 

@@ -1,9 +1,7 @@
 import mongoose, { Document } from 'mongoose';
 import { publicStatus } from 'src/constants/types.type';
-import { Categories } from './categories.schema';
 export type RestaurantsDocument = Restaurants & Document;
 export declare class Restaurants {
-    category: string | Categories;
     title: string;
     titleEN: string;
     titleKR: string;

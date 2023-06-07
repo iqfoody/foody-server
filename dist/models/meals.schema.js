@@ -65,6 +65,7 @@ MealAdditions = __decorate([
 exports.MealAdditions = MealAdditions;
 exports.MealAdditionsSchema = mongoose_1.SchemaFactory.createForClass(MealAdditions);
 let Meals = class Meals {
+    category;
     restaurant;
     tag;
     restaurantCategory;
@@ -84,6 +85,10 @@ let Meals = class Meals {
     position;
     state;
 };
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Categories' }),
+    __metadata("design:type", Object)
+], Meals.prototype, "category", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Restaurants", required: [true, "restaurant requird"] }),
     __metadata("design:type", Object)

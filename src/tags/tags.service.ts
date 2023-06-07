@@ -84,7 +84,7 @@ export class TagsService {
   async remove(id: string) {
     const {image} = await this.TagsModel.findOne({_id: id}, {image: 1, _id: 0});
     await this.TagsModel.findByIdAndDelete(id);
-    this.awsService.removeImage(image);
+    if(image) this.awsService.removeImage(image);
     return "Success";
   }
 }

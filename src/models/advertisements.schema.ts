@@ -26,8 +26,11 @@ export class Advertisements {
   @Prop({default: null})
   type: advertisementsTypes;
 
-  @Prop({type: mongoose.Schema.Types.ObjectId})
-  target: string;
+  @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Restaurants"})
+  restaurant: string;
+
+  @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Meals"})
+  meal: string;
 
   @Prop({type: mongoose.Schema.Types.Number, default: 0})
   position: number;

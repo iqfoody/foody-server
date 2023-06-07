@@ -4,6 +4,9 @@ import { CreateMealAdditionInput } from './create-meal-addition.input';
 
 @InputType()
 export class CreateMealInput {
+
+  @Field(()=> ID, {nullable: true})
+  category?: string;
   
   @Field(()=> ID)
   restaurant: string;

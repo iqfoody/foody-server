@@ -40,7 +40,7 @@ let AdvertisementsController = class AdvertisementsController {
         return this.advertisementsService.create(createAdvertisementInput, file);
     }
     async updateAdvertisement(updateAdvertisementInput, file) {
-        const result = await this.awsService.createImage(file, updateAdvertisementInput.id);
+        const result = file ? await this.awsService.createImage(file, updateAdvertisementInput.id) : undefined;
         return this.advertisementsService.update(updateAdvertisementInput.id, { ...updateAdvertisementInput, image: result?.Key });
     }
 };

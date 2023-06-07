@@ -1,5 +1,4 @@
 export declare class CreateRestaurantInput {
-    category?: string;
     title: string;
     titleEN: string;
     titleKR?: string;

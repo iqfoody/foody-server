@@ -33,9 +33,7 @@ export declare class AdvertisementsResolver {
     findAll(): Promise<(import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    findOne(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    findOne(id: string): Promise<any>;
     updateAdvertisement(updateAdvertisementInput: UpdateAdvertisementInput): Promise<string>;
     positionAdvertisement(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     stateAdvertisement(stateInput: StateInput): Promise<string>;

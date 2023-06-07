@@ -1,6 +1,8 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
-import { User } from 'aws-sdk/clients/budgets';
 import { advertisementsTypes, publicStatus } from 'src/constants/types.type';
+import { Meal } from 'src/meals/entities/meal.entity';
+import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @ObjectType()
 export class Advertisement {
@@ -8,10 +10,13 @@ export class Advertisement {
   @Field(() => ID)
   _id: string;
 
-  @Field(() => ID, {nullable: true})
-  target?: string;
+  @Field(() => Meal, {nullable: true})
+  meal?: string | Meal;
 
-  @Field({nullable: true})
+  @Field(() => Restaurant, {nullable: true})
+  restaurant?: string | Restaurant;
+
+  @Field(()=> User, {nullable: true})
   user?: string | User;
 
   @Field()

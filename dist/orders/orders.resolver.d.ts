@@ -30,13 +30,9 @@ import { LimitEntity } from 'src/constants/limitEntity';
 export declare class OrdersResolver {
     private readonly ordersService;
     constructor(ordersService: OrdersService);
-    createOrder(createOrderInput: CreateOrderInput): Promise<import("mongoose").Document<unknown, {}, import("../models/orders.schema").OrdersDocument> & Omit<import("../models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    createOrder(createOrderInput: CreateOrderInput): Promise<any>;
     findAll(limitEntity: LimitEntity): Promise<{
-        data: Omit<import("mongoose").Document<unknown, {}, import("../models/orders.schema").OrdersDocument> & Omit<import("../models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-            _id: import("mongoose").Types.ObjectId;
-        }, never>, never>[];
+        data: any;
         pages: number;
     }>;
     homeValues(): Promise<{
@@ -73,11 +69,11 @@ export declare class OrdersResolver {
         data: any;
         pages: number;
     }>;
-    findOne(id: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, import("../models/orders.schema").OrdersDocument> & Omit<import("../models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, import("mongoose").Document<unknown, {}, import("../models/orders.schema").OrdersDocument> & Omit<import("../models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, import("../models/orders.schema").OrdersDocument>;
+    findAllDriverOrders(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    findOne(id: string): Promise<any>;
     updateOrder(updateOrderInput: UpdateOrderInput): Promise<string>;
     removeOrder(id: string): Promise<string>;
     profitsReports(date: string): Promise<{

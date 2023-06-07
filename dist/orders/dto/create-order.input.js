@@ -22,6 +22,7 @@ let CreateOrderInput = class CreateOrderInput {
     details;
     paymentMethod;
     promoCode;
+    no;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
@@ -59,6 +60,10 @@ __decorate([
     (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)
 ], CreateOrderInput.prototype, "promoCode", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], CreateOrderInput.prototype, "no", void 0);
 CreateOrderInput = __decorate([
     (0, graphql_1.InputType)()
 ], CreateOrderInput);

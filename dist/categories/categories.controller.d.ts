@@ -27,13 +27,15 @@ import { CategoriesService } from './categories.service';
 import { AwsService } from 'src/aws/aws.service';
 import { CreateCategoryInput } from './dto/create-category.input';
 import { UpdateCategoryInput } from './dto/update-category.input';
+import { MealsService } from 'src/meals/meals.service';
 export declare class CategoriesController {
     private readonly categoriesService;
+    private readonly mealsService;
     private readonly awsService;
-    constructor(categoriesService: CategoriesService, awsService: AwsService);
-    getCategory(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/categories.schema").CategoriesDocument> & Omit<import("../models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
+    constructor(categoriesService: CategoriesService, mealsService: MealsService, awsService: AwsService);
+    getRestaurantsForCategory(category: string, orderby: string): Promise<(import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    }, never>)[]>;
     getCategories(): Promise<(import("mongoose").Document<unknown, {}, import("../models/categories.schema").CategoriesDocument> & Omit<import("../models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;

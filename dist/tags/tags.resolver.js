@@ -41,7 +41,7 @@ let TagsResolver = class TagsResolver {
     updateTag(updateTagInput) {
         return this.tagsService.update(updateTagInput.id, updateTagInput);
     }
-    StateTag(stateInput) {
+    stateTag(stateInput) {
         return this.tagsService.state(stateInput);
     }
     positionTag(updatePositionInput) {
@@ -89,7 +89,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [state_input_1.StateInput]),
     __metadata("design:returntype", void 0)
-], TagsResolver.prototype, "StateTag", null);
+], TagsResolver.prototype, "stateTag", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: tag_entity_1.Tag }),

@@ -4,6 +4,7 @@ import { mealStatus } from 'src/constants/types.type';
 import { Restaurants } from './restaurants.schema';
 import { Tags } from './tags.schema';
 import { RestaurantCategories } from './restaurantCategories.schema';
+import { Categories } from './categories.schema';
 
 export type MealsDocument = Meals & Document;
 
@@ -40,6 +41,9 @@ export const MealAdditionsSchema = SchemaFactory.createForClass(MealAdditions);
 
 @Schema({timestamps: true})
 export class Meals {
+
+  @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Categories'})
+  category: string | Categories;
 
   @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Restaurants", required: [true, "restaurant requird"]})
   restaurant: string | Restaurants;

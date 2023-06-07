@@ -31,35 +31,32 @@ import { StateInput } from 'src/constants/state.input';
 import { UpdatePositionInput } from 'src/constants/position.input';
 import { LimitEntity } from 'src/constants/limitEntity';
 import { RestaurantCategoriesService } from 'src/restaurant-categories/restaurant-categories.service';
+import { MealsService } from 'src/meals/meals.service';
 export declare class RestaurantsService {
     private RestaurantsModel;
-    private readonly restaurantCategoriesService;
+    private mealsService;
+    private restaurantCategoriesService;
     private readonly awsService;
-    constructor(RestaurantsModel: Model<RestaurantsDocument>, restaurantCategoriesService: RestaurantCategoriesService, awsService: AwsService);
-    findRestaurnats(): Promise<Omit<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, never>[]>;
-    findRestaurnatsInfinty(limitEntity: LimitEntity): Promise<{
-        data: Omit<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
-            _id: import("mongoose").Types.ObjectId;
-        }, never>, never>[];
-        pages: number;
-    }>;
-    findForCategory(category: string, orderBy?: string): Promise<(import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
+    constructor(RestaurantsModel: Model<RestaurantsDocument>, mealsService: MealsService, restaurantCategoriesService: RestaurantCategoriesService, awsService: AwsService);
+    findRestaurnats(): Promise<(import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    findRestaurant(id: string): Promise<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    findRestaurnatsInfinty(limitEntity: LimitEntity): Promise<{
+        data: (import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
+            _id: import("mongoose").Types.ObjectId;
+        }, never>)[];
+        pages: number;
+    }>;
+    findRestaurant(id: string): Promise<any>;
     searchRestaurant(query: string): Promise<(import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
     create(createRestaurantInput: CreateRestaurantInput, file: any): Promise<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    findAll(): Promise<Omit<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
+    findAll(): Promise<(import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>, never>[]>;
+    }, never>)[]>;
     findOne(id: string): Promise<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;

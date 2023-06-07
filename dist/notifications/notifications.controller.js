@@ -23,9 +23,8 @@ let NotificationsController = class NotificationsController {
     async getMealsInfinty(limit, page) {
         return;
     }
-    async sendPublic() {
-        await this.firebaseService.sendPublic({ test: "test" });
-        return "Success";
+    sendPublic() {
+        return this.firebaseService.sendPublic({ test: "tse" });
     }
 };
 __decorate([
@@ -40,7 +39,7 @@ __decorate([
     (0, common_1.Post)('/'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], NotificationsController.prototype, "sendPublic", null);
 NotificationsController = __decorate([
     (0, common_1.Controller)('notifications'),

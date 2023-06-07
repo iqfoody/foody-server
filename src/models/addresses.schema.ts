@@ -35,10 +35,10 @@ export class Addresses {
   @Prop()
   description: string;
 
-  @Prop({type: mongoose.Schema.Types.Decimal128, required: [true, "latitude required"]})
+  @Prop({type: mongoose.Schema.Types.Number, required: [true, "latitude required"]})
   latitude: number;
 
-  @Prop({type: mongoose.Schema.Types.Decimal128, required: [true, "longitude required"]})
+  @Prop({type: mongoose.Schema.Types.Number, required: [true, "longitude required"]})
   longitude: number;
 }
 

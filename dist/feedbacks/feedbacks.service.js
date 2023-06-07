@@ -16,10 +16,13 @@ exports.FeedbacksService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const aws_service_1 = require("../aws/aws.service");
 let FeedbacksService = class FeedbacksService {
     FeedbacksModel;
-    constructor(FeedbacksModel) {
+    awsService;
+    constructor(FeedbacksModel, awsService) {
         this.FeedbacksModel = FeedbacksModel;
+        this.awsService = awsService;
     }
     async create(createFeedbackInput) {
         await this.FeedbacksModel.create(createFeedbackInput);
@@ -27,12 +30,19 @@ let FeedbacksService = class FeedbacksService {
     }
     async findAll(limitEntity) {
         const startIndex = limitEntity.page * limitEntity.limit;
-        const feedbacks = await this.FeedbacksModel.find().limit(limitEntity.limit).skip(startIndex).sort({ _id: -1 });
+        const feedbacks = await this.FeedbacksModel.find().limit(limitEntity.limit).skip(startIndex).sort({ _id: -1 }).populate({ path: "user", select: { name: 1, phoneNumber: 1, image: 1 } });
         const total = await this.FeedbacksModel.countDocuments();
+        for (const single of feedbacks) {
+            if (single?.user?.image)
+                single.user.image = this.awsService.getUrl(single.user.image);
+        }
         return { data: feedbacks, pages: Math.ceil(total / limitEntity.limit) };
     }
-    findOne(id) {
-        return this.FeedbacksModel.findById(id);
+    async findOne(id) {
+        const feedback = await this.FeedbacksModel.findById(id).populate({ path: "user", select: { name: 1, phoneNumber: 1, image: 1 } });
+        if (feedback?.user?.image)
+            feedback.user.image = this.awsService.getUrl(feedback.user.image);
+        return feedback;
     }
     async remove(id) {
         await this.FeedbacksModel.findByIdAndDelete(id);
@@ -42,7 +52,8 @@ let FeedbacksService = class FeedbacksService {
 FeedbacksService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)("Feedbacks")),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        aws_service_1.AwsService])
 ], FeedbacksService);
 exports.FeedbacksService = FeedbacksService;
 //# sourceMappingURL=feedbacks.service.js.map

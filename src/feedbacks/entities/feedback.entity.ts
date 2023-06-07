@@ -19,7 +19,7 @@ export class Feedback {
   @Field({nullable: true})
   phoneNumber?: string;
 
-  @Field(()=> String || User, {nullable: true})
+  @Field(()=> User, {nullable: true})
   user?: string | User;
 
 }

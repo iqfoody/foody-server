@@ -41,7 +41,7 @@ export class TagsResolver {
 
   @Mutation(() => String)
   @CheckAbilities({actions: Actions.Update, subject: Tag})
-  StateTag(@Args('stateInput') stateInput: StateInput) {
+  stateTag(@Args('stateInput') stateInput: StateInput) {
     return this.tagsService.state(stateInput);
   }
 

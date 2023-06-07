@@ -65,11 +65,11 @@ __decorate([
     __metadata("design:type", String)
 ], Addresses.prototype, "description", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Decimal128, required: [true, "latitude required"] }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, required: [true, "latitude required"] }),
     __metadata("design:type", Number)
 ], Addresses.prototype, "latitude", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Decimal128, required: [true, "longitude required"] }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, required: [true, "longitude required"] }),
     __metadata("design:type", Number)
 ], Addresses.prototype, "longitude", void 0);
 Addresses = __decorate([

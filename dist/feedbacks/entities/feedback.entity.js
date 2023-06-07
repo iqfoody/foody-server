@@ -41,7 +41,7 @@ __decorate([
     __metadata("design:type", String)
 ], Feedback.prototype, "phoneNumber", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => String || user_entity_1.User, { nullable: true }),
+    (0, graphql_1.Field)(() => user_entity_1.User, { nullable: true }),
     __metadata("design:type", Object)
 ], Feedback.prototype, "user", void 0);
 Feedback = __decorate([

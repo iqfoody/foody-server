@@ -13,12 +13,14 @@ const feedbacks_resolver_1 = require("./feedbacks.resolver");
 const feedbacks_controller_1 = require("./feedbacks.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const feedbacks_schema_1 = require("../models/feedbacks.schema");
+const aws_module_1 = require("../aws/aws.module");
 let FeedbacksModule = class FeedbacksModule {
 };
 FeedbacksModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: "Feedbacks", schema: feedbacks_schema_1.FeedbacksSchema }]),
+            aws_module_1.AwsModule
         ],
         providers: [feedbacks_resolver_1.FeedbacksResolver, feedbacks_service_1.FeedbacksService],
         exports: [feedbacks_service_1.FeedbacksService],

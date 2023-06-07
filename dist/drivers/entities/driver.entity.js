@@ -11,8 +11,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Driver = void 0;
 const graphql_1 = require("@nestjs/graphql");
+const wallet_entity_1 = require("../../wallets/entities/wallet.entity");
 let Driver = class Driver {
     _id;
+    wallet;
     name;
     phoneNumber;
     country;
@@ -30,6 +32,10 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
     __metadata("design:type", String)
 ], Driver.prototype, "_id", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => wallet_entity_1.Wallet),
+    __metadata("design:type", Object)
+], Driver.prototype, "wallet", void 0);
 __decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", String)

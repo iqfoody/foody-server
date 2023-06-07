@@ -10,4 +10,5 @@ export declare class CreateOrderInput {
     details?: string;
     paymentMethod?: paymentMethodsType;
     promoCode?: string;
+    no?: number;
 }

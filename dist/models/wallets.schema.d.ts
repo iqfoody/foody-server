@@ -1,6 +1,9 @@
 import mongoose, { Document } from 'mongoose';
 export type WalletsDocument = Wallets & Document;
 export declare class Wallets {
+    user: string;
+    driver: string;
+    admin: string;
     points: number;
     amount: number;
 }

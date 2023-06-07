@@ -1,10 +1,7 @@
-import { InputType, Int, Field, ID } from '@nestjs/graphql';
+import { InputType, Int, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreateRestaurantInput {
-  
-  @Field(()=> ID, {nullable: true})
-  category?: string;
 
   @Field()
   title: string;

@@ -26,10 +26,11 @@ import { CreateWalletInput } from './dto/create-wallet.input';
 import { UpdateWalletInput } from './dto/update-wallet.input';
 import { WalletsDocument } from 'src/models/wallets.schema';
 import { Model } from 'mongoose';
+import { ResetAdminWallet } from 'src/admins/dto/reset-admin-wallet.input';
 export declare class WalletsService {
     private WalletsModel;
     constructor(WalletsModel: Model<WalletsDocument>);
-    create(createWalletInput?: CreateWalletInput): Promise<import("mongoose").Document<unknown, {}, WalletsDocument> & Omit<import("src/models/wallets.schema").Wallets & import("mongoose").Document<any, any, any> & {
+    create(createWalletInput: CreateWalletInput): Promise<import("mongoose").Document<unknown, {}, WalletsDocument> & Omit<import("src/models/wallets.schema").Wallets & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     findAll(): import("mongoose").Query<(import("mongoose").Document<unknown, {}, WalletsDocument> & Omit<import("src/models/wallets.schema").Wallets & import("mongoose").Document<any, any, any> & {
@@ -42,6 +43,29 @@ export declare class WalletsService {
     }, never>, import("mongoose").Document<unknown, {}, WalletsDocument> & Omit<import("src/models/wallets.schema").Wallets & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, WalletsDocument>;
+    findUserWallet(user: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, WalletsDocument> & Omit<import("src/models/wallets.schema").Wallets & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, import("mongoose").Document<unknown, {}, WalletsDocument> & Omit<import("src/models/wallets.schema").Wallets & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, {}, WalletsDocument>;
+    findDriverWallet(driver: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, WalletsDocument> & Omit<import("src/models/wallets.schema").Wallets & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, import("mongoose").Document<unknown, {}, WalletsDocument> & Omit<import("src/models/wallets.schema").Wallets & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, {}, WalletsDocument>;
+    findAdminWallet(admin: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, WalletsDocument> & Omit<import("src/models/wallets.schema").Wallets & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, import("mongoose").Document<unknown, {}, WalletsDocument> & Omit<import("src/models/wallets.schema").Wallets & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, {}, WalletsDocument>;
+    resetAdminWallet(resetAdminWallet: ResetAdminWallet): Promise<{
+        _id: string;
+        amount: number;
+        points: number;
+    }>;
     update(id: string, updateWalletInput: UpdateWalletInput): Promise<string>;
     remove(id: string): Promise<string>;
+    removeUser(user: string): Promise<string>;
+    removeDriver(driver: string): Promise<string>;
+    removeAdmin(admin: string): Promise<string>;
 }

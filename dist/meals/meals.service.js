@@ -25,10 +25,14 @@ let MealsService = class MealsService {
         this.awsService = awsService;
     }
     async findForRestaurant(restaurant) {
-        const meals = await this.MealsModel.find({ $and: [{ restaurant }, { state: "Active" }] }).select(['-__v', '-createdAt', '-updatedAt', '-state', '-position', '-restaurant', '-tag', '-restaurantCategory']);
+        const meals = await this.MealsModel.find({ $and: [{ restaurant }, { state: "Active" }] }).select(['-__v', '-createdAt', '-updatedAt', '-state', '-position', '-restaurant', '-tag']);
         for (const single of meals) {
             if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
+            if (single?.points)
+                single.points = single.points * single.price;
+            if (single?.pointsBack)
+                single.pointsBack = (single.pointsBack / 100) * single.price;
         }
         return meals;
     }
@@ -41,6 +45,26 @@ let MealsService = class MealsService {
                 single.image = this.awsService.getUrl(single.image);
         }
         return { data: meals, pages: Math.ceil(total / limitEntity.limit) };
+    }
+    async findForCategory(category, orderBy) {
+        if (!(0, mongoose_2.isValidObjectId)(category))
+            throw new common_1.BadRequestException("There isn't meals with this category id");
+        let sort = { position: 1 };
+        if (orderBy === 'highestPrice') {
+            sort = { price: -1 };
+        }
+        else if (orderBy === 'lowestPrice') {
+            sort = { price: 1 };
+        }
+        else if (orderBy === 'recently') {
+            sort = { _id: -1 };
+        }
+        const meals = await this.MealsModel.find({ $and: [{ category }, { state: "Active" }] }).select(['-position', '-state', '-__v', '-createdAt', '-updatedAt']).sort(sort);
+        for (const single of meals) {
+            if (single?.image)
+                single.image = this.awsService.getUrl(single.image);
+        }
+        return meals;
     }
     async findForTag(tag) {
         if (!(0, mongoose_2.isValidObjectId)(tag))
@@ -59,6 +83,10 @@ let MealsService = class MealsService {
         for (const single of meals) {
             if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
+            if (single?.points)
+                single.points = single.points * single.price;
+            if (single?.pointsBack)
+                single.pointsBack = (single.pointsBack / 100) * single.price;
         }
         return meals;
     }
@@ -88,7 +116,7 @@ let MealsService = class MealsService {
     }
     async findAll(limitEntity) {
         const startIndex = limitEntity.page * limitEntity.limit;
-        const meals = await this.MealsModel.find().sort({ _id: -1 }).limit(limitEntity.limit).skip(startIndex);
+        const meals = await this.MealsModel.find().sort({ position: 1 }).limit(limitEntity.limit).skip(startIndex).populate("category");
         const total = await this.MealsModel.countDocuments();
         for (const single of meals) {
             if (single?.image)
@@ -96,8 +124,18 @@ let MealsService = class MealsService {
         }
         return { data: meals, pages: Math.ceil(total / limitEntity.limit) };
     }
+    async findAllForRestaurant(limitEntity) {
+        const startIndex = limitEntity.page * limitEntity.limit;
+        const meals = await this.MealsModel.find({ $and: [{ restaurant: limitEntity.user }, { state: "Active" }] }).sort({ _id: -1 }).limit(limitEntity.limit).skip(startIndex);
+        const total = await this.MealsModel.countDocuments({ $and: [{ restaurant: limitEntity.user }, { state: "Active" }] });
+        for (const single of meals) {
+            if (single?.image)
+                single.image = this.awsService.getUrl(single.image);
+        }
+        return { data: meals, pages: Math.ceil(total / limitEntity.limit) };
+    }
     async findOne(id) {
-        const meal = await this.MealsModel.findById(id);
+        const meal = await this.MealsModel.findById(id).populate({ path: "category", select: { _id: 1 } });
         if (meal?.image)
             meal.image = this.awsService.getUrl(meal.image);
         return meal;
@@ -123,7 +161,8 @@ let MealsService = class MealsService {
     async remove(id) {
         const { image } = await this.MealsModel.findOne({ _id: id }, { image: 1, _id: 0 });
         await this.MealsModel.findByIdAndDelete(id);
-        this.awsService.removeImage(image);
+        if (image)
+            this.awsService.removeImage(image);
         return "Success";
     }
     async findExtention(_id, restaurant) {

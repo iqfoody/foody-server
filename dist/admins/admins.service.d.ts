@@ -30,17 +30,19 @@ import { AwsService } from 'src/aws/aws.service';
 import { LoginInput } from 'src/auth/dto/login.input';
 import { StateInput } from 'src/constants/state.input';
 import { UpdatePasswordUser } from 'src/users/dto/update-password-user.input';
+import { WalletsService } from 'src/wallets/wallets.service';
 export declare class AdminsService {
     private AdminsModel;
+    private walletsService;
     private readonly awsService;
-    constructor(AdminsModel: IAdminsModel, awsService: AwsService);
+    constructor(AdminsModel: IAdminsModel, walletsService: WalletsService, awsService: AwsService);
     login(loginInput: LoginInput): Promise<import("src/models/admins.schema").AdminsDocument>;
     create(_id: string, createAdminInput: CreateAdminInput, file: any): Promise<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    findAll(): Promise<(import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
+    findAll(): Promise<Omit<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>)[]>;
+    }, never>, never>[]>;
     findOne(_id: string): Promise<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;

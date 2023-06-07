@@ -41,6 +41,9 @@ let MealsResolver = class MealsResolver {
     findAll(limitEntity) {
         return this.mealsService.findAll(limitEntity);
     }
+    findAllForRestaurant(limitEntity) {
+        return this.mealsService.findAllForRestaurant(limitEntity);
+    }
     search(query) {
         return this.mealsService.search(query);
     }
@@ -85,6 +88,14 @@ __decorate([
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
     __metadata("design:returntype", void 0)
 ], MealsResolver.prototype, "findAll", null);
+__decorate([
+    (0, graphql_1.Query)(() => mealsResponse_entity_1.MealsResponse, { name: 'mealsRestaurant' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: meal_entity_1.Meal }),
+    __param(0, (0, graphql_1.Args)('limitEntity')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
+    __metadata("design:returntype", void 0)
+], MealsResolver.prototype, "findAllForRestaurant", null);
 __decorate([
     (0, graphql_1.Query)(() => [meal_entity_1.Meal], { name: 'searchMeals' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: meal_entity_1.Meal }),

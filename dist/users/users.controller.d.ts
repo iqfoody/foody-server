@@ -21,4 +21,11 @@ export declare class UsersController {
         email: any;
     }>;
     updateUser(updateUserInput: UpdateUserInput, file: any): Promise<string>;
+    sendOtp(otp: {
+        phoneNumber: string;
+    }): Promise<"Sended" | import("aws-sdk/lib/request").PromiseResult<import("aws-sdk/clients/sns").CreateSMSSandboxPhoneNumberResult, import("aws-sdk").AWSError>>;
+    verifyOtp(otp: {
+        phoneNumber: string;
+        otp: string;
+    }): Promise<"Verified" | import("aws-sdk/lib/request").PromiseResult<import("aws-sdk/clients/sns").VerifySMSSandboxPhoneNumberResult, import("aws-sdk").AWSError>>;
 }

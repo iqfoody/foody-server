@@ -39,9 +39,6 @@ let RestaurantsController = class RestaurantsController {
     async getRestaurantsInfinty(limit, page) {
         return this.restaurantsService.findRestaurnatsInfinty({ limit, page });
     }
-    async getRestaurantsForCategory(category, orderby) {
-        return this.restaurantsService.findForCategory(category, orderby);
-    }
     async createRestaurant(createRestaurantInput, file) {
         return this.restaurantsService.create(createRestaurantInput, file);
     }
@@ -71,14 +68,6 @@ __decorate([
     __metadata("design:paramtypes", [Number, Number]),
     __metadata("design:returntype", Promise)
 ], RestaurantsController.prototype, "getRestaurantsInfinty", null);
-__decorate([
-    (0, common_1.Get)('/category/:id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Query)('orderBy')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", Promise)
-], RestaurantsController.prototype, "getRestaurantsForCategory", null);
 __decorate([
     (0, common_1.Post)('/'),
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),

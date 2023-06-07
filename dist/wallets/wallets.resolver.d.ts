@@ -24,7 +24,6 @@
 /// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
 import { WalletsService } from './wallets.service';
-import { UpdateWalletInput } from './dto/update-wallet.input';
 export declare class WalletsResolver {
     private readonly walletsService;
     constructor(walletsService: WalletsService);
@@ -33,5 +32,4 @@ export declare class WalletsResolver {
     }, never>, import("mongoose").Document<unknown, {}, import("../models/wallets.schema").WalletsDocument> & Omit<import("../models/wallets.schema").Wallets & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, import("../models/wallets.schema").WalletsDocument>;
-    updateWallet(updateWalletInput: UpdateWalletInput): Promise<string>;
 }

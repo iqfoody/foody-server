@@ -1,3 +1,5 @@
 export declare class CreateWalletInput {
-    _id: string;
+    user?: string;
+    driver?: string;
+    admin?: string;
 }

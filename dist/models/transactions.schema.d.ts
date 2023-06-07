@@ -4,6 +4,7 @@ export type TransactionsDocument = Transactions & Document;
 export declare class Transactions {
     user: string;
     admin: string;
+    driver: string;
     order: string;
     description: string;
     type: transactionTypes;

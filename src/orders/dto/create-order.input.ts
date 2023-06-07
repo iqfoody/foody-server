@@ -32,4 +32,7 @@ export class CreateOrderInput {
   @Field({nullable: true})
   promoCode?: string;
 
+  @Field(()=> Int, {nullable: true})
+  no?: number;
+
 }

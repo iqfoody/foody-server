@@ -24,13 +24,14 @@ const ability_factory_1 = require("../ability/ability.factory");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const limitEntity_1 = require("../constants/limitEntity");
 const transactionsResponse_entity_1 = require("./entities/transactionsResponse.entity");
+const reset_admin_wallet_input_1 = require("../admins/dto/reset-admin-wallet.input");
 let TransactionsResolver = class TransactionsResolver {
     transactionsService;
     constructor(transactionsService) {
         this.transactionsService = transactionsService;
     }
-    createTransaction(createTransactionInput) {
-        return this.transactionsService.create(createTransactionInput);
+    createTransaction(createTransactionInput, context) {
+        return this.transactionsService.create({ ...createTransactionInput, admin: context.req.user._id }, context.req.user.type === "Admin" ? true : false);
     }
     findAll(limitEntity) {
         return this.transactionsService.findAll(limitEntity);
@@ -41,17 +42,32 @@ let TransactionsResolver = class TransactionsResolver {
     findPoints(limitEntity) {
         return this.transactionsService.findPoints(limitEntity);
     }
-    findForUser(limitEntity) {
-        return this.transactionsService.findForUser(limitEntity);
+    findAmountUser(limitEntity) {
+        return this.transactionsService.findAmountUser(limitEntity);
     }
-    findForAdmin(limitEntity) {
-        return this.transactionsService.findForAdmin(limitEntity);
+    findAmountDriver(limitEntity) {
+        return this.transactionsService.findAmountDriver(limitEntity);
+    }
+    findAllAdmin(limitEntity) {
+        return this.transactionsService.findAllAdmin(limitEntity);
+    }
+    findAmountAdmin(limitEntity) {
+        return this.transactionsService.findAmountAdmin(limitEntity);
+    }
+    findPointsAdmin(limitEntity) {
+        return this.transactionsService.findPointsAdmin(limitEntity);
+    }
+    findPointsUser(limitEntity) {
+        return this.transactionsService.findPointsUser(limitEntity);
     }
     findOne(id) {
         return this.transactionsService.findOne(id);
     }
     updateTransaction(updateTransactionInput) {
         return this.transactionsService.update(updateTransactionInput.id, updateTransactionInput);
+    }
+    resetAdminWallet(resetAdminWallet, context) {
+        return this.transactionsService.resetAdmin(context.req.user._id, resetAdminWallet);
     }
     removeTransaction(id) {
         return this.transactionsService.remove(id);
@@ -61,8 +77,9 @@ __decorate([
     (0, graphql_1.Mutation)(() => transaction_entity_1.Transaction),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: transaction_entity_1.Transaction }),
     __param(0, (0, graphql_1.Args)('createTransactionInput')),
+    __param(1, (0, graphql_1.Context)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_transaction_input_1.CreateTransactionInput]),
+    __metadata("design:paramtypes", [create_transaction_input_1.CreateTransactionInput, Object]),
     __metadata("design:returntype", void 0)
 ], TransactionsResolver.prototype, "createTransaction", null);
 __decorate([
@@ -90,13 +107,21 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TransactionsResolver.prototype, "findPoints", null);
 __decorate([
-    (0, graphql_1.Query)(() => transactionsResponse_entity_1.TransactionResponse, { name: 'userTransactions' }),
+    (0, graphql_1.Query)(() => transactionsResponse_entity_1.TransactionResponse, { name: 'amountUserTransactions' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: transaction_entity_1.Transaction }),
     __param(0, (0, graphql_1.Args)('limitEntity')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
     __metadata("design:returntype", void 0)
-], TransactionsResolver.prototype, "findForUser", null);
+], TransactionsResolver.prototype, "findAmountUser", null);
+__decorate([
+    (0, graphql_1.Query)(() => transactionsResponse_entity_1.TransactionResponse, { name: 'amountDriverTransactions' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: transaction_entity_1.Transaction }),
+    __param(0, (0, graphql_1.Args)('limitEntity')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
+    __metadata("design:returntype", void 0)
+], TransactionsResolver.prototype, "findAmountDriver", null);
 __decorate([
     (0, graphql_1.Query)(() => transactionsResponse_entity_1.TransactionResponse, { name: 'adminTransactions' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: transaction_entity_1.Transaction }),
@@ -104,7 +129,31 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
     __metadata("design:returntype", void 0)
-], TransactionsResolver.prototype, "findForAdmin", null);
+], TransactionsResolver.prototype, "findAllAdmin", null);
+__decorate([
+    (0, graphql_1.Query)(() => transactionsResponse_entity_1.TransactionResponse, { name: 'amountAdminTransactions' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: transaction_entity_1.Transaction }),
+    __param(0, (0, graphql_1.Args)('limitEntity')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
+    __metadata("design:returntype", void 0)
+], TransactionsResolver.prototype, "findAmountAdmin", null);
+__decorate([
+    (0, graphql_1.Query)(() => transactionsResponse_entity_1.TransactionResponse, { name: 'pointsAdminTransactions' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: transaction_entity_1.Transaction }),
+    __param(0, (0, graphql_1.Args)('limitEntity')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
+    __metadata("design:returntype", void 0)
+], TransactionsResolver.prototype, "findPointsAdmin", null);
+__decorate([
+    (0, graphql_1.Query)(() => transactionsResponse_entity_1.TransactionResponse, { name: 'pointsUserTransactions' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: transaction_entity_1.Transaction }),
+    __param(0, (0, graphql_1.Args)('limitEntity')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
+    __metadata("design:returntype", void 0)
+], TransactionsResolver.prototype, "findPointsUser", null);
 __decorate([
     (0, graphql_1.Query)(() => transaction_entity_1.Transaction, { name: 'transaction' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: transaction_entity_1.Transaction }),
@@ -121,6 +170,15 @@ __decorate([
     __metadata("design:paramtypes", [update_transaction_input_1.UpdateTransactionInput]),
     __metadata("design:returntype", void 0)
 ], TransactionsResolver.prototype, "updateTransaction", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Manage, subject: transaction_entity_1.Transaction }),
+    __param(0, (0, graphql_1.Args)('resetAdminWallet')),
+    __param(1, (0, graphql_1.Context)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [reset_admin_wallet_input_1.ResetAdminWallet, Object]),
+    __metadata("design:returntype", void 0)
+], TransactionsResolver.prototype, "resetAdminWallet", null);
 __decorate([
     (0, graphql_1.Mutation)(() => transaction_entity_1.Transaction),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: transaction_entity_1.Transaction }),

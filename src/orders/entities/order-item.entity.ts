@@ -6,17 +6,17 @@ import { Meal } from "src/meals/entities/meal.entity";
 @ObjectType()
 export class OrderItem {
 
-    @Field(()=> String || Meal)
+    @Field(()=> Meal)
     meal: string | Meal;
 
-    @Field(()=> [String], {nullable: true})
-    additions?: string[];
+    @Field(()=> [MealAddition], {nullable: true})
+    additions?: MealAddition[];
 
-    @Field(()=> [String], {nullable: true})
-    addIngredients?: string[];
+    @Field(()=> [MealIngredient], {nullable: true})
+    addIngredients?: MealIngredient[];
 
-    @Field(()=> [String], {nullable: true})
-    removeIngredients?: string[];
+    @Field(()=> [MealIngredient], {nullable: true})
+    removeIngredients?: MealIngredient[];
 
     @Field(()=> Int)
     quantity: number;

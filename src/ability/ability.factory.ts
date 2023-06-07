@@ -30,6 +30,7 @@ import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { Tag } from 'src/tags/entities/tag.entity';
 import { Wallet } from 'src/wallets/entities/wallet.entity';
 import { Transaction } from 'src/transactions/entities/transaction.entity';
+import { Setting } from 'src/settings/entities/setting.entity';
 
 
 export enum Actions {
@@ -68,7 +69,8 @@ export type Subjects = InferSubjects<
                                     typeof Restaurant |
                                     typeof Tag |
                                     typeof Wallet |
-                                    typeof Transaction
+                                    typeof Transaction |
+                                    typeof Setting
                                     > | 'all';
 
 export type AppAbility = MongoAbility<[Actions, Subjects], MongoQuery>

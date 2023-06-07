@@ -24,17 +24,24 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { CreateTransactionInput } from './dto/create-transaction.input';
 import { UpdateTransactionInput } from './dto/update-transaction.input';
+import { AdminsService } from 'src/admins/admins.service';
+import { UsersService } from 'src/users/users.service';
+import { WalletsService } from 'src/wallets/wallets.service';
+import { OrdersService } from 'src/orders/orders.service';
 import { Model } from 'mongoose';
 import { TransactionsDocument } from 'src/models/transactions.schema';
 import { LimitEntity } from 'src/constants/limitEntity';
 import { AwsService } from 'src/aws/aws.service';
+import { ResetAdminWallet } from 'src/admins/dto/reset-admin-wallet.input';
 export declare class TransactionsService {
     private TransactionsModel;
+    private ordersService;
+    private adminsService;
+    private usersService;
+    private walletsService;
     private readonly awsService;
-    constructor(TransactionsModel: Model<TransactionsDocument>, awsService: AwsService);
-    create(createTransactionInput: CreateTransactionInput): Promise<import("mongoose").Document<unknown, {}, TransactionsDocument> & Omit<import("src/models/transactions.schema").Transactions & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    constructor(TransactionsModel: Model<TransactionsDocument>, ordersService: OrdersService, adminsService: AdminsService, usersService: UsersService, walletsService: WalletsService, awsService: AwsService);
+    createTransaction(createTransactionInput: CreateTransactionInput): Promise<void>;
     findAll(limitEntity: LimitEntity): Promise<{
         data: any;
         pages: number;
@@ -47,14 +54,32 @@ export declare class TransactionsService {
         data: any;
         pages: number;
     }>;
-    findForUser(limitEntity: LimitEntity): Promise<{
+    findPointsUser(limitEntity: LimitEntity): Promise<{
         data: any;
         pages: number;
     }>;
-    findForAdmin(limitEntity: LimitEntity): Promise<{
+    findAmountUser(limitEntity: LimitEntity): Promise<{
         data: any;
         pages: number;
     }>;
+    findAmountDriver(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    findAllAdmin(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    findAmountAdmin(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    findPointsAdmin(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    create(createTransactionInput: CreateTransactionInput, admin: boolean): Promise<any>;
+    resetAdmin(admin: string, resetAdminWallet: ResetAdminWallet): Promise<string>;
     findOne(id: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, TransactionsDocument> & Omit<import("src/models/transactions.schema").Transactions & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, import("mongoose").Document<unknown, {}, TransactionsDocument> & Omit<import("src/models/transactions.schema").Transactions & import("mongoose").Document<any, any, any> & {

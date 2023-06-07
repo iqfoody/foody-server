@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { TransactionsService } from './transactions.service';
 import { Transaction } from './entities/transaction.entity';
 import { CreateTransactionInput } from './dto/create-transaction.input';
@@ -9,16 +9,19 @@ import { Actions } from 'src/ability/ability.factory';
 import { CheckAbilities } from 'src/ability/ability.decorator';
 import { LimitEntity } from 'src/constants/limitEntity';
 import { TransactionResponse } from './entities/transactionsResponse.entity';
+import { ResetAdminWallet } from 'src/admins/dto/reset-admin-wallet.input';
 
 @UseGuards(AccessAuthGuard)
 @Resolver(() => Transaction)
 export class TransactionsResolver {
-  constructor(private readonly transactionsService: TransactionsService) {}
+  constructor(
+    private readonly transactionsService: TransactionsService,
+    ) {}
 
   @Mutation(() => Transaction)
   @CheckAbilities({actions: Actions.Create, subject: Transaction})
-  createTransaction(@Args('createTransactionInput') createTransactionInput: CreateTransactionInput) {
-    return this.transactionsService.create(createTransactionInput);
+  createTransaction(@Args('createTransactionInput') createTransactionInput: CreateTransactionInput, @Context() context) {
+    return this.transactionsService.create({...createTransactionInput, admin: context.req.user._id}, context.req.user.type === "Admin" ? true : false);
   }
 
   @Query(() => TransactionResponse, { name: 'transactions' })
@@ -39,16 +42,40 @@ export class TransactionsResolver {
     return this.transactionsService.findPoints(limitEntity);
   }
 
-  @Query(() => TransactionResponse, { name: 'userTransactions' })
+  @Query(() => TransactionResponse, { name: 'amountUserTransactions' })
   @CheckAbilities({actions: Actions.Read, subject: Transaction})
-  findForUser(@Args('limitEntity') limitEntity: LimitEntity) {
-    return this.transactionsService.findForUser(limitEntity);
+  findAmountUser(@Args('limitEntity') limitEntity: LimitEntity) {
+    return this.transactionsService.findAmountUser(limitEntity);
+  }
+
+  @Query(() => TransactionResponse, { name: 'amountDriverTransactions' })
+  @CheckAbilities({actions: Actions.Read, subject: Transaction})
+  findAmountDriver(@Args('limitEntity') limitEntity: LimitEntity) {
+    return this.transactionsService.findAmountDriver(limitEntity);
   }
 
   @Query(() => TransactionResponse, { name: 'adminTransactions' })
   @CheckAbilities({actions: Actions.Read, subject: Transaction})
-  findForAdmin(@Args('limitEntity') limitEntity: LimitEntity) {
-    return this.transactionsService.findForAdmin(limitEntity);
+  findAllAdmin(@Args('limitEntity') limitEntity: LimitEntity) {
+    return this.transactionsService.findAllAdmin(limitEntity);
+  }
+
+  @Query(() => TransactionResponse, { name: 'amountAdminTransactions' })
+  @CheckAbilities({actions: Actions.Read, subject: Transaction})
+  findAmountAdmin(@Args('limitEntity') limitEntity: LimitEntity) {
+    return this.transactionsService.findAmountAdmin(limitEntity);
+  }
+
+  @Query(() => TransactionResponse, { name: 'pointsAdminTransactions' })
+  @CheckAbilities({actions: Actions.Read, subject: Transaction})
+  findPointsAdmin(@Args('limitEntity') limitEntity: LimitEntity) {
+    return this.transactionsService.findPointsAdmin(limitEntity);
+  }
+
+  @Query(() => TransactionResponse, { name: 'pointsUserTransactions' })
+  @CheckAbilities({actions: Actions.Read, subject: Transaction})
+  findPointsUser(@Args('limitEntity') limitEntity: LimitEntity) {
+    return this.transactionsService.findPointsUser(limitEntity);
   }
 
   @Query(() => Transaction, { name: 'transaction' })
@@ -61,6 +88,12 @@ export class TransactionsResolver {
   @CheckAbilities({actions: Actions.Update, subject: Transaction})
   updateTransaction(@Args('updateTransactionInput') updateTransactionInput: UpdateTransactionInput) {
     return this.transactionsService.update(updateTransactionInput.id, updateTransactionInput);
+  }
+
+  @Mutation(() => String)
+  @CheckAbilities({actions: Actions.Manage, subject: Transaction})
+  resetAdminWallet(@Args('resetAdminWallet') resetAdminWallet: ResetAdminWallet, @Context() context) {
+    return this.transactionsService.resetAdmin(context.req.user._id, resetAdminWallet);
   }
 
   @Mutation(() => Transaction)

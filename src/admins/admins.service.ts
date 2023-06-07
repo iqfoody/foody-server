@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { CreateAdminInput } from './dto/create-admin.input';
 import { UpdateAdminInput } from './dto/update-admin.input';
 import { InjectModel } from '@nestjs/mongoose';
@@ -9,11 +9,13 @@ import { Response } from 'src/constants/response.entity';
 import { StateInput } from 'src/constants/state.input';
 import { genSalt, hash } from 'bcryptjs';
 import { UpdatePasswordUser } from 'src/users/dto/update-password-user.input';
+import { WalletsService } from 'src/wallets/wallets.service';
 
 @Injectable()
 export class AdminsService {
   constructor(
     @InjectModel("Admins") private AdminsModel: IAdminsModel,
+    @Inject(forwardRef(()=> WalletsService)) private walletsService: WalletsService,
     private readonly awsService: AwsService,
   ) {}
 
@@ -31,13 +33,16 @@ export class AdminsService {
       const result = await this.awsService.createImage(file, admin._id);
       admin.image = result?.Key;
     }
+    // create wallet...
+    const wallet = await this.walletsService.create({admin: admin._id});
+    admin.wallet = wallet._id;
     await admin.save();
     if(admin?.image) admin.image = this.awsService.getUrl(admin?.image);
     return admin;
   }
 
   async findAll() {
-    const admins = await this.AdminsModel.find({type: {$ne: "Admin"}});
+    const admins = await this.AdminsModel.find({type: {$ne: "Admin"}}).populate("wallet");
     for(const admin of admins){
       if(admin?.image) admin.image = this.awsService.getUrl(admin?.image);
     }
@@ -45,7 +50,7 @@ export class AdminsService {
   }
 
   async findOne(_id: string) {
-    const admin = await this.AdminsModel.findOne({$and: [{_id}, {type: {$ne: "Admin"}} ]});
+    const admin = await this.AdminsModel.findOne({$and: [{_id}, {type: {$ne: "Admin"}} ]}).populate("wallet");
     if(admin?.image) admin.image = this.awsService.getUrl(admin?.image);
     return admin;
   }
@@ -110,6 +115,7 @@ export class AdminsService {
   async remove(_id: string) {
     const { image } = await this.AdminsModel.findOne({$and: [{_id}, {type: {$ne: "Admin"}}]}, {image: 1, _id: 0});
     await this.AdminsModel.findOneAndDelete({$and: [{_id}, {type: {$ne: "Admin"}}]});
+    await this.walletsService.removeAdmin(_id);
     if(image) this.awsService.removeImage(image);
     return "success";
   }

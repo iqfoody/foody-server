@@ -22,7 +22,6 @@
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
-import { NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { CreatePromoCodeInput } from './dto/create-promo-code.input';
 import { UpdatePromoCodeInput } from './dto/update-promo-code.input';
 import { Model } from 'mongoose';
@@ -36,13 +35,12 @@ export declare class PromoCodesService {
     }, never>)[], import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, PromoCodesDocument>;
-    check(name: string, user: string): Promise<NotFoundException | {
-        _id: any;
+    check(name: string, user: string): Promise<{
         name: string;
         discount: number;
         type: import("../constants/types.type").promoCodeTypes;
     }>;
-    usePromoCode(name: string, user: string): Promise<NotAcceptableException | NotFoundException | "Verifyed">;
+    usePromoCode(name: string, user: string): Promise<string>;
     create(createPromoCodeInput: CreatePromoCodeInput): Promise<import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;

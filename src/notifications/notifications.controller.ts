@@ -14,8 +14,7 @@ export class NotificationsController {
     }
 
     @Post('/')
-    async sendPublic(){
-        await this.firebaseService.sendPublic({test: "test"});
-        return "Success";
+    sendPublic(){
+        return this.firebaseService.sendPublic({test: "tse"});
     }
 }

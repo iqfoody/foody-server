@@ -11,6 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderItem = void 0;
 const graphql_1 = require("@nestjs/graphql");
+const meal_addition_entity_1 = require("../../meals/entities/meal-addition.entity");
+const meal_ingredient_entity_1 = require("../../meals/entities/meal-ingredient.entity");
 const meal_entity_1 = require("../../meals/entities/meal.entity");
 let OrderItem = class OrderItem {
     meal;
@@ -20,19 +22,19 @@ let OrderItem = class OrderItem {
     quantity;
 };
 __decorate([
-    (0, graphql_1.Field)(() => String || meal_entity_1.Meal),
+    (0, graphql_1.Field)(() => meal_entity_1.Meal),
     __metadata("design:type", Object)
 ], OrderItem.prototype, "meal", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => [String], { nullable: true }),
+    (0, graphql_1.Field)(() => [meal_addition_entity_1.MealAddition], { nullable: true }),
     __metadata("design:type", Array)
 ], OrderItem.prototype, "additions", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => [String], { nullable: true }),
+    (0, graphql_1.Field)(() => [meal_ingredient_entity_1.MealIngredient], { nullable: true }),
     __metadata("design:type", Array)
 ], OrderItem.prototype, "addIngredients", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => [String], { nullable: true }),
+    (0, graphql_1.Field)(() => [meal_ingredient_entity_1.MealIngredient], { nullable: true }),
     __metadata("design:type", Array)
 ], OrderItem.prototype, "removeIngredients", void 0);
 __decorate([

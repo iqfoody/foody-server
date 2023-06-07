@@ -1,10 +1,14 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { province, publicStatus } from 'src/constants/types.type';
+import { Wallet } from 'src/wallets/entities/wallet.entity';
 
 @ObjectType()
 export class Driver {
   @Field(() => ID)
   _id: string;
+
+  @Field(() => Wallet)
+  wallet: string | Wallet;
 
   @Field()
   name: string;

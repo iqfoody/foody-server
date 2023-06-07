@@ -19,6 +19,7 @@ let PromoCode = class PromoCode {
     user;
     type;
     discount;
+    usageTimes;
     isPublic;
     expire;
     state;
@@ -49,6 +50,10 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int),
     __metadata("design:type", Number)
 ], PromoCode.prototype, "discount", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], PromoCode.prototype, "usageTimes", void 0);
 __decorate([
     (0, graphql_1.Field)(() => Boolean),
     __metadata("design:type", Boolean)

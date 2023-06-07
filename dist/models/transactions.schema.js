@@ -18,6 +18,7 @@ const mongoose_2 = __importDefault(require("mongoose"));
 let Transactions = class Transactions {
     user;
     admin;
+    driver;
     order;
     description;
     type;
@@ -28,13 +29,17 @@ let Transactions = class Transactions {
     state;
 };
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Users", required: [true, "user id is required"] }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Users" }),
     __metadata("design:type", String)
 ], Transactions.prototype, "user", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Admins" }),
     __metadata("design:type", String)
 ], Transactions.prototype, "admin", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Drivers" }),
+    __metadata("design:type", String)
+], Transactions.prototype, "driver", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Orders" }),
     __metadata("design:type", String)

@@ -39,6 +39,12 @@ export declare class MealsResolver {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     findAll(limitEntity: LimitEntity): Promise<{
+        data: Omit<import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+            _id: import("mongoose").Types.ObjectId;
+        }, never>, never>[];
+        pages: number;
+    }>;
+    findAllForRestaurant(limitEntity: LimitEntity): Promise<{
         data: (import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
             _id: import("mongoose").Types.ObjectId;
         }, never>)[];

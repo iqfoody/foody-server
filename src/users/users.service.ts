@@ -81,8 +81,9 @@ export class UsersService {
       if(email) throw new NotAcceptableException("email E0011")
     }
     // -> create wallet...
-    const wallet = await this.walletsService.create();
-    const user = new this.UsersModel({...createUserInput, wallet: wallet._id});
+    const user = new this.UsersModel(createUserInput);
+    const wallet = await this.walletsService.create({user: user._id});
+    user.wallet = wallet._id;
     // -> upload image to s3 bucket...
     if(file) {
       const result = await this.awsService.createImage(file, user._id);
@@ -145,8 +146,9 @@ export class UsersService {
   }
 
   async create(createUserInput: CreateUserInput){
-    const wallet = await this.walletsService.create();
-    const user = new this.UsersModel({...createUserInput, wallet: wallet._id});
+    const user = new this.UsersModel(createUserInput);
+    const wallet = await this.walletsService.create({user: user._id});
+    user.wallet = wallet._id;
     await user.save();
     await this.favoritesService.create({user: user._id});
     return user.populate({path: "wallet", select: {points: 1, amount: 1, _id: 0}});
@@ -256,8 +258,10 @@ export class UsersService {
       {$match: {$and: [ {createdAt: {$gte: year}}, {createdAt: {$lte: new Date()}} ] }},
       {$group: {_id: "createAt", total: {$push: "$createdAt"},}},
     ]);
-    for(const single of users[0]?.total){
-      result = {...result, [`m${new Date(single).getMonth()}`]: {...result[`m${new Date(single).getMonth()}`], [`d${new Date(single).getDate()}`]: result[`m${new Date(single).getMonth()}`][`d${new Date(single).getDate()}`]+1}}
+    if(users?.length){
+      for(const single of users[0]?.total){
+        result = {...result, [`m${new Date(single).getMonth()}`]: {...result[`m${new Date(single).getMonth()}`], [`d${new Date(single).getDate()}`]: result[`m${new Date(single).getMonth()}`][`d${new Date(single).getDate()}`]+1}}
+      }
     }
     return result;
   }

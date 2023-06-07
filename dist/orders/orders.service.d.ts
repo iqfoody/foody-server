@@ -42,7 +42,6 @@ import { TransactionsService } from 'src/transactions/transactions.service';
 export declare class OrdersService {
     private OrdersModel;
     private mealsService;
-    private readonly awsService;
     private readonly promoCodeService;
     private readonly walletsService;
     private readonly usersService;
@@ -50,7 +49,8 @@ export declare class OrdersService {
     private readonly restaurantsService;
     private readonly driversService;
     private readonly transactionsService;
-    constructor(OrdersModel: Model<OrdersDocument>, mealsService: MealsService, awsService: AwsService, promoCodeService: PromoCodesService, walletsService: WalletsService, usersService: UsersService, ratesService: RatesService, restaurantsService: RestaurantsService, driversService: DriversService, transactionsService: TransactionsService);
+    private readonly awsService;
+    constructor(OrdersModel: Model<OrdersDocument>, mealsService: MealsService, promoCodeService: PromoCodesService, walletsService: WalletsService, usersService: UsersService, ratesService: RatesService, restaurantsService: RestaurantsService, driversService: DriversService, transactionsService: TransactionsService, awsService: AwsService);
     createOrder(createOrderInput: CreateOrderInput): Promise<import("mongoose").Document<unknown, {}, OrdersDocument> & Omit<import("src/models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
@@ -65,24 +65,20 @@ export declare class OrdersService {
     completeOrder(id: string, driver: string, recievedPrice: number): Promise<string>;
     rateOrder(createRateOrderInput: CreateRateOrderInput): Promise<string>;
     deleteOrder(id: string, user: string): Promise<string>;
-    create(createOrderInput: CreateOrderInput): Promise<import("mongoose").Document<unknown, {}, OrdersDocument> & Omit<import("src/models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    create(createOrderInput: CreateOrderInput): Promise<any>;
     findAll(limitEntity: LimitEntity): Promise<{
-        data: Omit<import("mongoose").Document<unknown, {}, OrdersDocument> & Omit<import("src/models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-            _id: import("mongoose").Types.ObjectId;
-        }, never>, never>[];
+        data: any;
         pages: number;
     }>;
     findUserOrders(limitEntity: LimitEntity): Promise<{
         data: any;
         pages: number;
     }>;
-    findOne(id: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, OrdersDocument> & Omit<import("src/models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, import("mongoose").Document<unknown, {}, OrdersDocument> & Omit<import("src/models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, OrdersDocument>;
+    findDriverOrders(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    findOne(id: string): Promise<any>;
     update(id: string, updateOrderInput: UpdateOrderInput): Promise<string>;
     state(stateInput: StateInput): Promise<string>;
     remove(id: string): Promise<string>;

@@ -8,12 +8,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DriversSchema = exports.Drivers = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
+const mongoose_2 = __importDefault(require("mongoose"));
 const bcryptjs_1 = require("bcryptjs");
 const common_1 = require("@nestjs/common");
 let Drivers = class Drivers {
+    wallet;
     name;
     phoneNumber;
     password;
@@ -28,6 +33,10 @@ let Drivers = class Drivers {
     comparePassword;
     compareToken;
 };
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Wallets", required: [true, "wallet required"] }),
+    __metadata("design:type", Object)
+], Drivers.prototype, "wallet", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: [true, 'name field required'] }),
     __metadata("design:type", String)

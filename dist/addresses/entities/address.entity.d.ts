@@ -5,6 +5,7 @@ export declare class Address {
     user: string | User;
     title: string;
     country?: string;
+    phoneNumber?: string;
     city?: province;
     address?: string;
     building?: string;
