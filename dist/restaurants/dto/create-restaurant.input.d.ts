@@ -8,4 +8,9 @@ export declare class CreateRestaurantInput {
     image?: string;
     time: number;
     deliveryPrice?: number;
+    discount: number;
+    minDiscount: number;
+    maxDiscount: number;
+    latitude: number;
+    longitude: number;
 }

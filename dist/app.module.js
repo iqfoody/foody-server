@@ -52,6 +52,7 @@ AppModule = __decorate([
                 buildSchemaOptions: {
                     dateScalarMode: 'timestamp',
                 },
+                playground: false,
                 context: ({ req, res }) => {
                     return { req, res };
                 },

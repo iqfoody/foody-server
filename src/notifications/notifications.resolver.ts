@@ -1,35 +1,53 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 import { NotificationsService } from './notifications.service';
 import { Notification } from './entities/notification.entity';
 import { CreateNotificationInput } from './dto/create-notification.input';
 import { UpdateNotificationInput } from './dto/update-notification.input';
+import { LimitEntity } from 'src/constants/limitEntity';
+import { NotificationsResponse } from './entities/notificationsResponse.entity';
+import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
+import { UseGuards } from '@nestjs/common';
+import { CheckAbilities } from 'src/ability/ability.decorator';
+import { Actions } from 'src/ability/ability.factory';
 
+@UseGuards(AccessAuthGuard)
 @Resolver(() => Notification)
 export class NotificationsResolver {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Mutation(() => Notification)
+  @CheckAbilities({actions: Actions.Create, subject: Notification})
   createNotification(@Args('createNotificationInput') createNotificationInput: CreateNotificationInput) {
-    return this.notificationsService.create(createNotificationInput);
+    return this.notificationsService.create(createNotificationInput, null);
   }
 
-  @Query(() => [Notification], { name: 'notifications' })
-  findAll() {
-    return this.notificationsService.findAll();
+  @Query(() => NotificationsResponse, { name: 'notifications' })
+  @CheckAbilities({actions: Actions.Read, subject: Notification})
+  findAll(@Args('limitEntity') limitEntity: LimitEntity) {
+    return this.notificationsService.findAll(limitEntity);
+  }
+
+  @Query(() => NotificationsResponse, { name: 'managementNotifications' })
+  @CheckAbilities({actions: Actions.Read, subject: Notification})
+  findManagement(@Args('limitEntity') limitEntity: LimitEntity) {
+    return this.notificationsService.findManagement(limitEntity);
   }
 
   @Query(() => Notification, { name: 'notification' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  @CheckAbilities({actions: Actions.Read, subject: Notification})
+  findOne(@Args('id', { type: () => ID }) id: string) {
     return this.notificationsService.findOne(id);
   }
 
   @Mutation(() => Notification)
+  @CheckAbilities({actions: Actions.Update, subject: Notification})
   updateNotification(@Args('updateNotificationInput') updateNotificationInput: UpdateNotificationInput) {
     return this.notificationsService.update(updateNotificationInput.id, updateNotificationInput);
   }
 
   @Mutation(() => Notification)
-  removeNotification(@Args('id', { type: () => Int }) id: number) {
+  @CheckAbilities({actions: Actions.Delete, subject: Notification})
+  removeNotification(@Args('id', { type: () => ID }) id: string) {
     return this.notificationsService.remove(id);
   }
 }

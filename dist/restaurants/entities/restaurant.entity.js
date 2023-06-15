@@ -28,6 +28,11 @@ let Restaurant = class Restaurant {
     state;
     createdAt;
     updatedAt;
+    discount;
+    minDiscount;
+    maxDiscount;
+    latitude;
+    longitude;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
@@ -93,6 +98,26 @@ __decorate([
     (0, graphql_1.Field)(() => Date, { nullable: true }),
     __metadata("design:type", Date)
 ], Restaurant.prototype, "updatedAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Restaurant.prototype, "discount", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Restaurant.prototype, "minDiscount", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Restaurant.prototype, "maxDiscount", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    __metadata("design:type", Number)
+], Restaurant.prototype, "latitude", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    __metadata("design:type", Number)
+], Restaurant.prototype, "longitude", void 0);
 Restaurant = __decorate([
     (0, graphql_1.ObjectType)()
 ], Restaurant);

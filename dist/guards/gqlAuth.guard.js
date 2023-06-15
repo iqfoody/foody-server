@@ -14,10 +14,12 @@ let GqlAuthGuard = class GqlAuthGuard extends (0, passport_1.AuthGuard)('local')
     getRequest(context) {
         const ctx = graphql_1.GqlExecutionContext.create(context);
         const request = ctx.getContext().req;
-        const body = request.body;
-        const origin = request.headers.origin;
-        request.body = { ...body, origin };
-        return request;
+        if (request.headers.authorization) {
+            request.body = { ...request.body, username: "Foody", password: "123123" };
+            return request;
+        }
+        else
+            throw new common_1.UnauthorizedException('Access Denied');
     }
 };
 GqlAuthGuard = __decorate([

@@ -45,6 +45,24 @@ export class Restaurants {
 
   @Prop({default: "Active"})
   state: publicStatus;
+
+  // -> after update 1...
+
+  @Prop({type: mongoose.Schema.Types.Number, default: 0, minlength: [1000, "Min discount 1000"]})
+  discount: number;
+
+  @Prop({type: mongoose.Schema.Types.Number, default: 0, minlength: [1000, "Min discount 1000"]})
+  minDiscount: number;
+
+  @Prop({type: mongoose.Schema.Types.Number, default: 0, minlength: [2000, "Min discount 2000"]})
+  maxDiscount: number;
+
+  @Prop({type: mongoose.Schema.Types.Number, default: 0.0})
+  latitude: number;
+
+  @Prop({type: mongoose.Schema.Types.Number, default: 0.0})
+  longitude: number;
+
 }
 
 export const RestaurantsSchema = SchemaFactory.createForClass(Restaurants);

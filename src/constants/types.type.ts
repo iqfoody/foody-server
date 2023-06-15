@@ -23,7 +23,7 @@ type publicStatus = "Active" | "Disabled";
 
 type mealStatus = "Active" | "Disabled" | "Deleted" | "hidden";
 
-type notificationsTypes = "Public" | "Private" | "Vertual";
+type notificationsTypes = "Public" | "Private" | "Vertual" | "Management";
 
 type notificationsStatus = "Unread" | "Read";
 

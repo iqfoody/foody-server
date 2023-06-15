@@ -168,7 +168,7 @@ let MealsService = class MealsService {
     async findExtention(_id, restaurant) {
         if (!(0, mongoose_2.isValidObjectId)(_id) || !(0, mongoose_2.isValidObjectId)(restaurant))
             throw new common_1.BadRequestException("There isn't meal or restaurant with this id");
-        return this.MealsModel.findOne({ $and: [{ _id }, { restaurant }] }, { additions: 1, ingredients: 1, price: 1, points: 1, pointsBack: 1, _id: 0 });
+        return this.MealsModel.findOne({ $and: [{ _id }, { restaurant }] }, { additions: 1, ingredients: 1, price: 1, points: 1, pointsBack: 1, discount: 1, _id: 0 });
     }
     async search(query) {
         const meals = await this.MealsModel.find({ $text: { $search: query } }, { score: { $meta: "textScore" } }).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']).sort({ score: { $meta: "textScore" } });

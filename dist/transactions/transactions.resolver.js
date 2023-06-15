@@ -157,7 +157,7 @@ __decorate([
 __decorate([
     (0, graphql_1.Query)(() => transaction_entity_1.Transaction, { name: 'transaction' }),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: transaction_entity_1.Transaction }),
-    __param(0, (0, graphql_1.Args)('id', { type: () => String })),
+    __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
@@ -182,7 +182,7 @@ __decorate([
 __decorate([
     (0, graphql_1.Mutation)(() => transaction_entity_1.Transaction),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: transaction_entity_1.Transaction }),
-    __param(0, (0, graphql_1.Args)('id', { type: () => String })),
+    __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)

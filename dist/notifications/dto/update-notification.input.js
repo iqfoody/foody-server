@@ -16,8 +16,8 @@ let UpdateNotificationInput = class UpdateNotificationInput extends (0, graphql_
     id;
 };
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Int),
-    __metadata("design:type", Number)
+    (0, graphql_1.Field)(() => graphql_1.ID),
+    __metadata("design:type", String)
 ], UpdateNotificationInput.prototype, "id", void 0);
 UpdateNotificationInput = __decorate([
     (0, graphql_1.InputType)()

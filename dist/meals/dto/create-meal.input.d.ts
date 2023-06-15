@@ -18,4 +18,5 @@ export declare class CreateMealInput {
     previousPrice?: number;
     points?: number;
     pointsBack?: number;
+    discount: number;
 }

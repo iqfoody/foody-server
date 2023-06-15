@@ -2,6 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { notificationsStatus, notificationsTypes } from 'src/constants/types.type';
 import { Users } from './users.schema';
+import { Orders } from './orders.schema';
+import { Restaurants } from './restaurants.schema';
+import { Meals } from './meals.schema';
+import { Drivers } from './drivers.schema';
 
 export type NotificationsDocument = Notifications & Document;
 
@@ -9,31 +13,40 @@ export type NotificationsDocument = Notifications & Document;
 export class Notifications {
 
   @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Users'})
-  sender: string | Users;
+  user: string | Users;
 
-  @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Users'})
-  receiver: string | Users;
+  @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Drivers'})
+  driver: string | Drivers;
 
-  @Prop({type: mongoose.Schema.Types.ObjectId})
-  targetId: string;
+  @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Orders'})
+  order: string | Orders;
+
+  @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Restaruants"})
+  restaurant: string | Restaurants;
+
+  @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Meals'})
+  meal: string | Meals;
 
   @Prop({default: "Public"})
   type: notificationsTypes;
 
-  @Prop()
-  target: string;
+  @Prop({required: true})
+  title: string;
 
   @Prop({required: true})
   titleEN: string;
 
+  @Prop()
+  titleKR: string;
+
   @Prop({required: true})
-  titleAR: string;
+  body: string;
 
   @Prop({required: true})
   bodyEN: string;
 
-  @Prop({required: true})
-  bodyAR: string;
+  @Prop()
+  bodyKR: string;
 
   @Prop()
   submit: string;
@@ -44,7 +57,7 @@ export class Notifications {
   @Prop()
   priority: string;
 
-  @Prop({required: true})
+  @Prop()
   action: string;
 
   @Prop()

@@ -84,6 +84,7 @@ let Meals = class Meals {
     pointsBack;
     position;
     state;
+    discount;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Categories' }),
@@ -142,15 +143,15 @@ __decorate([
     __metadata("design:type", Number)
 ], Meals.prototype, "price", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, minlength: [250, "Min price 250"] }),
     __metadata("design:type", Number)
 ], Meals.prototype, "previousPrice", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0 }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0, maxlength: [25, "max points converter to price is FB20"], minlength: [5, "Min price 250"] }),
     __metadata("design:type", Number)
 ], Meals.prototype, "points", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0 }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0, maxlength: [100, "max points back is 100%"] }),
     __metadata("design:type", Number)
 ], Meals.prototype, "pointsBack", void 0);
 __decorate([
@@ -161,6 +162,10 @@ __decorate([
     (0, mongoose_1.Prop)({ default: "Active" }),
     __metadata("design:type", String)
 ], Meals.prototype, "state", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0, minlength: [1000, "Min discount 1000"] }),
+    __metadata("design:type", Number)
+], Meals.prototype, "discount", void 0);
 Meals = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Meals);

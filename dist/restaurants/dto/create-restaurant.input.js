@@ -21,6 +21,11 @@ let CreateRestaurantInput = class CreateRestaurantInput {
     image;
     time;
     deliveryPrice;
+    discount;
+    minDiscount;
+    maxDiscount;
+    latitude;
+    longitude;
 };
 __decorate([
     (0, graphql_1.Field)(),
@@ -58,6 +63,26 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
     __metadata("design:type", Number)
 ], CreateRestaurantInput.prototype, "deliveryPrice", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], CreateRestaurantInput.prototype, "discount", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], CreateRestaurantInput.prototype, "minDiscount", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], CreateRestaurantInput.prototype, "maxDiscount", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    __metadata("design:type", Number)
+], CreateRestaurantInput.prototype, "latitude", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Float),
+    __metadata("design:type", Number)
+], CreateRestaurantInput.prototype, "longitude", void 0);
 CreateRestaurantInput = __decorate([
     (0, graphql_1.InputType)()
 ], CreateRestaurantInput);

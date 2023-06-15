@@ -11,6 +11,7 @@ import { Actions } from 'src/ability/ability.factory';
 import { OrdersResponse } from './entities/ordersResponse.entity';
 import { HomeResponse } from 'src/constants/homeResponse.entity';
 import { Months } from 'src/constants/reportsResults.entity';
+import { StateInput } from 'src/constants/state.input';
 
 @UseGuards(AccessAuthGuard)
 @Resolver(() => Order)
@@ -54,10 +55,16 @@ export class OrdersResolver {
     return this.ordersService.findOne(id);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Order)
   @CheckAbilities({actions: Actions.Update, subject: Order})
   updateOrder(@Args('updateOrderInput') updateOrderInput: UpdateOrderInput) {
     return this.ordersService.update(updateOrderInput.id, updateOrderInput);
+  }
+
+  @Mutation(() => String)
+  @CheckAbilities({actions: Actions.Update, subject: Order})
+  stateOrder(@Args('stateInput') stateInput: StateInput) {
+    return this.ordersService.state(stateInput);
   }
 
   @Mutation(() => String)

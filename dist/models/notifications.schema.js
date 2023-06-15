@@ -16,15 +16,18 @@ exports.NotificationsSchema = exports.Notifications = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 let Notifications = class Notifications {
-    sender;
-    receiver;
-    targetId;
+    user;
+    driver;
+    order;
+    restaurant;
+    meal;
     type;
-    target;
+    title;
     titleEN;
-    titleAR;
+    titleKR;
+    body;
     bodyEN;
-    bodyAR;
+    bodyKR;
     submit;
     dismiss;
     priority;
@@ -35,39 +38,51 @@ let Notifications = class Notifications {
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Users' }),
     __metadata("design:type", Object)
-], Notifications.prototype, "sender", void 0);
+], Notifications.prototype, "user", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Users' }),
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Drivers' }),
     __metadata("design:type", Object)
-], Notifications.prototype, "receiver", void 0);
+], Notifications.prototype, "driver", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId }),
-    __metadata("design:type", String)
-], Notifications.prototype, "targetId", void 0);
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Orders' }),
+    __metadata("design:type", Object)
+], Notifications.prototype, "order", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: "Restaruants" }),
+    __metadata("design:type", Object)
+], Notifications.prototype, "restaurant", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Meals' }),
+    __metadata("design:type", Object)
+], Notifications.prototype, "meal", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ default: "Public" }),
     __metadata("design:type", String)
 ], Notifications.prototype, "type", void 0);
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
-], Notifications.prototype, "target", void 0);
+], Notifications.prototype, "title", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
 ], Notifications.prototype, "titleEN", void 0);
 __decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Notifications.prototype, "titleKR", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
-], Notifications.prototype, "titleAR", void 0);
+], Notifications.prototype, "body", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
 ], Notifications.prototype, "bodyEN", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
-], Notifications.prototype, "bodyAR", void 0);
+], Notifications.prototype, "bodyKR", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
@@ -81,7 +96,7 @@ __decorate([
     __metadata("design:type", String)
 ], Notifications.prototype, "priority", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Notifications.prototype, "action", void 0);
 __decorate([

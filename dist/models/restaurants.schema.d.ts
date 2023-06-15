@@ -15,6 +15,11 @@ export declare class Restaurants {
     deliveryPrice: number;
     position: number;
     state: publicStatus;
+    discount: number;
+    minDiscount: number;
+    maxDiscount: number;
+    latitude: number;
+    longitude: number;
 }
 export declare const RestaurantsSchema: mongoose.Schema<Restaurants, mongoose.Model<Restaurants, any, any, any, mongoose.Document<unknown, any, Restaurants> & Omit<Restaurants & {
     _id: mongoose.Types.ObjectId;

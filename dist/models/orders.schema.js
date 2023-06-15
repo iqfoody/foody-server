@@ -12,10 +12,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OrdersSchema = exports.Orders = exports.OrderItemSchema = exports.OrderItems = void 0;
+exports.OrdersSchema = exports.Orders = exports.OrderItemSchema = exports.OrderItems = exports.OrderItemAdditionSchema = exports.OrderItemAddition = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 const meals_schema_1 = require("./meals.schema");
+const meals_schema_2 = require("./meals.schema");
+let OrderItemAddition = class OrderItemAddition {
+    addition;
+    quantity;
+};
+__decorate([
+    (0, mongoose_1.Prop)({ type: meals_schema_1.MealAdditionsSchema }),
+    __metadata("design:type", meals_schema_2.MealAdditions)
+], OrderItemAddition.prototype, "addition", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, required: [true, "Quantity required"], minlength: [1, "Min quantity 1"] }),
+    __metadata("design:type", Number)
+], OrderItemAddition.prototype, "quantity", void 0);
+OrderItemAddition = __decorate([
+    (0, mongoose_1.Schema)()
+], OrderItemAddition);
+exports.OrderItemAddition = OrderItemAddition;
+exports.OrderItemAdditionSchema = mongoose_1.SchemaFactory.createForClass(OrderItemAddition);
 let OrderItems = class OrderItems {
     meal;
     additions;
@@ -28,7 +46,7 @@ __decorate([
     __metadata("design:type", Object)
 ], OrderItems.prototype, "meal", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: [meals_schema_1.MealAdditionsSchema] }),
+    (0, mongoose_1.Prop)({ type: [exports.OrderItemAdditionSchema] }),
     __metadata("design:type", Array)
 ], OrderItems.prototype, "additions", void 0);
 __decorate([

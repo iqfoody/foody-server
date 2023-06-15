@@ -79,7 +79,7 @@ export declare class OrdersService {
         pages: number;
     }>;
     findOne(id: string): Promise<any>;
-    update(id: string, updateOrderInput: UpdateOrderInput): Promise<string>;
+    update(id: string, updateOrderInput: UpdateOrderInput): Promise<any>;
     state(stateInput: StateInput): Promise<string>;
     remove(id: string): Promise<string>;
     home(): Promise<{

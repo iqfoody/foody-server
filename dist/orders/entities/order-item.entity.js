@@ -11,9 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderItem = void 0;
 const graphql_1 = require("@nestjs/graphql");
-const meal_addition_entity_1 = require("../../meals/entities/meal-addition.entity");
 const meal_ingredient_entity_1 = require("../../meals/entities/meal-ingredient.entity");
 const meal_entity_1 = require("../../meals/entities/meal.entity");
+const order_meal_addition_entity_1 = require("./order-meal-addition.entity");
 let OrderItem = class OrderItem {
     meal;
     additions;
@@ -26,7 +26,7 @@ __decorate([
     __metadata("design:type", Object)
 ], OrderItem.prototype, "meal", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => [meal_addition_entity_1.MealAddition], { nullable: true }),
+    (0, graphql_1.Field)(() => [order_meal_addition_entity_1.OrderMealAddition], { nullable: true }),
     __metadata("design:type", Array)
 ], OrderItem.prototype, "additions", void 0);
 __decorate([

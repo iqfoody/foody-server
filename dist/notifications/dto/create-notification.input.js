@@ -12,12 +12,87 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateNotificationInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
 let CreateNotificationInput = class CreateNotificationInput {
-    exampleField;
+    user;
+    driver;
+    order;
+    restaurant;
+    meal;
+    type;
+    title;
+    titleEN;
+    titleKR;
+    body;
+    bodyEN;
+    bodyKR;
+    submit;
+    dismiss;
+    action;
+    priority;
 };
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Int, { description: 'Example field (placeholder)' }),
-    __metadata("design:type", Number)
-], CreateNotificationInput.prototype, "exampleField", void 0);
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "user", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "driver", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "order", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "restaurant", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "meal", void 0);
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "type", void 0);
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "title", void 0);
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "titleEN", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "titleKR", void 0);
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "body", void 0);
+__decorate([
+    (0, graphql_1.Field)(),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "bodyEN", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "bodyKR", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "submit", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "dismiss", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "action", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], CreateNotificationInput.prototype, "priority", void 0);
 CreateNotificationInput = __decorate([
     (0, graphql_1.InputType)()
 ], CreateNotificationInput);

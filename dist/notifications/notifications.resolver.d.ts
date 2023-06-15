@@ -1,12 +1,20 @@
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationInput } from './dto/create-notification.input';
 import { UpdateNotificationInput } from './dto/update-notification.input';
+import { LimitEntity } from 'src/constants/limitEntity';
 export declare class NotificationsResolver {
     private readonly notificationsService;
     constructor(notificationsService: NotificationsService);
-    createNotification(createNotificationInput: CreateNotificationInput): string;
-    findAll(): string;
-    findOne(id: number): string;
-    updateNotification(updateNotificationInput: UpdateNotificationInput): string;
-    removeNotification(id: number): string;
+    createNotification(createNotificationInput: CreateNotificationInput): Promise<any>;
+    findAll(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    findManagement(limitEntity: LimitEntity): Promise<{
+        data: any;
+        pages: number;
+    }>;
+    findOne(id: string): Promise<any>;
+    updateNotification(updateNotificationInput: UpdateNotificationInput): Promise<string>;
+    removeNotification(id: string): Promise<string>;
 }

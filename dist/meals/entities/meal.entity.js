@@ -40,6 +40,7 @@ let Meal = class Meal {
     state;
     createdAt;
     updatedAt;
+    discount;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
@@ -129,6 +130,10 @@ __decorate([
     (0, graphql_1.Field)(() => Date, { nullable: true }),
     __metadata("design:type", Date)
 ], Meal.prototype, "updatedAt", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], Meal.prototype, "discount", void 0);
 Meal = __decorate([
     (0, graphql_1.ObjectType)()
 ], Meal);

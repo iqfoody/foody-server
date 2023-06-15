@@ -242,8 +242,15 @@ let TransactionsService = class TransactionsService {
         }
         return "Success";
     }
-    findOne(id) {
-        return this.TransactionsModel.findById(id);
+    async findOne(id) {
+        const transaction = await this.TransactionsModel.findById(id).populate(["user", "admin", "driver", "order"]);
+        if (transaction.user?.image)
+            transaction.user.image = this.awsService.getUrl(transaction.user.image);
+        if (transaction.admin?.image)
+            transaction.admin.image = this.awsService.getUrl(transaction.admin.image);
+        if (transaction.driver?.image)
+            transaction.driver.image = this.awsService.getUrl(transaction.driver.image);
+        return transaction;
     }
     async update(id, updateTransactionInput) {
         await this.TransactionsModel.findByIdAndUpdate(id, updateTransactionInput);

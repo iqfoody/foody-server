@@ -31,6 +31,7 @@ import { Tag } from 'src/tags/entities/tag.entity';
 import { Wallet } from 'src/wallets/entities/wallet.entity';
 import { Transaction } from 'src/transactions/entities/transaction.entity';
 import { Setting } from 'src/settings/entities/setting.entity';
+import { Notification } from 'src/notifications/entities/notification.entity';
 
 
 export enum Actions {
@@ -70,7 +71,8 @@ export type Subjects = InferSubjects<
                                     typeof Tag |
                                     typeof Wallet |
                                     typeof Transaction |
-                                    typeof Setting
+                                    typeof Setting |
+                                    typeof Notification
                                     > | 'all';
 
 export type AppAbility = MongoAbility<[Actions, Subjects], MongoQuery>

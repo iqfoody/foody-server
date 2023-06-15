@@ -29,6 +29,11 @@ let Restaurants = class Restaurants {
     deliveryPrice;
     position;
     state;
+    discount;
+    minDiscount;
+    maxDiscount;
+    latitude;
+    longitude;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.String, required: [true, "title required"], index: { name: "text", description: "text", text: true } }),
@@ -82,6 +87,26 @@ __decorate([
     (0, mongoose_1.Prop)({ default: "Active" }),
     __metadata("design:type", String)
 ], Restaurants.prototype, "state", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0, minlength: [1000, "Min discount 1000"] }),
+    __metadata("design:type", Number)
+], Restaurants.prototype, "discount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0, minlength: [1000, "Min discount 1000"] }),
+    __metadata("design:type", Number)
+], Restaurants.prototype, "minDiscount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0, minlength: [2000, "Min discount 2000"] }),
+    __metadata("design:type", Number)
+], Restaurants.prototype, "maxDiscount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0.0 }),
+    __metadata("design:type", Number)
+], Restaurants.prototype, "latitude", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0.0 }),
+    __metadata("design:type", Number)
+], Restaurants.prototype, "longitude", void 0);
 Restaurants = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Restaurants);

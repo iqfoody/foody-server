@@ -11,6 +11,7 @@ import { CheckAbilities } from 'src/ability/ability.decorator';
 import { Actions } from 'src/ability/ability.factory';
 import { User } from 'src/users/entities/user.entity';
 import { Driver } from 'src/drivers/entities/driver.entity';
+import { FirebaseAuthGuard } from 'src/firebase-auth/firebase-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +24,8 @@ export class AuthController {
     @Post('/login')
     @UseGuards(GqlAuthGuard)
     async login(@Body('loginUserInput') loginInput: LoginInput, @Req() req){
-        return this.authService.login(req, loginInput);
+        // return this.authService.login(req, loginInput);
+        return "success";
     }
 
     @Post('/signup')

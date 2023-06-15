@@ -76,4 +76,9 @@ export class Meal {
   @Field(()=> Date, { nullable: true})
   updatedAt?: Date;
 
+  // -> after update 1...
+
+  @Field(()=> Int)
+  discount: number;
+
 }

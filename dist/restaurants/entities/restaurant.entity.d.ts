@@ -16,4 +16,9 @@ export declare class Restaurant {
     state: publicStatus;
     createdAt?: Date;
     updatedAt?: Date;
+    discount: number;
+    minDiscount: number;
+    maxDiscount: number;
+    latitude: number;
+    longitude: number;
 }

@@ -157,7 +157,7 @@ export class MealsService {
 
   async findExtention(_id: string, restaurant: string){
     if(!isValidObjectId(_id) || !isValidObjectId(restaurant)) throw new BadRequestException("There isn't meal or restaurant with this id")
-    return this.MealsModel.findOne({$and: [{_id}, {restaurant}]}, {additions: 1, ingredients: 1, price: 1, points: 1, pointsBack: 1, _id: 0});
+    return this.MealsModel.findOne({$and: [{_id}, {restaurant}]}, {additions: 1, ingredients: 1, price: 1, points: 1, pointsBack: 1, discount: 1, _id: 0});
   }
 
   async search(query: string){

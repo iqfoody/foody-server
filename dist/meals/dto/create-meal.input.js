@@ -31,6 +31,7 @@ let CreateMealInput = class CreateMealInput {
     previousPrice;
     points;
     pointsBack;
+    discount;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
@@ -100,6 +101,10 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
     __metadata("design:type", Number)
 ], CreateMealInput.prototype, "pointsBack", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int),
+    __metadata("design:type", Number)
+], CreateMealInput.prototype, "discount", void 0);
 CreateMealInput = __decorate([
     (0, graphql_1.InputType)()
 ], CreateMealInput);

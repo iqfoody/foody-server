@@ -11,6 +11,7 @@ import { LocalStrategy } from 'src/guards/local.strategy';
 import { AccessTokenStrategy } from 'src/guards/accessToken.strategy';
 import { RefreshTokenStrategy } from 'src/guards/refreshToken.strategy';
 import { AbilityModule } from 'src/ability/ability.module';
+import { FirebaseModule } from 'src/firebase/firebase.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AbilityModule } from 'src/ability/ability.module';
     JwtModule,
     AwsModule,
     AbilityModule,
+    FirebaseModule
   ],
   providers: [AuthResolver, AuthService, LocalStrategy, AccessTokenStrategy, RefreshTokenStrategy],
   controllers: [AuthController]

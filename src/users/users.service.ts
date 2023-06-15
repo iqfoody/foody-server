@@ -137,6 +137,10 @@ export class UsersService {
     return "user has been deleted";
   }
 
+  async findDeviceToken(_id: string){
+    return this.UsersModel.findOne({_id}, {deviceToken: 1, _id: 0})
+  }
+
   //? -> application...
 
   async login(loginUserInput: any) {

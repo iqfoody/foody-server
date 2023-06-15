@@ -36,7 +36,7 @@ let AuthController = class AuthController {
         this.driversService = driversService;
     }
     async login(loginInput, req) {
-        return this.authService.login(req, loginInput);
+        return "success";
     }
     async signup(createUserInput, req) {
         return this.authService.signup(createUserInput, req);

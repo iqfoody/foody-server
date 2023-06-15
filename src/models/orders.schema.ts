@@ -8,16 +8,28 @@ import { Addresses } from './addresses.schema';
 import { MealAdditions } from './meals.schema';
 import { MealIngredients } from './meals.schema';
 import { Drivers } from './drivers.schema';
+import { OrderMealAddition } from 'src/orders/entities/order-meal-addition.entity';
 
 export type OrdersDocument = Orders & Document;
+
+@Schema()
+export class OrderItemAddition {
+
+  @Prop({type: MealAdditionsSchema})
+  addition: MealAdditions;
+
+  @Prop({type: mongoose.Schema.Types.Number, required: [true, "Quantity required"], minlength: [1, "Min quantity 1"]})
+  quantity: number;
+}
+export const OrderItemAdditionSchema = SchemaFactory.createForClass(OrderItemAddition);
 
 @Schema()
 export class OrderItems {
   @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Meals', required: [true, "Meals required"]})
   meal: string | Meals;
 
-  @Prop({type: [MealAdditionsSchema]})
-  additions: MealAdditions[];
+  @Prop({type: [OrderItemAdditionSchema]})
+  additions: OrderMealAddition[];
 
   @Prop({type: [MealIngredientsSchema]})
   addIngredients: MealIngredients[];

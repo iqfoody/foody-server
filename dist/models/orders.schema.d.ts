@@ -7,10 +7,20 @@ import { Addresses } from './addresses.schema';
 import { MealAdditions } from './meals.schema';
 import { MealIngredients } from './meals.schema';
 import { Drivers } from './drivers.schema';
+import { OrderMealAddition } from 'src/orders/entities/order-meal-addition.entity';
 export type OrdersDocument = Orders & Document;
+export declare class OrderItemAddition {
+    addition: MealAdditions;
+    quantity: number;
+}
+export declare const OrderItemAdditionSchema: mongoose.Schema<OrderItemAddition, mongoose.Model<OrderItemAddition, any, any, any, mongoose.Document<unknown, any, OrderItemAddition> & Omit<OrderItemAddition & {
+    _id: mongoose.Types.ObjectId;
+}, never>, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, OrderItemAddition, mongoose.Document<unknown, {}, mongoose.FlatRecord<OrderItemAddition>> & Omit<mongoose.FlatRecord<OrderItemAddition> & {
+    _id: mongoose.Types.ObjectId;
+}, never>>;
 export declare class OrderItems {
     meal: string | Meals;
-    additions: MealAdditions[];
+    additions: OrderMealAddition[];
     addIngredients: MealIngredients[];
     removeIngredients: MealIngredients[];
     quantity: number;

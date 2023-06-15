@@ -23,16 +23,16 @@ export class AuthService {
     private driversService: DriversService,
   ) {
     this.cookieOptions = {
-      domain: 'localhost', // <- change it to your client domain... -> https://admin.iqfoody.com
-      secure: false, // <- should be true in production...
+      domain: 'https://admin.iqfoody.com', // <- change it to your client domain... -> https://admin.iqfoody.com
+      secure: true, // <- should be true in production...
       sameSite: 'lax',
       httpOnly: true,
       path: '/',
       maxAge: 1000*60*60*24
     };
     this.cookieRefreshOptions = {
-      domain: 'localhost', // <- change it to your client domain... -> https://admin.iqfoody.com
-      secure: false, // <- should be true in production...
+      domain: 'https://admin.iqfoody.com', // <- change it to your client domain... -> https://admin.iqfoody.com
+      secure: true, // <- should be true in production...
       sameSite: 'lax',
       httpOnly: true,
       path: '/',
@@ -42,25 +42,18 @@ export class AuthService {
     this.refreshOptions = { secret: process.env.REFRESH_TOKEN_USERS, expiresIn: constants.jwtRefresh };
   }
 
-  async validateUser(loginInput: LoginInput) {
-    if(loginInput.password.length < 6) throw new BadRequestException('password E0004');
-    const user = await this.usersService.login(loginInput);
+  async validateUser(phoneNumber: string) {
+    //if(loginInput.password.length < 6) throw new BadRequestException('password E0004');
+    const user = await this.usersService.findByPhoneNumber(phoneNumber);
     if (user) return user;
-    if(loginInput.username.length === 11){
-      throw new BadRequestException('phoneNumber E0010');
-    } else {
-      throw new BadRequestException('email E0001');
-    }
+    throw new BadRequestException('phoneNumber E0010');
   }
 
   async login(context: any, loginInput: LoginInput) {
     const ip: string = context?.ip;
     const platform: string = context?.get('user-agent');
-    const result = await this.getTokens(context.user, "User");
-    const refreshToken = await hash(result.refreshToken, 10);
-    result.user.refreshToken = result.refreshToken;
-    await this.usersService.updateAny(context.user._id, {refreshToken, ip, platform, deviceToken: loginInput?.deviceToken});
-    return {user: result.user, accessToken: result.accessToken};
+    await this.usersService.updateAny(context.user._id, {ip, platform, deviceToken: loginInput?.deviceToken});
+    return context.user;
   }
 
   async loginAdmin(context: any, loginInput: LoginInput) {

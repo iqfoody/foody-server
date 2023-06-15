@@ -1,3 +1,28 @@
+/// <reference types="mongoose/types/aggregate" />
+/// <reference types="mongoose/types/callback" />
+/// <reference types="mongoose/types/collection" />
+/// <reference types="mongoose/types/connection" />
+/// <reference types="mongoose/types/cursor" />
+/// <reference types="mongoose/types/document" />
+/// <reference types="mongoose/types/error" />
+/// <reference types="mongoose/types/expressions" />
+/// <reference types="mongoose/types/helpers" />
+/// <reference types="mongoose/types/middlewares" />
+/// <reference types="mongoose/types/indexes" />
+/// <reference types="mongoose/types/models" />
+/// <reference types="mongoose/types/mongooseoptions" />
+/// <reference types="mongoose/types/pipelinestage" />
+/// <reference types="mongoose/types/populate" />
+/// <reference types="mongoose/types/query" />
+/// <reference types="mongoose/types/schemaoptions" />
+/// <reference types="mongoose/types/schematypes" />
+/// <reference types="mongoose/types/session" />
+/// <reference types="mongoose/types/types" />
+/// <reference types="mongoose/types/utility" />
+/// <reference types="mongoose/types/validation" />
+/// <reference types="mongoose/types/virtuals" />
+/// <reference types="mongoose" />
+/// <reference types="mongoose/types/inferschematype" />
 import { LoginInput } from './dto/login.input';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
@@ -15,11 +40,10 @@ export declare class AuthService {
     accessOptions: any;
     refreshOptions: any;
     constructor(usersService: UsersService, jwtService: JwtService, adminsService: AdminsService, driversService: DriversService);
-    validateUser(loginInput: LoginInput): Promise<import("../models/users.schema").UsersDocument>;
-    login(context: any, loginInput: LoginInput): Promise<{
-        user: any;
-        accessToken: string;
-    }>;
+    validateUser(phoneNumber: string): Promise<import("mongoose").Document<unknown, import("../models/users.schema").IUsersQueryHelpers, import("../models/users.schema").UsersDocument> & Omit<import("../models/users.schema").Users & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
+    login(context: any, loginInput: LoginInput): Promise<any>;
     loginAdmin(context: any, loginInput: LoginInput): Promise<{
         accessToken: string;
         refreshToken: string;

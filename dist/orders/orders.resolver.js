@@ -26,6 +26,7 @@ const ability_factory_1 = require("../ability/ability.factory");
 const ordersResponse_entity_1 = require("./entities/ordersResponse.entity");
 const homeResponse_entity_1 = require("../constants/homeResponse.entity");
 const reportsResults_entity_1 = require("../constants/reportsResults.entity");
+const state_input_1 = require("../constants/state.input");
 let OrdersResolver = class OrdersResolver {
     ordersService;
     constructor(ordersService) {
@@ -51,6 +52,9 @@ let OrdersResolver = class OrdersResolver {
     }
     updateOrder(updateOrderInput) {
         return this.ordersService.update(updateOrderInput.id, updateOrderInput);
+    }
+    stateOrder(stateInput) {
+        return this.ordersService.state(stateInput);
     }
     removeOrder(id) {
         return this.ordersService.remove(id);
@@ -110,13 +114,21 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], OrdersResolver.prototype, "findOne", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => String),
+    (0, graphql_1.Mutation)(() => order_entity_1.Order),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: order_entity_1.Order }),
     __param(0, (0, graphql_1.Args)('updateOrderInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_order_input_1.UpdateOrderInput]),
     __metadata("design:returntype", void 0)
 ], OrdersResolver.prototype, "updateOrder", null);
+__decorate([
+    (0, graphql_1.Mutation)(() => String),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: order_entity_1.Order }),
+    __param(0, (0, graphql_1.Args)('stateInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [state_input_1.StateInput]),
+    __metadata("design:returntype", void 0)
+], OrdersResolver.prototype, "stateOrder", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: order_entity_1.Order }),

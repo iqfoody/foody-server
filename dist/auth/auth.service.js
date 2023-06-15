@@ -32,16 +32,16 @@ let AuthService = class AuthService {
         this.adminsService = adminsService;
         this.driversService = driversService;
         this.cookieOptions = {
-            domain: 'localhost',
-            secure: false,
+            domain: 'https://admin.iqfoody.com',
+            secure: true,
             sameSite: 'lax',
             httpOnly: true,
             path: '/',
             maxAge: 1000 * 60 * 60 * 24
         };
         this.cookieRefreshOptions = {
-            domain: 'localhost',
-            secure: false,
+            domain: 'https://admin.iqfoody.com',
+            secure: true,
             sameSite: 'lax',
             httpOnly: true,
             path: '/',
@@ -50,27 +50,17 @@ let AuthService = class AuthService {
         this.accessOptions = { secret: process.env.ACCESS_TOKEN_USERS, expiresIn: enums_1.constants.jwtAccess };
         this.refreshOptions = { secret: process.env.REFRESH_TOKEN_USERS, expiresIn: enums_1.constants.jwtRefresh };
     }
-    async validateUser(loginInput) {
-        if (loginInput.password.length < 6)
-            throw new common_1.BadRequestException('password E0004');
-        const user = await this.usersService.login(loginInput);
+    async validateUser(phoneNumber) {
+        const user = await this.usersService.findByPhoneNumber(phoneNumber);
         if (user)
             return user;
-        if (loginInput.username.length === 11) {
-            throw new common_1.BadRequestException('phoneNumber E0010');
-        }
-        else {
-            throw new common_1.BadRequestException('email E0001');
-        }
+        throw new common_1.BadRequestException('phoneNumber E0010');
     }
     async login(context, loginInput) {
         const ip = context?.ip;
         const platform = context?.get('user-agent');
-        const result = await this.getTokens(context.user, "User");
-        const refreshToken = await (0, bcryptjs_1.hash)(result.refreshToken, 10);
-        result.user.refreshToken = result.refreshToken;
-        await this.usersService.updateAny(context.user._id, { refreshToken, ip, platform, deviceToken: loginInput?.deviceToken });
-        return { user: result.user, accessToken: result.accessToken };
+        await this.usersService.updateAny(context.user._id, { ip, platform, deviceToken: loginInput?.deviceToken });
+        return context.user;
     }
     async loginAdmin(context, loginInput) {
         if (loginInput.password.length < 6)

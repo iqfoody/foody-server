@@ -20,6 +20,7 @@ const local_strategy_1 = require("../guards/local.strategy");
 const accessToken_strategy_1 = require("../guards/accessToken.strategy");
 const refreshToken_strategy_1 = require("../guards/refreshToken.strategy");
 const ability_module_1 = require("../ability/ability.module");
+const firebase_module_1 = require("../firebase/firebase.module");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
@@ -31,6 +32,7 @@ AuthModule = __decorate([
             jwt_1.JwtModule,
             aws_module_1.AwsModule,
             ability_module_1.AbilityModule,
+            firebase_module_1.FirebaseModule
         ],
         providers: [auth_resolver_1.AuthResolver, auth_service_1.AuthService, local_strategy_1.LocalStrategy, accessToken_strategy_1.AccessTokenStrategy, refreshToken_strategy_1.RefreshTokenStrategy],
         controllers: [auth_controller_1.AuthController]

@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, ID } from '@nestjs/graphql';
 import { TransactionsService } from './transactions.service';
 import { Transaction } from './entities/transaction.entity';
 import { CreateTransactionInput } from './dto/create-transaction.input';
@@ -80,7 +80,7 @@ export class TransactionsResolver {
 
   @Query(() => Transaction, { name: 'transaction' })
   @CheckAbilities({actions: Actions.Read, subject: Transaction})
-  findOne(@Args('id', { type: () => String }) id: string) {
+  findOne(@Args('id', { type: () => ID }) id: string) {
     return this.transactionsService.findOne(id);
   }
 
@@ -98,7 +98,7 @@ export class TransactionsResolver {
 
   @Mutation(() => Transaction)
   @CheckAbilities({actions: Actions.Delete, subject: Transaction})
-  removeTransaction(@Args('id', { type: () => String }) id: string) {
+  removeTransaction(@Args('id', { type: () => ID }) id: string) {
     return this.transactionsService.remove(id);
   }
 }

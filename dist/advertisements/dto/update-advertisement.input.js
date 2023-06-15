@@ -16,7 +16,7 @@ let UpdateAdvertisementInput = class UpdateAdvertisementInput extends (0, graphq
     id;
 };
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
     __metadata("design:type", String)
 ], UpdateAdvertisementInput.prototype, "id", void 0);
 UpdateAdvertisementInput = __decorate([

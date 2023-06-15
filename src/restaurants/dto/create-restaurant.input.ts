@@ -1,4 +1,4 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Int, Field, Float } from '@nestjs/graphql';
 
 @InputType()
 export class CreateRestaurantInput {
@@ -29,5 +29,22 @@ export class CreateRestaurantInput {
 
   @Field(()=> Int, {nullable: true})
   deliveryPrice?: number;
+
+  // -> after update 1...
+
+  @Field(()=> Int)
+  discount: number;
+
+  @Field(()=> Int)
+  minDiscount: number;
+
+  @Field(()=> Int)
+  maxDiscount: number;
+
+  @Field(()=> Float)
+  latitude: number;
+
+  @Field(()=> Float)
+  longitude: number;
 
 }

@@ -18,6 +18,7 @@ import { RestaurantsService } from 'src/restaurants/restaurants.service';
 import { DriversService } from 'src/drivers/drivers.service';
 import { months } from 'src/constants/declearedMonths';
 import { TransactionsService } from 'src/transactions/transactions.service';
+import { Order } from './entities/order.entity';
 
 @Injectable()
 export class OrdersService {
@@ -43,23 +44,27 @@ export class OrdersService {
     const ActiveOrder = await this.OrdersModel.findOne({$and: [{user: createOrderInput.user}, {restaurant: createOrderInput.restaurant}, {$and: [{state: {$ne: "Completed"}}, {state: {$ne: "Deleted"}}, {state: {$ne: "Canceled"}}]}]}, {_id:  1});
     if(ActiveOrder) throw new BadRequestException("you have order in ordered.");
 
+    const restaurant = await this.restaurantsService.findRestaurant(createOrderInput.restaurant);
+    if(!restaurant) throw new BadRequestException("There isn't restaurant with this restaruant id");
+
     let demoOrderDate :any = {...createOrderInput, type: "Auto"};
 
     // -> get meals data & calculate total price...
-    let totalPrice = 0;
-    let totalPoints = 0;
-    let pointsBack = 0;
-    let price = 0;
-    let priceAdditions = 0;
+    let totalPrice: number = 0;
+    let totalPoints: number = 0;
+    let pointsBack: number = 0;
+    let price: number = 0;
+    let priceAdditions: number = 0;
+    let priceAfterDiscount: number = 0;
     let transaction = {
       user: createOrderInput.user,
       amount: 0
     };
-    let usePromoCode = false;
-
-    // -> restaurnat delivery price...
-    const { deliveryPrice } = await this.restaurantsService.getDeliveryPrice(createOrderInput.restaurant);
-    price += deliveryPrice;
+    let usePromoCode: boolean = false;
+    let discount: number = restaurant?.discount || 0;
+    let minDiscount: number = restaurant?.minDiscount || 0;
+    let maxDiscount: number = restaurant?.maxDiscount || 0;
+    const deliveryPrice: number = restaurant?.deliveryPrice || 0;
 
     for(const single of createOrderInput.meals){
       let additions = [];
@@ -70,14 +75,24 @@ export class OrdersService {
       price += meal.price * single.quantity;
       totalPoints += (meal.points * meal.price) * single.quantity;
       pointsBack += ((meal.pointsBack / 100) * meal.price) * single.quantity;
+
+      if(meal.discount > 0){
+        priceAfterDiscount += (meal.price * (meal.discount/100)) * single.quantity;
+      }
       // -> check if ! payment with point calculate additions & ingredients...
       
               // -> get addition object & injected to order...
               if(single?.additions){
                 for(const addition of single.additions){
-                  const value = meal?.additions?.find((val: any) => val._id == addition);
+                  const value: any = meal?.additions?.find((val: any) => val._id == addition);
                   if(value) {
-                    additions = [...additions, value];
+                    const item = additions?.find(res => res?.addition?._id === value?._id);
+                    if(item){
+                      item.quantity = item.quantity + 1;
+                      additions = additions?.map(res => res.addition === item.addition._id ? item : res);
+                    } else {
+                      additions = [...additions, {addition: value, quantity: 1}];
+                    }
                     price += value.price;
                     totalPoints += (meal.points * value.price);
                     pointsBack += (meal.pointsBack / 100) * value.price;
@@ -108,6 +123,17 @@ export class OrdersService {
     // -> put price in totalPrice...
     totalPrice += price;
 
+    if(discount > 0 && totalPrice >= minDiscount){
+      if(maxDiscount === 0 || totalPrice < maxDiscount){
+        totalPrice += -(totalPrice * (discount/100));
+      } else
+      if(totalPrice > maxDiscount){
+        totalPrice += -maxDiscount;
+      }
+    } else if(priceAfterDiscount > 0) {
+      totalPrice += -priceAfterDiscount;
+    }
+
     // -> sync promo code if exist...
     if(createOrderInput?.promoCode && createOrderInput?.paymentMethod !== "Points"){
       const promoCode :any = await this.promoCodeService.check(createOrderInput.promoCode, createOrderInput.user);
@@ -115,6 +141,7 @@ export class OrdersService {
       usePromoCode = true;
       if(promoCode.type === 'Price') {
         totalPrice += -promoCode.discount;
+        if(totalPrice < 0) totalPrice = 0;
         demoOrderDate = {...demoOrderDate, discountType: "Price", discount: promoCode.discount, promoCode: promoCode.name};
         let precentValue = (price / promoCode.discount) / 100;
         pointsBack += - (pointsBack * precentValue);
@@ -122,10 +149,15 @@ export class OrdersService {
       }
       if(promoCode.type === 'Percent') {
         totalPrice += - totalPrice * (promoCode.discount/100);
+        if(totalPrice < 0) totalPrice = 0;
         demoOrderDate = {...demoOrderDate, discountType: "Percent", discount: promoCode.discount, promoCode: promoCode.name};
         pointsBack += - (pointsBack * (promoCode.discount / 100));
       }; 
     }
+
+    // -> restaurnat delivery price...
+    price += deliveryPrice;
+    totalPrice += deliveryPrice;
 
     // -> sync wallet with order...
     const wallet = await this.walletsService.findUserWallet(createOrderInput.user);
@@ -157,14 +189,17 @@ export class OrdersService {
       }
     }
 
+    // -> get orders length...
+    const no = await this.OrdersModel.countDocuments();
+
     // -> creating order...
-    const order = await this.OrdersModel.create({...demoOrderDate, totalPrice, price, state: "InDelivery", deliveryPrice, pointsBack});
+    const order = await this.OrdersModel.create({...demoOrderDate, totalPrice, price, state: "Pending", deliveryPrice, pointsBack, no});
     if(!order) throw new BadRequestException("you order haven't created please try again later");
     if(usePromoCode && createOrderInput?.paymentMethod !== "Points") await this.promoCodeService.usePromoCode(createOrderInput.promoCode, createOrderInput.user);
     if(createOrderInput?.paymentMethod === "Wallet" && transaction.amount !== 0){
-      await this.transactionsService.createTransaction({...transaction, order: order?._id, type: "Amount", procedure: "Minus", paymentMethod: "Wallet", state: "Completed", description: "payed for cost order" });
+      await this.transactionsService.createTransaction({...transaction, order: order?._id, type: "Amount", procedure: "Minus", paymentMethod: "Wallet", state: "Pending", description: "payed for cost order" });
     } else if(createOrderInput?.paymentMethod === "Points" && transaction.amount !== 0){
-      await this.transactionsService.createTransaction({...transaction, order: order?._id, type: "Points", procedure: "Minus", paymentMethod: "Points", state: "Completed", description: "payed for cost order points"});
+      await this.transactionsService.createTransaction({...transaction, order: order?._id, type: "Points", procedure: "Minus", paymentMethod: "Points", state: "Pending", description: "payed for cost order points"});
     }
     //TODO: send noti -> admins & driver? ...
     return order;
@@ -204,6 +239,7 @@ export class OrdersService {
     // -> this func. just for user & state = Pending...
   async cancelOrder(id: string, user: string) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't order with this id");
+    //! cancel transactions...
     await this.OrdersModel.findOneAndUpdate({$and: [{_id: id}, {user}, {state: "Pending"}]}, {state: "Canceled"});
     return "Success";
   }
@@ -218,6 +254,7 @@ export class OrdersService {
   async completeOrder(id: string, driver: string, recievedPrice: number) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't order with this id");
     //TODO: send rating notification to user...
+    //! find transaction and make it completed...
     const order = await this.OrdersModel.findOne({$and: [{_id: id}, {driver}, {state: "InDelivery"}]}, {totalPrice: 1, pointsBack: 1, user: 1});
     if(!order || order?.totalPrice > recievedPrice) throw new NotAcceptableException("There isn't order for this action or recieved price isn't enough");
     await this.OrdersModel.findByIdAndUpdate(order._id, {state: "Completed", recievedPrice});
@@ -260,23 +297,22 @@ export class OrdersService {
     const ActiveOrder = await this.OrdersModel.findOne({$and: [{user: createOrderInput.user}, {restaurant: createOrderInput.restaurant}, {$and: [{state: {$ne: "Completed"}}, {state: {$ne: "Deleted"}}, {state: {$ne: "Canceled"}}]}]}, {_id:  1});
     if(ActiveOrder) throw new BadRequestException("you have order in ordered.");
 
+    const restaurant = await this.restaurantsService.findRestaurant(createOrderInput.restaurant);
+    if(!restaurant) throw new BadRequestException("There isn't restaurant with this restaruant id");
+
     let demoOrderDate :any = {...createOrderInput, type: "Manual"};
 
     // -> get meals data & calculate total price...
-    let totalPrice = 0;
-    let totalPoints = 0;
-    let pointsBack = 0;
-    let price = 0;
-    let priceAdditions = 0;
-    // let transaction = {
-    //   user: createOrderInput.user,
-    //   amount: 0
-    // };
-    // let usePromoCode = false;
-
-    // -> restaurnat delivery price...
-    const { deliveryPrice } = await this.restaurantsService.getDeliveryPrice(createOrderInput.restaurant);
-    price += deliveryPrice;
+    let totalPrice: number = 0;
+    let totalPoints: number = 0;
+    let pointsBack: number = 0;
+    let price: number = 0;
+    let priceAdditions: number = 0;
+    let priceAfterDiscount: number = 0;
+    let discount: number = restaurant?.discount || 0;
+    let minDiscount: number = restaurant?.minDiscount || 0;
+    let maxDiscount: number = restaurant?.maxDiscount || 0;
+    const deliveryPrice: number = restaurant?.deliveryPrice || 0;
 
     for(const single of createOrderInput.meals){
       let additions = [];
@@ -287,102 +323,78 @@ export class OrdersService {
       price += meal.price * single.quantity;
       totalPoints += (meal.points * meal.price) * single.quantity;
       pointsBack += ((meal.pointsBack / 100) * meal.price) * single.quantity;
+
+      if(meal.discount > 0){
+        priceAfterDiscount += (meal.price * (meal.discount/100)) * single.quantity;
+      }
       // -> check if ! payment with point calculate additions & ingredients...
-      
-              // -> get addition object & injected to order...
-              if(single?.additions){
-                for(const addition of single.additions){
-                  const value = meal?.additions?.find((val: any) => val._id == addition);
-                  if(value) {
-                    additions = [...additions, value];
-                    price += value.price;
-                    totalPoints += (meal.points * value.price);
-                    pointsBack += (meal.pointsBack / 100) * value.price;
-                    priceAdditions += value.price;
-                  }
-                }
-              }
-              // -> get added ingredient object & injected to order...
-              if(single?.addIngredients){
-                for(const addIngredient of single.addIngredients){
-                  const value = meal?.ingredients?.find((val: any) => val._id == addIngredient);
-                  if(value) addIngredients = [...addIngredients, value]
-                }
-              }
-              // -> get removed ingredient object & injected to order...
-              if(single?.removeIngredients){
-                for(const removeIngredient of single.removeIngredients){
-                  const value = meal?.ingredients?.find((val: any) => val._id == removeIngredient);
-                  if(value) removeIngredients = [...removeIngredients, value]
-                }
-              }
-              // -> return new values...
-              single.additions = additions;
-              single.addIngredients = addIngredients;
-              single.removeIngredients = removeIngredients;
+      // -> get addition object & injected to order...
+      if(single?.additions){
+        for(const addition of single.additions){
+          const value: any = meal?.additions?.find((val: any) => val._id == addition);
+          if(value) {
+            const item = additions?.find(res => res?.addition?._id === value?._id);
+            if(item){
+              item.quantity = item.quantity + 1;
+              additions = additions?.map(res => res.addition === item.addition._id ? item : res);
+            } else {
+              additions = [...additions, {addition: value, quantity: 1}];
+            }
+            price += value.price;
+            totalPoints += (meal.points * value.price);
+            pointsBack += (meal.pointsBack / 100) * value.price;
+            priceAdditions += value.price;
+          }
+        }
+      }
+      // -> get added ingredient object & injected to order...
+      if(single?.addIngredients){
+        for(const addIngredient of single.addIngredients){
+          const value = meal?.ingredients?.find((val: any) => val._id == addIngredient);
+          if(value) addIngredients = [...addIngredients, value]
+        }
+      }
+      // -> get removed ingredient object & injected to order...
+      if(single?.removeIngredients){
+        for(const removeIngredient of single.removeIngredients){
+          const value = meal?.ingredients?.find((val: any) => val._id == removeIngredient);
+          if(value) removeIngredients = [...removeIngredients, value]
+        }
+      }
+      // -> return new values...
+      single.additions = additions;
+      single.addIngredients = addIngredients;
+      single.removeIngredients = removeIngredients;
     }
 
     // -> put price in totalPrice...
     totalPrice += price;
 
-    // -> sync promo code if exist...
-    // if(createOrderInput?.promoCode && createOrderInput?.paymentMethod !== "Points"){
-    //   const promoCode :any = await this.promoCodeService.check(createOrderInput.promoCode, createOrderInput.user);
-    //   if(!promoCode?.name) throw new BadRequestException("You can't use promo code dosn't exist")
-    //   //? usePromoCode = true;
-    //   if(promoCode.type === 'Price') {
-    //     totalPrice += -promoCode.discount;
-    //     demoOrderDate = {...demoOrderDate, discountType: "Price", discount: promoCode.discount, promoCode: promoCode.name};
-    //     let precentValue = (price / promoCode.discount) / 100;
-    //     pointsBack += - (pointsBack * precentValue);
-        
-    //   }
-    //   if(promoCode.type === 'Percent') {
-    //     totalPrice += - totalPrice * (promoCode.discount/100);
-    //     demoOrderDate = {...demoOrderDate, discountType: "Percent", discount: promoCode.discount, promoCode: promoCode.name};
-    //     pointsBack += - (pointsBack * (promoCode.discount / 100));
-    //   }; 
-    // }
+    if(discount > 0 && totalPrice >= minDiscount){
+      if(maxDiscount === 0 || totalPrice < maxDiscount){
+        totalPrice += -(totalPrice * (discount/100));
+      } else
+      if(totalPrice >= maxDiscount){
+        totalPrice += -maxDiscount;
+      }
+    } else if(priceAfterDiscount > 0) {
+      totalPrice += -priceAfterDiscount;
+    }
+
+    // -> restaurnat delivery price...
+    price += deliveryPrice;
+    totalPrice += deliveryPrice;
 
     // -> sync wallet with order...
     const wallet = await this.walletsService.findUserWallet(createOrderInput.user);
     demoOrderDate = {...demoOrderDate, walletPoints: wallet.points};
-    // if(createOrderInput?.paymentMethod !== 'Cash'){
-    //   if(wallet?.amount && createOrderInput?.paymentMethod === 'Wallet'){
-    //     demoOrderDate = {...demoOrderDate, walletAmount: wallet.amount};
-    //     // -> reset amount wallet...
-    //     if(wallet.amount >= totalPrice){
-    //       transaction = {...transaction, amount: totalPrice};
-    //       totalPrice = 0;
-    //     } else if(wallet?.amount > 0) {
-    //       totalPrice += -wallet.amount;
-    //       transaction = {...transaction, amount: wallet.amount};
-    //     } else {
-    //       createOrderInput = {...createOrderInput, paymentMethod: "Cash"}
-    //     }
-        
-    //   } else if(wallet?.points && createOrderInput?.paymentMethod === 'Points'){
-    //     // -> reset points wallet...
-    //     if(totalPoints > wallet.points) throw new BadRequestException("your points is'nt enough");
-    //     if(wallet.points >= totalPoints){
-    //       transaction = {...transaction, amount: totalPoints};
-    //       totalPrice = deliveryPrice;
-    //     }
-        
-    //     // -> add total points to order...
-    //     demoOrderDate = {...demoOrderDate, totalPoints}
-    //   }
-    // }
+
+    // -> get orders length...
+    const no = await this.OrdersModel.countDocuments();
 
     // -> creating order...
-    const order = await this.OrdersModel.create({...demoOrderDate, totalPrice, price, state: "Pending", deliveryPrice, pointsBack});
+    const order = await this.OrdersModel.create({...demoOrderDate, totalPrice, price, state: "Pending", deliveryPrice, pointsBack, no});
     if(!order) throw new BadRequestException("you order haven't created please try again later");
-    //? if(usePromoCode && createOrderInput?.paymentMethod !== "Points") await this.promoCodeService.usePromoCode(createOrderInput.promoCode, createOrderInput.user);
-    // if(createOrderInput?.paymentMethod === "Wallet" && transaction.amount !== 0){
-    //   await this.transactionsService.createTransaction({...transaction, order: order?._id, type: "Amount", procedure: "Minus", paymentMethod: "Wallet", state: "Completed", description: "payed for cost order" });
-    // } else if(createOrderInput?.paymentMethod === "Points" && transaction.amount !== 0){
-    //   await this.transactionsService.createTransaction({...transaction, order: order?._id, type: "Points", procedure: "Minus", paymentMethod: "Points", state: "Completed", description: "payed for cost order points"});
-    // }
     const finalOrder: any = await order.populate([{path: "user", select: {name: 1, phoneNumber: 1, image: 1}}, {path: "restaurant", select: {title: 1, titleEN: 1, titleKR: 1}}]);
     if(finalOrder?.user?.image) finalOrder.user.image = this.awsService.getUrl(finalOrder.user.image);
     //TODO: send noti -> user & driver? ...
@@ -420,15 +432,117 @@ export class OrdersService {
   }
 
   async findOne(id: string) {
-    const order: any = await this.OrdersModel.findById(id).populate([{path: "user", select: {name: 1, phoneNumber: 1, image: 1}}, {path: "restaurant", select: {title: 1, titleEN: 1, titleKR: 1, image: 1 }}, {path: "address", select: {_id: 1}}, {path: "meals.meal"}, {path: "driver", select:{name: 1, phoneNumber: 1, image: 1}} ]);
+    const order: any = await this.OrdersModel.findById(id).populate([{path: "user", select: {name: 1, phoneNumber: 1, image: 1}}, {path: "restaurant", select: {title: 1, titleEN: 1, titleKR: 1, image: 1, discount: 1, minDiscount: 1, maxDiscount: 1 }}, {path: "address", select: {_id: 1}}, {path: "meals.meal"}, {path: "driver", select:{name: 1, phoneNumber: 1, image: 1}} ]);
     if(order?.user?.image) order.user.image = this.awsService.getUrl(order.user.image);
     if(order?.restaurant?.image) order.restaurant.image = this.awsService.getUrl(order.restaurant.image);
     return order;
   }
 
   async update(id: string, updateOrderInput: UpdateOrderInput) {
-    await this.OrdersModel.findByIdAndUpdate(id, updateOrderInput);
-    return "Success";
+     // -> check if user has an order not compeleted yet...
+     if(!isValidObjectId(updateOrderInput?.address) || !isValidObjectId(updateOrderInput?.driver) || !isValidObjectId(id)) throw new BadRequestException("There isn't user, address, restaurant or driver with this id");
+     if(updateOrderInput.meals?.length === 0) throw new BadRequestException("Please select meal to make order");
+     const order: any = await this.OrdersModel.findById(id);
+
+     const restaurant = await this.restaurantsService.findRestaurant(order.restaurant);
+     if(!restaurant) throw new BadRequestException("There isn't restaurant with this restaruant id");
+
+     let demoOrderDate :any = updateOrderInput;
+
+     // -> get meals data & calculate total price...
+     let totalPrice: number = 0;
+     let totalPoints: number = 0;
+     let pointsBack: number = 0;
+     let price: number = 0;
+     let priceAdditions: number = 0;
+     let priceAfterDiscount: number = 0;
+     let discount: number = restaurant?.discount || 0;
+     let minDiscount: number = restaurant?.minDiscount || 0;
+     let maxDiscount: number = restaurant?.maxDiscount || 0;
+     const deliveryPrice: number = restaurant?.deliveryPrice || 0;
+ 
+     for(const single of updateOrderInput.meals){
+       let additions = [];
+       let addIngredients = [];
+       let removeIngredients = [];
+       const meal = await this.mealsService.findExtention(single.meal, order.restaurant);
+       if(!meal) throw new BadRequestException("can't update order with meals isn't in this restaurant")
+       price += meal.price * single.quantity;
+       totalPoints += (meal.points * meal.price) * single.quantity;
+       pointsBack += ((meal.pointsBack / 100) * meal.price) * single.quantity;
+ 
+       if(meal.discount > 0){
+        priceAfterDiscount += (meal.price * (meal.discount/100)) * single.quantity;
+       }
+       // -> check if ! payment with point calculate additions & ingredients...
+       // -> get addition object & injected to order...
+       if(single?.additions){
+         for(const addition of single.additions){
+           const value: any = meal?.additions?.find((val: any) => val._id == addition);
+           if(value) {
+             const item = additions?.find(res => res?.addition?._id === value?._id);
+             if(item){
+               item.quantity = item.quantity + 1;
+               additions = additions?.map(res => res.addition === item.addition._id ? item : res);
+             } else {
+               additions = [...additions, {addition: value, quantity: 1}];
+             }
+             price += value.price;
+             totalPoints += (meal.points * value.price);
+             pointsBack += (meal.pointsBack / 100) * value.price;
+             priceAdditions += value.price;
+           }
+         }
+       }
+       // -> get added ingredient object & injected to order...
+       if(single?.addIngredients){
+         for(const addIngredient of single.addIngredients){
+           const value = meal?.ingredients?.find((val: any) => val._id == addIngredient);
+           if(value) addIngredients = [...addIngredients, value]
+         }
+       }
+       // -> get removed ingredient object & injected to order...
+       if(single?.removeIngredients){
+         for(const removeIngredient of single.removeIngredients){
+           const value = meal?.ingredients?.find((val: any) => val._id == removeIngredient);
+           if(value) removeIngredients = [...removeIngredients, value]
+         }
+       }
+       // -> return new values...
+       single.additions = additions;
+       single.addIngredients = addIngredients;
+       single.removeIngredients = removeIngredients;
+     }
+ 
+     // -> put price in totalPrice...
+     totalPrice += price;
+
+     if(discount > 0 && totalPrice >= minDiscount){
+      if(maxDiscount === 0 || totalPrice < maxDiscount){
+        totalPrice += -(totalPrice * (discount/100));
+      } else
+      if(totalPrice >= maxDiscount){
+        totalPrice += -maxDiscount;
+      }
+    } else if(priceAfterDiscount > 0) {
+      totalPrice += -priceAfterDiscount;
+    }
+
+     // -> restaurnat delivery price...
+     price += deliveryPrice;
+     totalPrice += deliveryPrice;
+
+     // -> sync wallet with order...
+     const wallet = await this.walletsService.findUserWallet(order.user);
+     demoOrderDate = {...demoOrderDate, walletPoints: wallet.points};
+ 
+     // -> updating order...
+     const updatedOrder = await this.OrdersModel.findByIdAndUpdate(id, {...demoOrderDate, totalPrice, price, pointsBack});
+     if(!updatedOrder) throw new BadRequestException("you order haven't updated please try again later");
+
+     //TODO: check if changed driver send notification to driver...
+     //TODO: send notification to user...
+    return this.findOne(id);
   }
 
   async state(stateInput: StateInput){

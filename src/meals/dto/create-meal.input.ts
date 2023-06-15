@@ -56,4 +56,9 @@ export class CreateMealInput {
   @Field(()=> Int, {nullable: true})
   pointsBack?: number;
 
+  // -> after update 1...
+
+  @Field(()=> Int)
+  discount: number;
+
 }

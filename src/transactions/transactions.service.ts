@@ -211,8 +211,12 @@ async resetAdmin(admin: string, resetAdminWallet: ResetAdminWallet) {
   return "Success";
 }
 
-  findOne(id: string) {
-    return this.TransactionsModel.findById(id);
+  async findOne(id: string) {
+    const transaction: any = await this.TransactionsModel.findById(id).populate(["user", "admin", "driver", "order"]);
+    if(transaction.user?.image) transaction.user.image = this.awsService.getUrl(transaction.user.image);
+    if(transaction.admin?.image) transaction.admin.image = this.awsService.getUrl(transaction.admin.image);
+    if(transaction.driver?.image) transaction.driver.image = this.awsService.getUrl(transaction.driver.image);
+    return transaction;
   }
 
   async update(id: string, updateTransactionInput: UpdateTransactionInput) {

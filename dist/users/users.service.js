@@ -135,6 +135,9 @@ let UsersService = class UsersService {
             this.awsService.removeImage(result?.image);
         return "user has been deleted";
     }
+    async findDeviceToken(_id) {
+        return this.UsersModel.findOne({ _id }, { deviceToken: 1, _id: 0 });
+    }
     async login(loginUserInput) {
         const user = await this.UsersModel.login(loginUserInput);
         if (user?.image)

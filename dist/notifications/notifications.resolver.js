@@ -18,16 +18,25 @@ const notifications_service_1 = require("./notifications.service");
 const notification_entity_1 = require("./entities/notification.entity");
 const create_notification_input_1 = require("./dto/create-notification.input");
 const update_notification_input_1 = require("./dto/update-notification.input");
+const limitEntity_1 = require("../constants/limitEntity");
+const notificationsResponse_entity_1 = require("./entities/notificationsResponse.entity");
+const accessAuth_guard_1 = require("../guards/accessAuth.guard");
+const common_1 = require("@nestjs/common");
+const ability_decorator_1 = require("../ability/ability.decorator");
+const ability_factory_1 = require("../ability/ability.factory");
 let NotificationsResolver = class NotificationsResolver {
     notificationsService;
     constructor(notificationsService) {
         this.notificationsService = notificationsService;
     }
     createNotification(createNotificationInput) {
-        return this.notificationsService.create(createNotificationInput);
+        return this.notificationsService.create(createNotificationInput, null);
     }
-    findAll() {
-        return this.notificationsService.findAll();
+    findAll(limitEntity) {
+        return this.notificationsService.findAll(limitEntity);
+    }
+    findManagement(limitEntity) {
+        return this.notificationsService.findManagement(limitEntity);
     }
     findOne(id) {
         return this.notificationsService.findOne(id);
@@ -41,26 +50,39 @@ let NotificationsResolver = class NotificationsResolver {
 };
 __decorate([
     (0, graphql_1.Mutation)(() => notification_entity_1.Notification),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: notification_entity_1.Notification }),
     __param(0, (0, graphql_1.Args)('createNotificationInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_notification_input_1.CreateNotificationInput]),
     __metadata("design:returntype", void 0)
 ], NotificationsResolver.prototype, "createNotification", null);
 __decorate([
-    (0, graphql_1.Query)(() => [notification_entity_1.Notification], { name: 'notifications' }),
+    (0, graphql_1.Query)(() => notificationsResponse_entity_1.NotificationsResponse, { name: 'notifications' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: notification_entity_1.Notification }),
+    __param(0, (0, graphql_1.Args)('limitEntity')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
     __metadata("design:returntype", void 0)
 ], NotificationsResolver.prototype, "findAll", null);
 __decorate([
-    (0, graphql_1.Query)(() => notification_entity_1.Notification, { name: 'notification' }),
-    __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.Int })),
+    (0, graphql_1.Query)(() => notificationsResponse_entity_1.NotificationsResponse, { name: 'managementNotifications' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: notification_entity_1.Notification }),
+    __param(0, (0, graphql_1.Args)('limitEntity')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
+    __metadata("design:returntype", void 0)
+], NotificationsResolver.prototype, "findManagement", null);
+__decorate([
+    (0, graphql_1.Query)(() => notification_entity_1.Notification, { name: 'notification' }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: notification_entity_1.Notification }),
+    __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], NotificationsResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => notification_entity_1.Notification),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: notification_entity_1.Notification }),
     __param(0, (0, graphql_1.Args)('updateNotificationInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_notification_input_1.UpdateNotificationInput]),
@@ -68,12 +90,14 @@ __decorate([
 ], NotificationsResolver.prototype, "updateNotification", null);
 __decorate([
     (0, graphql_1.Mutation)(() => notification_entity_1.Notification),
-    __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.Int })),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: notification_entity_1.Notification }),
+    __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], NotificationsResolver.prototype, "removeNotification", null);
 NotificationsResolver = __decorate([
+    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
     (0, graphql_1.Resolver)(() => notification_entity_1.Notification),
     __metadata("design:paramtypes", [notifications_service_1.NotificationsService])
 ], NotificationsResolver);

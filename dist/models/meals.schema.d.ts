@@ -46,6 +46,7 @@ export declare class Meals {
     pointsBack: number;
     position: number;
     state: mealStatus;
+    discount: number;
 }
 export declare const MealsSchema: mongoose.Schema<Meals, mongoose.Model<Meals, any, any, any, mongoose.Document<unknown, any, Meals> & Omit<Meals & {
     _id: mongoose.Types.ObjectId;

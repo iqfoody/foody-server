@@ -52,4 +52,21 @@ export class Restaurant {
   @Field(()=> Date, { nullable: true})
   updatedAt?: Date;
 
+  // -> after update 1...
+
+  @Field(()=> Int)
+  discount: number;
+
+  @Field(()=> Int)
+  minDiscount: number;
+
+  @Field(()=> Int)
+  maxDiscount: number;
+
+  @Field(()=> Float)
+  latitude: number;
+
+  @Field(()=> Float)
+  longitude: number;
+
 }

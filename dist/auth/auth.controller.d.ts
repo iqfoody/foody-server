@@ -33,10 +33,7 @@ export declare class AuthController {
     private readonly usersService;
     private readonly driversService;
     constructor(authService: AuthService, usersService: UsersService, driversService: DriversService);
-    login(loginInput: LoginInput, req: any): Promise<{
-        user: any;
-        accessToken: string;
-    }>;
+    login(loginInput: LoginInput, req: any): Promise<string>;
     signup(createUserInput: CreateUserInput, req: any): Promise<{
         user: any;
         accessToken: string;

@@ -111,6 +111,11 @@ type Restaurant {
   state: String!
   createdAt: Timestamp
   updatedAt: Timestamp
+  discount: Int!
+  minDiscount: Int!
+  maxDiscount: Int!
+  latitude: Float!
+  longitude: Float!
 }
 
 type MealAddition {
@@ -180,6 +185,7 @@ type Meal {
   state: String!
   createdAt: Timestamp
   updatedAt: Timestamp
+  discount: Int!
 }
 
 type Favorite {
@@ -198,9 +204,14 @@ type Feedback {
   user: User
 }
 
+type OrderMealAddition {
+  addition: MealAddition!
+  quantity: Int!
+}
+
 type OrderItem {
   meal: Meal!
-  additions: [MealAddition!]
+  additions: [OrderMealAddition!]
   addIngredients: [MealIngredient!]
   removeIngredients: [MealIngredient!]
   quantity: Int!
@@ -338,8 +349,32 @@ type FeedbacksLimit {
 }
 
 type Notification {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  _id: ID!
+  user: User
+  driver: Driver
+  order: Order
+  restaurant: Restaurant
+  meal: Meal
+  type: String!
+  title: String!
+  titleEN: String!
+  titleKR: String
+  body: String!
+  bodyEN: String!
+  bodyKR: String
+  image: String
+  state: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  submit: String
+  dismiss: String
+  action: String
+  priority: String
+}
+
+type NotificationsResponse {
+  data: [Notification!]!
+  pages: Int!
 }
 
 type OrdersResponse {
@@ -442,8 +477,9 @@ type Query {
   meal(id: ID!): Meal!
   feedbacks(limitEntity: LimitEntity!): FeedbacksLimit!
   feedback(id: ID!): Feedback!
-  notifications: [Notification!]!
-  notification(id: Int!): Notification!
+  notifications(limitEntity: LimitEntity!): NotificationsResponse!
+  managementNotifications(limitEntity: LimitEntity!): NotificationsResponse!
+  notification(id: ID!): Notification!
   orders(limitEntity: LimitEntity!): OrdersResponse!
   homeValues: HomeResponse!
   ordersUser(limitEntity: LimitEntity!): OrdersResponse!
@@ -469,7 +505,7 @@ type Query {
   amountAdminTransactions(limitEntity: LimitEntity!): TransactionResponse!
   pointsAdminTransactions(limitEntity: LimitEntity!): TransactionResponse!
   pointsUserTransactions(limitEntity: LimitEntity!): TransactionResponse!
-  transaction(id: String!): Transaction!
+  transaction(id: ID!): Transaction!
   tags: [Tag!]!
   tag(id: ID!): Tag!
   searchUsers(searchQuery: SearchInput!): UsersResponse!
@@ -534,9 +570,10 @@ type Mutation {
   removeFeedback(id: ID!): String!
   createNotification(createNotificationInput: CreateNotificationInput!): Notification!
   updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
-  removeNotification(id: Int!): Notification!
+  removeNotification(id: ID!): Notification!
   createOrder(createOrderInput: CreateOrderInput!): Order!
-  updateOrder(updateOrderInput: UpdateOrderInput!): String!
+  updateOrder(updateOrderInput: UpdateOrderInput!): Order!
+  stateOrder(stateInput: StateInput!): String!
   removeOrder(id: ID!): String!
   createPromoCode(createPromoCodeInput: CreatePromoCodeInput!): PromoCode!
   updatePromoCode(updatePromoCodeInput: UpdatePromoCodeInput!): String!
@@ -557,7 +594,7 @@ type Mutation {
   createTransaction(createTransactionInput: CreateTransactionInput!): Transaction!
   updateTransaction(updateTransactionInput: UpdateTransactionInput!): Transaction!
   resetAdminWallet(resetAdminWallet: ResetAdminWallet!): String!
-  removeTransaction(id: String!): Transaction!
+  removeTransaction(id: ID!): Transaction!
   createTag(createTagInput: CreateTagInput!): Tag!
   updateTag(updateTagInput: UpdateTagInput!): String!
   stateTag(stateInput: StateInput!): String!
@@ -700,7 +737,7 @@ input UpdateAdvertisementInput {
   titleKR: String
   image: String
   type: String
-  id: Int
+  id: ID
 }
 
 input UpdatePositionInput {
@@ -734,6 +771,7 @@ input CreateMealInput {
   previousPrice: Int
   points: Int
   pointsBack: Int
+  discount: Int!
 }
 
 input CreateMealAdditionInput {
@@ -767,6 +805,7 @@ input UpdateMealInput {
   previousPrice: Int
   points: Int
   pointsBack: Int
+  discount: Int
   id: ID!
 }
 
@@ -794,14 +833,42 @@ input RemoveMealObject {
 }
 
 input CreateNotificationInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  user: ID
+  driver: ID
+  order: ID
+  restaurant: ID
+  meal: ID
+  type: String!
+  title: String!
+  titleEN: String!
+  titleKR: String
+  body: String!
+  bodyEN: String!
+  bodyKR: String
+  submit: String
+  dismiss: String
+  action: String
+  priority: String
 }
 
 input UpdateNotificationInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  user: ID
+  driver: ID
+  order: ID
+  restaurant: ID
+  meal: ID
+  type: String
+  title: String
+  titleEN: String
+  titleKR: String
+  body: String
+  bodyEN: String
+  bodyKR: String
+  submit: String
+  dismiss: String
+  action: String
+  priority: String
+  id: ID!
 }
 
 input CreateOrderInput {
@@ -887,6 +954,11 @@ input CreateRestaurantInput {
   image: String
   time: Int!
   deliveryPrice: Int
+  discount: Int!
+  minDiscount: Int!
+  maxDiscount: Int!
+  latitude: Float!
+  longitude: Float!
 }
 
 input UpdateRestaurantInput {
@@ -899,6 +971,11 @@ input UpdateRestaurantInput {
   image: String
   time: Int
   deliveryPrice: Int
+  discount: Int
+  minDiscount: Int
+  maxDiscount: Int
+  latitude: Float
+  longitude: Float
   id: ID
   rating: Float
   rates: Int

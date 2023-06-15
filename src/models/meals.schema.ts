@@ -84,13 +84,13 @@ export class Meals {
   @Prop({type: mongoose.Schema.Types.Number, required: [true, "price required"], minlength: [250, "Min price 250"]})
   price: number;
 
-  @Prop({type: mongoose.Schema.Types.Number})
+  @Prop({type: mongoose.Schema.Types.Number, minlength: [250, "Min price 250"]})
   previousPrice: number;
 
-  @Prop({type: mongoose.Schema.Types.Number, default: 0})
+  @Prop({type: mongoose.Schema.Types.Number, default: 0, maxlength: [25, "max points converter to price is FB20"], minlength: [5, "Min price 250"]})
   points: number;
 
-  @Prop({type: mongoose.Schema.Types.Number, default: 0})
+  @Prop({type: mongoose.Schema.Types.Number, default: 0, maxlength: [100, "max points back is 100%"]})
   pointsBack: number;
 
   @Prop({type: mongoose.Schema.Types.Number, default: 0})
@@ -98,6 +98,12 @@ export class Meals {
 
   @Prop({default: "Active"})
   state: mealStatus;
+
+  // -> after update 1...
+
+  @Prop({type: mongoose.Schema.Types.Number, default: 0, minlength: [1000, "Min discount 1000"]})
+  discount: number;
+
 }
 
 export const MealsSchema = SchemaFactory.createForClass(Meals);

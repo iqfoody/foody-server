@@ -77,6 +77,9 @@ export declare class UsersService {
     passwordUser(id: string, updatePasswordUser: UpdatePasswordUser): Promise<string>;
     state(stateInput: StateInput): Promise<string>;
     remove(id: string): Promise<string>;
+    findDeviceToken(_id: string): Promise<import("mongoose").Document<unknown, import("src/models/users.schema").IUsersQueryHelpers, import("src/models/users.schema").UsersDocument> & Omit<import("src/models/users.schema").Users & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
     login(loginUserInput: any): Promise<import("src/models/users.schema").UsersDocument>;
     create(createUserInput: CreateUserInput): Promise<Omit<import("mongoose").Document<unknown, import("src/models/users.schema").IUsersQueryHelpers, import("src/models/users.schema").UsersDocument> & Omit<import("src/models/users.schema").Users & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;

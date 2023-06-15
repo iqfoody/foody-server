@@ -8,6 +8,7 @@ import { AwsModule } from 'src/aws/aws.module';
 import { WalletsModule } from 'src/wallets/wallets.module';
 import { FavoritesModule } from 'src/favorites/favorites.module';
 import { AddressesModule } from 'src/addresses/addresses.module';
+import { FirebaseModule } from 'src/firebase/firebase.module';
 
 @Module({
   imports: [

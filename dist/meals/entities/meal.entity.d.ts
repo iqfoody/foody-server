@@ -28,4 +28,5 @@ export declare class Meal {
     state: mealStatus;
     createdAt?: Date;
     updatedAt?: Date;
+    discount: number;
 }
