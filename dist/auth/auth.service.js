@@ -32,7 +32,7 @@ let AuthService = class AuthService {
         this.adminsService = adminsService;
         this.driversService = driversService;
         this.cookieOptions = {
-            domain: 'https://admin.iqfoody.com',
+            domain: 'admin.iqfoody.com',
             secure: true,
             sameSite: 'lax',
             httpOnly: true,
@@ -40,7 +40,7 @@ let AuthService = class AuthService {
             maxAge: 1000 * 60 * 60 * 24
         };
         this.cookieRefreshOptions = {
-            domain: 'https://admin.iqfoody.com',
+            domain: 'admin.iqfoody.com',
             secure: true,
             sameSite: 'lax',
             httpOnly: true,
