@@ -1,15 +1,17 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateRateInput } from './dto/create-rate.input';
 import { UpdateRateInput } from './dto/update-rate.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, isValidObjectId, mongo } from 'mongoose';
 import { RatesDocument } from 'src/models/rates.schema';
 import { AwsService } from 'src/aws/aws.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class RatesService {
   constructor(
     @InjectModel("Rates") private RatesModel: Model<RatesDocument>,
+    @Inject(forwardRef(()=> UsersService)) private usersService: UsersService,
     private readonly awsService: AwsService,
   ) {}
 
@@ -20,7 +22,8 @@ export class RatesService {
   async rateDriver(createRateInput: CreateRateInput){
     if(!createRateInput?.driver || !createRateInput?.user) throw new BadRequestException("driver & user required");
     if(!isValidObjectId(createRateInput.driver)) throw new BadRequestException("There isn't driver with this id");
-    await this.RatesModel.create(createRateInput);
+    const { _id } = await this.usersService.findId(createRateInput.user);
+    await this.RatesModel.create({...createRateInput, user: _id});
     return "Success";
   }
 

@@ -13,12 +13,16 @@ const addresses_resolver_1 = require("./addresses.resolver");
 const addresses_controller_1 = require("./addresses.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const addresses_schema_1 = require("../models/addresses.schema");
+const users_module_1 = require("../users/users.module");
+const firebase_module_1 = require("../firebase/firebase.module");
 let AddressesModule = class AddressesModule {
 };
 AddressesModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: "Addresses", schema: addresses_schema_1.AddressesSchema }]),
+            (0, common_1.forwardRef)(() => users_module_1.UsersModule),
+            firebase_module_1.FirebaseModule
         ],
         providers: [addresses_resolver_1.AddressesResolver, addresses_service_1.AddressesService],
         exports: [addresses_service_1.AddressesService],

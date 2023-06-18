@@ -80,6 +80,41 @@ let TransactionsService = class TransactionsService {
         }
         return;
     }
+    async cancelTransaction(order, user) {
+        const transaction = await this.TransactionsModel.findOne({ $and: [{ order }, { user }] });
+        const wallet = await this.walletsService.findUserWallet(user);
+        if (!transaction || !wallet)
+            throw new common_1.BadRequestException("Server can't find order transaction, wallet user");
+        if (transaction?.type === "Amount") {
+            if (transaction.procedure === "Minus") {
+                await this.walletsService.update(wallet._id, { amount: (wallet.amount + transaction.amount) });
+            }
+            else if (transaction.procedure === "Plus") {
+                await this.walletsService.update(wallet._id, { amount: (wallet.amount - transaction.amount) });
+            }
+        }
+        else if (transaction?.type === "Points") {
+            if (transaction.procedure === "Minus") {
+                await this.walletsService.update(wallet._id, { points: (wallet.points + transaction.amount) });
+            }
+            else if (transaction.procedure === "Plus") {
+                await this.walletsService.update(wallet._id, { points: (wallet.points - transaction.amount) });
+            }
+            else
+                throw new common_1.BadRequestException("Server, can't cancel order transaction");
+        }
+        await this.TransactionsModel.findByIdAndUpdate(transaction._id, { state: "Canceled", description: "transaction has been canceled" });
+        return "Success";
+    }
+    async completeTransaction(order, user) {
+        const transaction = await this.TransactionsModel.findOne({ $and: [{ order }, { user }] });
+        if (!transaction)
+            throw new common_1.BadRequestException("Server can't find order transaction");
+        const updatedTransaction = await this.TransactionsModel.findByIdAndUpdate(transaction._id, { state: "Completed" });
+        if (!updatedTransaction)
+            throw new common_1.BadRequestException("Server can't complete this transaction");
+        return "Success";
+    }
     async findAll(limitEntity) {
         const skipIndex = limitEntity.page * limitEntity.page;
         const transactions = await this.TransactionsModel.find({ user: { $exists: true } }).populate({ path: "user", select: { name: 1, image: 1 } }).sort({ _id: -1 }).limit(limitEntity.limit).skip(skipIndex);

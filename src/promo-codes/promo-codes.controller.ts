@@ -1,11 +1,8 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { PromoCodesService } from './promo-codes.service';
-import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
-import { CheckAbilities } from 'src/ability/ability.decorator';
-import { Actions } from 'src/ability/ability.factory';
-import { PromoCode } from './entities/promo-code.entity';
+import { FirebaseAuthGuard } from 'src/firebase-auth/firebase-auth.guard';
 
-@UseGuards(AccessAuthGuard)
+@UseGuards(FirebaseAuthGuard)
 @Controller('promo-codes')
 export class PromoCodesController {
     constructor(
@@ -13,16 +10,13 @@ export class PromoCodesController {
     ) {}
 
     @Get('/')
-    @CheckAbilities({actions: Actions.Info, subject: PromoCode})
     async checkPromoCode(@Query('promoCode') name: string, @Req() req){
-        console.log(name)
-        return this.promoCodesService.check(name, req.user._id);
+        return this.promoCodesService.check(name, req.user);
     }
 
     @Get('/self')
-    @CheckAbilities({actions: Actions.Info, subject: PromoCode})
     async getPromoCodes(@Req() req){
-        return this.promoCodesService.findPromoCodes(req.user._id);
+        return this.promoCodesService.findPromoCodes(req.user);
     }
 
 }

@@ -13,6 +13,8 @@ import { RatesModule } from 'src/rates/rates.module';
 import { RestaurantsModule } from 'src/restaurants/restaurants.module';
 import { DriversModule } from 'src/drivers/drivers.module';
 import { TransactionsModule } from 'src/transactions/transactions.module';
+import { FirebaseModule } from 'src/firebase/firebase.module';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -25,7 +27,9 @@ import { TransactionsModule } from 'src/transactions/transactions.module';
     forwardRef(()=> RestaurantsModule),
     forwardRef(()=> DriversModule),
     forwardRef(()=> TransactionsModule),
+    forwardRef(()=> NotificationsModule),
     AwsModule,
+    FirebaseModule
   ],
   providers: [OrdersResolver, OrdersService],
   exports: [OrdersService],

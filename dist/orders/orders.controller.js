@@ -15,45 +15,41 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrdersController = void 0;
 const common_1 = require("@nestjs/common");
 const orders_service_1 = require("./orders.service");
-const ability_decorator_1 = require("../ability/ability.decorator");
-const ability_factory_1 = require("../ability/ability.factory");
 const create_order_input_1 = require("./dto/create-order.input");
-const order_entity_1 = require("./entities/order.entity");
-const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const create_rate_order_input_1 = require("./dto/create-rate-order.input");
+const firebase_auth_guard_1 = require("../firebase-auth/firebase-auth.guard");
 let OrdersController = class OrdersController {
     ordersService;
     constructor(ordersService) {
         this.ordersService = ordersService;
     }
     async getOrderes(req, state) {
-        return this.ordersService.findOrders(req.user._id, state);
+        return this.ordersService.findOrders(req.user, state);
     }
     async createOrder(createOrderInput, req) {
-        return this.ordersService.createOrder({ ...createOrderInput, user: req.user._id });
+        return this.ordersService.createOrder({ ...createOrderInput, user: req.user });
     }
     async ratingOrder(id, createRateOrderInput, req) {
-        return this.ordersService.rateOrder({ user: req.user._id, order: id, rate: createRateOrderInput.rate, description: createRateOrderInput?.description });
+        return this.ordersService.rateOrder({ user: req.user, order: id, rate: createRateOrderInput.rate, description: createRateOrderInput?.description });
     }
     async cancelOrder(id, req) {
-        return this.ordersService.cancelOrder(id, req.user._id);
+        return this.ordersService.cancelOrder(id, req.user);
     }
     async inDeliveryOrder(id, req) {
-        return this.ordersService.inDeliveryOrder(id, req.user._id);
+        return this.ordersService.inDeliveryOrder(id, req.user);
     }
     async completeOrder(id, recievedPrice, req) {
-        return this.ordersService.completeOrder(id, req.user._id, recievedPrice);
+        return this.ordersService.completeOrder(id, req.user, recievedPrice);
     }
     async getOrder(id, req) {
-        return this.ordersService.findOrder(id, req.user._id);
+        return this.ordersService.findOrder(id, req.user);
     }
     async deleteOrder(id, req) {
-        return this.ordersService.deleteOrder(id, req.user._id);
+        return this.ordersService.deleteOrder(id, req.user);
     }
 };
 __decorate([
     (0, common_1.Get)('/history'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: order_entity_1.Order }),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Query)('state')),
     __metadata("design:type", Function),
@@ -62,7 +58,6 @@ __decorate([
 ], OrdersController.prototype, "getOrderes", null);
 __decorate([
     (0, common_1.Post)('/'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Add, subject: order_entity_1.Order }),
     __param(0, (0, common_1.Body)('createOrderInput')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -71,7 +66,6 @@ __decorate([
 ], OrdersController.prototype, "createOrder", null);
 __decorate([
     (0, common_1.Post)('/rate/:id'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Edit, subject: order_entity_1.Order }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('createRateOrderInput')),
     __param(2, (0, common_1.Req)()),
@@ -81,7 +75,6 @@ __decorate([
 ], OrdersController.prototype, "ratingOrder", null);
 __decorate([
     (0, common_1.Post)('/cancel/:id'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Edit, subject: order_entity_1.Order }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -90,7 +83,6 @@ __decorate([
 ], OrdersController.prototype, "cancelOrder", null);
 __decorate([
     (0, common_1.Post)('/indelivery/:id'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Complete, subject: order_entity_1.Order }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -99,7 +91,6 @@ __decorate([
 ], OrdersController.prototype, "inDeliveryOrder", null);
 __decorate([
     (0, common_1.Post)('/completed/:id'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Complete, subject: order_entity_1.Order }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('recievedPrice')),
     __param(2, (0, common_1.Req)()),
@@ -109,7 +100,6 @@ __decorate([
 ], OrdersController.prototype, "completeOrder", null);
 __decorate([
     (0, common_1.Get)('/:id'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: order_entity_1.Order }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -118,7 +108,6 @@ __decorate([
 ], OrdersController.prototype, "getOrder", null);
 __decorate([
     (0, common_1.Delete)('/:id'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Remove, subject: order_entity_1.Order }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -126,7 +115,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "deleteOrder", null);
 OrdersController = __decorate([
-    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
+    (0, common_1.UseGuards)(firebase_auth_guard_1.FirebaseAuthGuard),
     (0, common_1.Controller)('orders'),
     __metadata("design:paramtypes", [orders_service_1.OrdersService])
 ], OrdersController);

@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { CreateDriverInput } from './dto/create-driver.input';
 import { UpdateDriverInput } from './dto/update-driver.input';
 import { InjectModel } from '@nestjs/mongoose';
@@ -6,7 +6,6 @@ import { IDriversModel } from 'src/models/drivers.schema';
 import { AwsService } from 'src/aws/aws.service';
 import { LoginInput } from 'src/auth/dto/login.input';
 import { StateInput } from 'src/constants/state.input';
-import { Response } from 'src/constants/response.entity';
 import { genSalt, hash } from 'bcryptjs';
 import { UpdatePasswordUser } from 'src/users/dto/update-password-user.input';
 import { WalletsService } from 'src/wallets/wallets.service';
@@ -117,6 +116,12 @@ export class DriversService {
     await this.walletsService.removeDriver(_id);
     if(image) this.awsService.removeImage(image);
     return "success";
+  }
+
+  async findId(phoneNumber: string) {
+    const driver = await this.DriversModel.findOne({phoneNumber}, {_id: 1, deviceToken: 1});
+    if(!driver) throw new BadRequestException("There isn't driver regestered with this phone number");
+    return driver;
   }
 
   async home() {

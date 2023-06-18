@@ -63,8 +63,13 @@ let AdminsService = class AdminsService {
             admin.image = this.awsService.getUrl(admin?.image);
         return admin;
     }
-    async findInfo(_id) {
+    async findInfo(_id, token) {
         const admin = await this.AdminsModel.findOne({ $and: [{ _id }, { state: "Active" }] });
+        if (!admin)
+            throw new common_1.NotFoundException('Access Denied');
+        const isMatched = await admin.compareToken(token);
+        if (!isMatched)
+            return;
         if (admin?.image)
             admin.image = this.awsService.getUrl(admin?.image);
         return admin;
@@ -112,9 +117,9 @@ let AdminsService = class AdminsService {
         const admin = await this.AdminsModel.findById(id);
         if (!admin)
             throw new common_1.NotFoundException('Access Denied');
-        const isMatched = admin.compareToken(token);
+        const isMatched = await admin.compareToken(token);
         if (!isMatched)
-            throw new common_1.ForbiddenException('Access Denied');
+            return;
         return admin;
     }
     async remove(_id) {

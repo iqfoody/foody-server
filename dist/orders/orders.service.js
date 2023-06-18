@@ -26,6 +26,7 @@ const restaurants_service_1 = require("../restaurants/restaurants.service");
 const drivers_service_1 = require("../drivers/drivers.service");
 const declearedMonths_1 = require("../constants/declearedMonths");
 const transactions_service_1 = require("../transactions/transactions.service");
+const notifications_service_1 = require("../notifications/notifications.service");
 let OrdersService = class OrdersService {
     OrdersModel;
     mealsService;
@@ -36,8 +37,9 @@ let OrdersService = class OrdersService {
     restaurantsService;
     driversService;
     transactionsService;
+    notificationsService;
     awsService;
-    constructor(OrdersModel, mealsService, promoCodeService, walletsService, usersService, ratesService, restaurantsService, driversService, transactionsService, awsService) {
+    constructor(OrdersModel, mealsService, promoCodeService, walletsService, usersService, ratesService, restaurantsService, driversService, transactionsService, notificationsService, awsService) {
         this.OrdersModel = OrdersModel;
         this.mealsService = mealsService;
         this.promoCodeService = promoCodeService;
@@ -47,20 +49,22 @@ let OrdersService = class OrdersService {
         this.restaurantsService = restaurantsService;
         this.driversService = driversService;
         this.transactionsService = transactionsService;
+        this.notificationsService = notificationsService;
         this.awsService = awsService;
     }
     async createOrder(createOrderInput) {
-        if (!(0, mongoose_2.isValidObjectId)(createOrderInput?.user) || !(0, mongoose_2.isValidObjectId)(createOrderInput?.address) || !(0, mongoose_2.isValidObjectId)(createOrderInput?.restaurant))
-            throw new common_1.BadRequestException("There isn't user or restaurant with this id");
+        if (!(0, mongoose_2.isValidObjectId)(createOrderInput?.address) || !(0, mongoose_2.isValidObjectId)(createOrderInput?.restaurant))
+            throw new common_1.BadRequestException("There isn't address orrestaurant with this id");
         if (createOrderInput.meals?.length === 0)
             throw new common_1.BadRequestException("Please select meal to make order");
-        const ActiveOrder = await this.OrdersModel.findOne({ $and: [{ user: createOrderInput.user }, { restaurant: createOrderInput.restaurant }, { $and: [{ state: { $ne: "Completed" } }, { state: { $ne: "Deleted" } }, { state: { $ne: "Canceled" } }] }] }, { _id: 1 });
+        const { _id } = await this.usersService.findId(createOrderInput.user);
+        const ActiveOrder = await this.OrdersModel.findOne({ $and: [{ user: _id }, { restaurant: createOrderInput.restaurant }, { $and: [{ state: { $ne: "Completed" } }, { state: { $ne: "Deleted" } }, { state: { $ne: "Canceled" } }] }] }, { _id: 1 });
         if (ActiveOrder)
             throw new common_1.BadRequestException("you have order in ordered.");
         const restaurant = await this.restaurantsService.findRestaurant(createOrderInput.restaurant);
         if (!restaurant)
             throw new common_1.BadRequestException("There isn't restaurant with this restaruant id");
-        let demoOrderDate = { ...createOrderInput, type: "Auto" };
+        let demoOrderDate = { ...createOrderInput, user: _id, type: "Auto" };
         let totalPrice = 0;
         let totalPoints = 0;
         let pointsBack = 0;
@@ -68,7 +72,7 @@ let OrdersService = class OrdersService {
         let priceAdditions = 0;
         let priceAfterDiscount = 0;
         let transaction = {
-            user: createOrderInput.user,
+            user: _id,
             amount: 0
         };
         let usePromoCode = false;
@@ -139,7 +143,7 @@ let OrdersService = class OrdersService {
             totalPrice += -priceAfterDiscount;
         }
         if (createOrderInput?.promoCode && createOrderInput?.paymentMethod !== "Points") {
-            const promoCode = await this.promoCodeService.check(createOrderInput.promoCode, createOrderInput.user);
+            const promoCode = await this.promoCodeService.check(createOrderInput.promoCode, _id);
             if (!promoCode?.name)
                 throw new common_1.BadRequestException("You can't use promo code dosn't exist");
             usePromoCode = true;
@@ -162,7 +166,7 @@ let OrdersService = class OrdersService {
         }
         price += deliveryPrice;
         totalPrice += deliveryPrice;
-        const wallet = await this.walletsService.findUserWallet(createOrderInput.user);
+        const wallet = await this.walletsService.findUserWallet(_id);
         demoOrderDate = { ...demoOrderDate, walletPoints: wallet.points };
         if (createOrderInput?.paymentMethod !== 'Cash') {
             if (wallet?.amount && createOrderInput?.paymentMethod === 'Wallet') {
@@ -194,24 +198,26 @@ let OrdersService = class OrdersService {
         if (!order)
             throw new common_1.BadRequestException("you order haven't created please try again later");
         if (usePromoCode && createOrderInput?.paymentMethod !== "Points")
-            await this.promoCodeService.usePromoCode(createOrderInput.promoCode, createOrderInput.user);
+            await this.promoCodeService.usePromoCode(createOrderInput.promoCode, _id);
         if (createOrderInput?.paymentMethod === "Wallet" && transaction.amount !== 0) {
             await this.transactionsService.createTransaction({ ...transaction, order: order?._id, type: "Amount", procedure: "Minus", paymentMethod: "Wallet", state: "Pending", description: "payed for cost order" });
         }
         else if (createOrderInput?.paymentMethod === "Points" && transaction.amount !== 0) {
             await this.transactionsService.createTransaction({ ...transaction, order: order?._id, type: "Points", procedure: "Minus", paymentMethod: "Points", state: "Pending", description: "payed for cost order points" });
         }
+        await this.notificationsService.createVertual({ user: _id, order: order._id, restaurant: createOrderInput.restaurant, type: "Management", title: "New order", titleEN: "New order", body: "you hane a new pending order", bodyEN: "you hane a new pending order" });
         return order;
     }
-    async findOrders(user, state) {
+    async findOrders(phoneNumber, state) {
+        const { _id } = await this.usersService.findId(phoneNumber);
         let orders = [];
         if (state && state === "Deleted")
             return;
         if (!state) {
-            orders = await this.OrdersModel.find({ $and: [{ user }, { state: { $ne: "Deleted" } }] }).select(['-__v', '-updatedAt', '-type', '-user']).populate([{ path: 'restaurant', select: { title: 1, titleEN: 1, titleKR: 1, image: 1 } }, { path: "address", select: { title: 1, longitude: 1, latitude: 1, _id: 0 } }, { path: "meals.meal", select: { title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1 } }]);
+            orders = await this.OrdersModel.find({ $and: [{ user: _id }, { state: { $ne: "Deleted" } }] }).select(['-__v', '-updatedAt', '-type', '-user']).populate([{ path: 'restaurant', select: { title: 1, titleEN: 1, titleKR: 1, image: 1 } }, { path: "address", select: { title: 1, longitude: 1, latitude: 1, _id: 0 } }, { path: "meals.meal", select: { title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1 } }]);
         }
         else if (state) {
-            orders = await this.OrdersModel.find({ $and: [{ user }, { state }] }).select(['-__v', '-updatedAt', '-type', '-user']).populate([{ path: 'restaurant', select: { title: 1, titleEN: 1, titleKR: 1, image: 1 } }, { path: "address", select: { title: 1, longitude: 1, latitude: 1, _id: 0 } }, { path: "meals.meal", select: { title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1 } }]);
+            orders = await this.OrdersModel.find({ $and: [{ user: _id }, { state }] }).select(['-__v', '-updatedAt', '-type', '-user']).populate([{ path: 'restaurant', select: { title: 1, titleEN: 1, titleKR: 1, image: 1 } }, { path: "address", select: { title: 1, longitude: 1, latitude: 1, _id: 0 } }, { path: "meals.meal", select: { title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1 } }]);
         }
         for (const order of orders) {
             if (order?.restaurant?.image)
@@ -225,10 +231,11 @@ let OrdersService = class OrdersService {
         }
         return orders;
     }
-    async findOrder(id, user) {
+    async findOrder(id, phoneNumber) {
         if (!(0, mongoose_2.isValidObjectId)(id))
             throw new common_1.BadRequestException("There isn't order with this id");
-        const order = await this.OrdersModel.findOne({ $and: [{ _id: id }, { user }, { state: { $ne: "Deleted" } }] }).select(['-__v', '-updatedAt', '-type', '-user']).populate([{ path: 'restaurant', select: { title: 1, titleEN: 1, titleKR: 1, image: 1 } }, { path: "address", select: { title: 1, longitude: 1, latitude: 1, _id: 0 } }, { path: "meals.meal", select: { title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1 } }]);
+        const { _id } = await this.usersService.findId(phoneNumber);
+        const order = await this.OrdersModel.findOne({ $and: [{ _id: id }, { user: _id }, { state: { $ne: "Deleted" } }] }).select(['-__v', '-updatedAt', '-type', '-user']).populate([{ path: 'restaurant', select: { title: 1, titleEN: 1, titleKR: 1, image: 1 } }, { path: "address", select: { title: 1, longitude: 1, latitude: 1, _id: 0 } }, { path: "meals.meal", select: { title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1 } }]);
         if (order?.restaurant?.image)
             order.restaurant.image = this.awsService.getUrl(order.restaurant.image);
         if (order?.meals) {
@@ -239,28 +246,42 @@ let OrdersService = class OrdersService {
         }
         return order;
     }
-    async cancelOrder(id, user) {
+    async cancelOrder(id, phoneNumber) {
         if (!(0, mongoose_2.isValidObjectId)(id))
             throw new common_1.BadRequestException("There isn't order with this id");
-        await this.OrdersModel.findOneAndUpdate({ $and: [{ _id: id }, { user }, { state: "Pending" }] }, { state: "Canceled" });
+        const { _id } = await this.usersService.findId(phoneNumber);
+        const order = await this.OrdersModel.findById(id);
+        if (!order)
+            throw new common_1.BadRequestException("Sorry, order not found");
+        const updatedOrder = await this.OrdersModel.findOneAndUpdate({ $and: [{ _id: id }, { user: _id }, { state: "Pending" }] }, { state: "Canceled" });
+        if (!updatedOrder)
+            throw new common_1.BadRequestException("Sorry, you can't canceled this order");
+        await this.transactionsService.cancelTransaction(order._id, _id);
+        await this.notificationsService.createVertual({ user: _id, order: order._id, restaurant: order.restaurant, type: "Management", title: "Canceled order", titleEN: "Canceled order", body: "Order has been canceled", bodyEN: "Order has been canceled" });
         return "Success";
     }
-    inDeliveryOrder(id, driver) {
+    async inDeliveryOrder(id, phoneNumber) {
         if (!(0, mongoose_2.isValidObjectId)(id))
             throw new common_1.BadRequestException("There isn't order with this id");
-        return this.OrdersModel.findOneAndUpdate({ $and: [{ _id: id }, { driver }, { state: "InProgress" }] }, { state: "InDelivery" });
+        const { _id } = await this.driversService.findId(phoneNumber);
+        const updatedOrder = await this.OrdersModel.findOneAndUpdate({ $and: [{ _id: id }, { driver: _id }, { state: "InProgress" }] }, { state: "InDelivery" });
+        if (!updatedOrder)
+            throw new common_1.BadRequestException("This order isn't in progress, make sure this order if an in progress state");
+        return "Success";
     }
-    async completeOrder(id, driver, recievedPrice) {
+    async completeOrder(id, phoneNumber, recievedPrice) {
         if (!(0, mongoose_2.isValidObjectId)(id))
             throw new common_1.BadRequestException("There isn't order with this id");
-        const order = await this.OrdersModel.findOne({ $and: [{ _id: id }, { driver }, { state: "InDelivery" }] }, { totalPrice: 1, pointsBack: 1, user: 1 });
+        const { _id } = await this.driversService.findId(phoneNumber);
+        const order = await this.OrdersModel.findOne({ $and: [{ _id: id }, { driver: _id }, { state: "InDelivery" }] }, { totalPrice: 1, pointsBack: 1, user: 1 });
         if (!order || order?.totalPrice > recievedPrice)
             throw new common_1.NotAcceptableException("There isn't order for this action or recieved price isn't enough");
+        await this.transactionsService.completeTransaction(order._id, _id);
         await this.OrdersModel.findByIdAndUpdate(order._id, { state: "Completed", recievedPrice });
         if (recievedPrice > order?.totalPrice) {
             const amount = recievedPrice - order.totalPrice;
             await this.transactionsService.createTransaction({ user: order.user, amount, order: order?._id, type: "Amount", procedure: "Plus", paymentMethod: "Cash", state: "Completed", description: "Cash back from completed order recieved amount by driver" });
-            await this.transactionsService.createTransaction({ driver, amount: recievedPrice, order: order?._id, type: "Amount", procedure: "Plus", paymentMethod: "Cash", state: "Completed", description: "Cash recieved from customer completed order" });
+            await this.transactionsService.createTransaction({ driver: _id, amount: recievedPrice, order: order?._id, type: "Amount", procedure: "Plus", paymentMethod: "Cash", state: "Completed", description: "Cash recieved from customer completed order" });
         }
         if (order.pointsBack > 0)
             await this.transactionsService.createTransaction({ user: order.user, amount: order.pointsBack, order: order?._id, type: "Points", procedure: "Plus", paymentMethod: "Points", state: "Completed", description: "Points back from completed order" });
@@ -272,19 +293,21 @@ let OrdersService = class OrdersService {
             throw new common_1.BadRequestException("order & user & rate required");
         if (!(0, mongoose_2.isValidObjectId)(order))
             throw new common_1.BadRequestException("There isn't order with this id");
-        const currentOrder = await this.OrdersModel.findOne({ $and: [{ _id: order }, { user }, { hasRating: false }] });
+        const { _id } = await this.usersService.findId(user);
+        const currentOrder = await this.OrdersModel.findOne({ $and: [{ _id: order }, { user: _id }, { hasRating: false }] });
         if (!currentOrder)
             throw new common_1.BadRequestException("you can't rate this order.");
         await this.OrdersModel.findByIdAndUpdate(currentOrder._id, { hasRating: true });
-        const resultRate = await this.ratesService.rateResaurant({ user, rate, description, restaurant: currentOrder.restaurant });
+        const resultRate = await this.ratesService.rateResaurant({ user: _id, rate, description, restaurant: currentOrder.restaurant });
         if (resultRate?.rates && resultRate?.rating)
             await this.restaurantsService.update(currentOrder.restaurant, { rates: resultRate.rates, rating: resultRate.rating });
         return "Success";
     }
-    async deleteOrder(id, user) {
+    async deleteOrder(id, phoneNumber) {
         if (!(0, mongoose_2.isValidObjectId)(id))
             throw new common_1.BadRequestException("There isn't order with this id");
-        await this.OrdersModel.findOneAndDelete({ $and: [{ _id: id }, { user }, { $or: [{ state: "Completed" }, { state: "Rejected" }] }] });
+        const { _id } = await this.usersService.findId(phoneNumber);
+        await this.OrdersModel.findOneAndDelete({ $and: [{ _id: id }, { user: _id }, { $or: [{ state: "Completed" }, { state: "Rejected" }] }] });
         return "Success";
     }
     async create(createOrderInput) {
@@ -514,6 +537,17 @@ let OrdersService = class OrdersService {
         return this.findOne(id);
     }
     async state(stateInput) {
+        const order = await this.OrdersModel.findById(stateInput.id);
+        if (stateInput.state === "Pending") {
+        }
+        else if (stateInput.state === "InProgress") {
+        }
+        else if (stateInput.state === "InDelivery") {
+        }
+        else if (stateInput.state === "Completed") {
+        }
+        else if (stateInput.state === "Canceled") {
+        }
         await this.OrdersModel.findByIdAndUpdate(stateInput.id, stateInput);
         return "Success";
     }
@@ -588,6 +622,7 @@ OrdersService = __decorate([
     __param(6, (0, common_1.Inject)((0, common_1.forwardRef)(() => restaurants_service_1.RestaurantsService))),
     __param(7, (0, common_1.Inject)((0, common_1.forwardRef)(() => drivers_service_1.DriversService))),
     __param(8, (0, common_1.Inject)((0, common_1.forwardRef)(() => transactions_service_1.TransactionsService))),
+    __param(9, (0, common_1.Inject)((0, common_1.forwardRef)(() => notifications_service_1.NotificationsService))),
     __metadata("design:paramtypes", [mongoose_2.Model,
         meals_service_1.MealsService,
         promo_codes_service_1.PromoCodesService,
@@ -597,6 +632,7 @@ OrdersService = __decorate([
         restaurants_service_1.RestaurantsService,
         drivers_service_1.DriversService,
         transactions_service_1.TransactionsService,
+        notifications_service_1.NotificationsService,
         aws_service_1.AwsService])
 ], OrdersService);
 exports.OrdersService = OrdersService;

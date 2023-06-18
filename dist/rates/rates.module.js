@@ -14,13 +14,17 @@ const rates_controller_1 = require("./rates.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const rates_schema_1 = require("../models/rates.schema");
 const aws_module_1 = require("../aws/aws.module");
+const users_module_1 = require("../users/users.module");
+const firebase_module_1 = require("../firebase/firebase.module");
 let RatesModule = class RatesModule {
 };
 RatesModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: "Rates", schema: rates_schema_1.RatesSchema }]),
-            aws_module_1.AwsModule
+            (0, common_1.forwardRef)(() => users_module_1.UsersModule),
+            aws_module_1.AwsModule,
+            firebase_module_1.FirebaseModule
         ],
         providers: [rates_resolver_1.RatesResolver, rates_service_1.RatesService],
         exports: [rates_service_1.RatesService],

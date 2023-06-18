@@ -17,11 +17,14 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const aws_service_1 = require("../aws/aws.service");
+const users_service_1 = require("../users/users.service");
 let RatesService = class RatesService {
     RatesModel;
+    usersService;
     awsService;
-    constructor(RatesModel, awsService) {
+    constructor(RatesModel, usersService, awsService) {
         this.RatesModel = RatesModel;
+        this.usersService = usersService;
         this.awsService = awsService;
     }
     create(createRateInput) {
@@ -32,7 +35,8 @@ let RatesService = class RatesService {
             throw new common_1.BadRequestException("driver & user required");
         if (!(0, mongoose_2.isValidObjectId)(createRateInput.driver))
             throw new common_1.BadRequestException("There isn't driver with this id");
-        await this.RatesModel.create(createRateInput);
+        const { _id } = await this.usersService.findId(createRateInput.user);
+        await this.RatesModel.create({ ...createRateInput, user: _id });
         return "Success";
     }
     async rateResaurant(createRateInput) {
@@ -80,7 +84,9 @@ let RatesService = class RatesService {
 RatesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)("Rates")),
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => users_service_1.UsersService))),
     __metadata("design:paramtypes", [mongoose_2.Model,
+        users_service_1.UsersService,
         aws_service_1.AwsService])
 ], RatesService);
 exports.RatesService = RatesService;

@@ -18,6 +18,8 @@ export declare class TransactionsService {
     private readonly awsService;
     constructor(TransactionsModel: Model<TransactionsDocument>, ordersService: OrdersService, adminsService: AdminsService, usersService: UsersService, walletsService: WalletsService, awsService: AwsService);
     createTransaction(createTransactionInput: CreateTransactionInput): Promise<void>;
+    cancelTransaction(order: string, user: string): Promise<string>;
+    completeTransaction(order: string, user: string): Promise<string>;
     findAll(limitEntity: LimitEntity): Promise<{
         data: any;
         pages: number;

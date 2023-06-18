@@ -13,12 +13,16 @@ const favorites_resolver_1 = require("./favorites.resolver");
 const favorites_controller_1 = require("./favorites.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const favorites_schema_1 = require("../models/favorites.schema");
+const users_module_1 = require("../users/users.module");
+const firebase_module_1 = require("../firebase/firebase.module");
 let FavoritesModule = class FavoritesModule {
 };
 FavoritesModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: "Favorites", schema: favorites_schema_1.FavoritesSchema }]),
+            (0, common_1.forwardRef)(() => users_module_1.UsersModule),
+            firebase_module_1.FirebaseModule
         ],
         providers: [favorites_resolver_1.FavoritesResolver, favorites_service_1.FavoritesService],
         exports: [favorites_service_1.FavoritesService],

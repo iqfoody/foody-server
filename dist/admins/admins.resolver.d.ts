@@ -40,9 +40,6 @@ export declare class AdminsResolver {
     findOne(id: string): Promise<import("mongoose").Document<unknown, import("../models/admins.schema").IAdminsQueryHelpers, import("../models/admins.schema").AdminsDocument> & Omit<import("../models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    infoAdmin(context: any): Promise<import("mongoose").Document<unknown, import("../models/admins.schema").IAdminsQueryHelpers, import("../models/admins.schema").AdminsDocument> & Omit<import("../models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
     updateAdmin(updateAdminInput: UpdateAdminInput): Promise<string>;
     passwordUser(passwordAdminInput: UpdatePasswordUser): Promise<string>;
     stateAdmin(stateInput: StateInput): Promise<string>;

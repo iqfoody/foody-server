@@ -15,23 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RatesController = void 0;
 const common_1 = require("@nestjs/common");
 const rates_service_1 = require("./rates.service");
-const ability_decorator_1 = require("../ability/ability.decorator");
-const accessAuth_guard_1 = require("../guards/accessAuth.guard");
-const ability_factory_1 = require("../ability/ability.factory");
-const rate_entity_1 = require("./entities/rate.entity");
 const create_rate_input_1 = require("./dto/create-rate.input");
+const firebase_auth_guard_1 = require("../firebase-auth/firebase-auth.guard");
 let RatesController = class RatesController {
     ratesService;
     constructor(ratesService) {
         this.ratesService = ratesService;
     }
     async createMeal(createRateInput, context) {
-        return this.ratesService.rateDriver({ ...createRateInput, user: context.user._id });
+        return this.ratesService.rateDriver({ ...createRateInput, user: context.user });
     }
 };
 __decorate([
     (0, common_1.Post)('/driver'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Add, subject: rate_entity_1.Rate }),
     __param(0, (0, common_1.Body)('createRateInput')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -39,7 +35,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RatesController.prototype, "createMeal", null);
 RatesController = __decorate([
-    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
+    (0, common_1.UseGuards)(firebase_auth_guard_1.FirebaseAuthGuard),
     (0, common_1.Controller)('rates'),
     __metadata("design:paramtypes", [rates_service_1.RatesService])
 ], RatesController);

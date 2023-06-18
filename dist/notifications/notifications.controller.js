@@ -22,6 +22,7 @@ const ability_factory_1 = require("../ability/ability.factory");
 const notification_entity_1 = require("./entities/notification.entity");
 const platform_express_1 = require("@nestjs/platform-express");
 const create_notification_input_1 = require("./dto/create-notification.input");
+const firebase_auth_guard_1 = require("../firebase-auth/firebase-auth.guard");
 let NotificationsController = class NotificationsController {
     notificationsService;
     firebaseService;
@@ -29,22 +30,23 @@ let NotificationsController = class NotificationsController {
         this.notificationsService = notificationsService;
         this.firebaseService = firebaseService;
     }
-    async getMealsInfinty(limit, page) {
-        const user = '';
-        return this.notificationsService.findNotifications({ limit, page, user });
+    async getNotificationsInfinty(limit, page, req) {
+        return this.notificationsService.findNotifications({ limit, page, user: req.user });
     }
-    async createRestaurant(createNotificationInput, file) {
+    async createNotification(createNotificationInput, file) {
         return this.notificationsService.create(createNotificationInput, file);
     }
 };
 __decorate([
     (0, common_1.Get)('/'),
+    (0, common_1.UseGuards)(firebase_auth_guard_1.FirebaseAuthGuard),
     __param(0, (0, common_1.Query)('limit')),
     __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:paramtypes", [Number, Number, Object]),
     __metadata("design:returntype", Promise)
-], NotificationsController.prototype, "getMealsInfinty", null);
+], NotificationsController.prototype, "getNotificationsInfinty", null);
 __decorate([
     (0, common_1.Post)('/'),
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
@@ -55,7 +57,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_notification_input_1.CreateNotificationInput, Object]),
     __metadata("design:returntype", Promise)
-], NotificationsController.prototype, "createRestaurant", null);
+], NotificationsController.prototype, "createNotification", null);
 NotificationsController = __decorate([
     (0, common_1.Controller)('notifications'),
     __metadata("design:paramtypes", [notifications_service_1.NotificationsService,

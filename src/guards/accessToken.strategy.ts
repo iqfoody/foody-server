@@ -14,7 +14,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt'){
     ){
         super({
           jwtFromRequest: ExtractJwt.fromBodyField('access'),
-          secretOrKey: process.env.ACCESS_TOKEN_USERS,
+          secretOrKey: process.env.PUBLIC_ACCESS_TOKEN,
           passReqToCallback: true,
         });
     }

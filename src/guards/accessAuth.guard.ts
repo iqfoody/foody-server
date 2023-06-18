@@ -15,10 +15,10 @@ export class AccessAuthGuard extends AuthGuard('jwt') {
             request.body = {...request.body, access, handler}
         }
         // check if request header from application contain access token...
-         else if(request.headers.authorization) {
-            const access = request.headers.authorization.replace('Bearer', '').trim();
-            request.body = {...request.body, access, handler}
-        }
+        //  else if(request.headers.authorization) {
+        //     const access = request.headers.authorization.replace('Bearer', '').trim();
+        //     request.body = {...request.body, access, handler}
+        // }
         return request;
     }
 }

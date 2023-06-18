@@ -33,16 +33,13 @@ export declare class AuthController {
     private readonly usersService;
     private readonly driversService;
     constructor(authService: AuthService, usersService: UsersService, driversService: DriversService);
-    login(loginInput: LoginInput, req: any): Promise<string>;
-    signup(createUserInput: CreateUserInput, req: any): Promise<{
-        user: any;
-        accessToken: string;
-    }>;
-    logout(req: any): Promise<string>;
+    login(loginInput: LoginInput, req: any): Promise<any>;
+    signup(createUserInput: CreateUserInput, req: any): Promise<Omit<import("mongoose").Document<unknown, import("../models/users.schema").IUsersQueryHelpers, import("../models/users.schema").UsersDocument> & Omit<import("../models/users.schema").Users & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, never>>;
     info(req: any): Promise<import("mongoose").Document<unknown, import("../models/users.schema").IUsersQueryHelpers, import("../models/users.schema").UsersDocument> & Omit<import("../models/users.schema").Users & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    refresh(req: any): Promise<string>;
     loginDriver(loginInput: LoginInput, req: any): Promise<{
         accessToken: string;
         refreshToken: string;

@@ -38,9 +38,6 @@ let AdminsResolver = class AdminsResolver {
     findOne(id) {
         return this.adminsService.findOne(id);
     }
-    infoAdmin(context) {
-        return this.adminsService.findInfo(context.req.user._id);
-    }
     updateAdmin(updateAdminInput) {
         return this.adminsService.update(updateAdminInput.id, updateAdminInput);
     }
@@ -78,14 +75,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], AdminsResolver.prototype, "findOne", null);
-__decorate([
-    (0, graphql_1.Query)(() => admin_entity_1.Admin, { name: 'infoAdmin' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: admin_entity_1.Admin }),
-    __param(0, (0, graphql_1.Context)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], AdminsResolver.prototype, "infoAdmin", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: admin_entity_1.Admin }),

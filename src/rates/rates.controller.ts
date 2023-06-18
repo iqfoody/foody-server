@@ -1,12 +1,9 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { RatesService } from './rates.service';
-import { CheckAbilities } from 'src/ability/ability.decorator';
-import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
-import { Actions } from 'src/ability/ability.factory';
-import { Rate } from './entities/rate.entity';
 import { CreateRateInput } from './dto/create-rate.input';
+import { FirebaseAuthGuard } from 'src/firebase-auth/firebase-auth.guard';
 
-@UseGuards(AccessAuthGuard)
+@UseGuards(FirebaseAuthGuard)
 @Controller('rates')
 export class RatesController {
     constructor(
@@ -14,14 +11,12 @@ export class RatesController {
     ) {}
 
     @Post('/driver')
-    @CheckAbilities({actions: Actions.Add, subject: Rate})
     async createMeal(@Body('createRateInput') createRateInput: CreateRateInput, @Req() context) {
-      return this.ratesService.rateDriver({...createRateInput, user: context.user._id});
+      return this.ratesService.rateDriver({...createRateInput, user: context.user});
     }
 
     // @Post('/restaurant')
-    // @CheckAbilities({actions: Actions.Add, subject: Rate})
     // async rate(@Body('createRateInput') createRateInput: CreateRateInput, @Req() context) {
-    //   return this.ratesService.rateResaurant({...createRateInput, user: context.user._id});
+    //   return this.ratesService.rateResaurant({...createRateInput, user: context.user});
     // }
 }

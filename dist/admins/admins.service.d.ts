@@ -46,7 +46,7 @@ export declare class AdminsService {
     findOne(_id: string): Promise<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    findInfo(_id: string): Promise<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
+    findInfo(_id: string, token: string): Promise<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     findByEmail(email: string): Promise<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {

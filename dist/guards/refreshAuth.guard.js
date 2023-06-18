@@ -15,11 +15,7 @@ let RefreshAuthGuard = class RefreshAuthGuard extends (0, passport_1.AuthGuard)(
         const ctx = graphql_1.GqlExecutionContext.create(context);
         const request = ctx.getContext().req;
         if (request.cookies.iop) {
-            const refresh = request.cookies.iop;
-            request.body = { ...request.body, refresh };
-        }
-        else if (request.headers.authorization) {
-            const refresh = request.headers.authorization.replace('Bearer', '').trim();
+            const refresh = request.cookies?.iop;
             request.body = { ...request.body, refresh };
         }
         return request;

@@ -7,14 +7,14 @@ export class CreateUserInput {
   @Field()
   name: string;
 
-  @Field()
-  phoneNumber: string;
+  @Field({nullable: true})
+  phoneNumber?: string;
 
   @Field({nullable: true})
   email?: string;
 
-  @Field()
-  password: string;
+  @Field({nullable: true})
+  password?: string;
 
   @Field({nullable: true})
   type?: userTypes;

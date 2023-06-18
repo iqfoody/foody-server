@@ -22,7 +22,7 @@ let AccessTokenStrategy = class AccessTokenStrategy extends (0, passport_1.Passp
     constructor(reflector, caslAbilityFactory) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromBodyField('access'),
-            secretOrKey: process.env.ACCESS_TOKEN_USERS,
+            secretOrKey: process.env.PUBLIC_ACCESS_TOKEN,
             passReqToCallback: true,
         });
         this.reflector = reflector;

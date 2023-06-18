@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable, NotAcceptableException, forwar
 import { CreateOrderInput } from './dto/create-order.input';
 import { UpdateOrderInput } from './dto/update-order.input';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, isValidObjectId, mongo } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { OrdersDocument } from 'src/models/orders.schema';
 import { LimitEntity } from 'src/constants/limitEntity';
 import { orderStatus } from 'src/constants/types.type';
@@ -18,7 +18,7 @@ import { RestaurantsService } from 'src/restaurants/restaurants.service';
 import { DriversService } from 'src/drivers/drivers.service';
 import { months } from 'src/constants/declearedMonths';
 import { TransactionsService } from 'src/transactions/transactions.service';
-import { Order } from './entities/order.entity';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class OrdersService {
@@ -32,22 +32,24 @@ export class OrdersService {
     @Inject(forwardRef(()=> RestaurantsService)) private readonly restaurantsService: RestaurantsService,
     @Inject(forwardRef(()=> DriversService)) private readonly driversService: DriversService,
     @Inject(forwardRef(()=> TransactionsService)) private readonly transactionsService: TransactionsService,
-    private readonly awsService: AwsService,
+    @Inject(forwardRef(()=> NotificationsService)) private readonly notificationsService: NotificationsService,
+    private readonly awsService: AwsService
   ) {}
 
   //? -> application...
 
   async createOrder(createOrderInput: CreateOrderInput) {
     // -> check if user has an order not compeleted yet...
-    if(!isValidObjectId(createOrderInput?.user) || !isValidObjectId(createOrderInput?.address) || !isValidObjectId(createOrderInput?.restaurant)) throw new BadRequestException("There isn't user or restaurant with this id");
+    if(!isValidObjectId(createOrderInput?.address) || !isValidObjectId(createOrderInput?.restaurant)) throw new BadRequestException("There isn't address orrestaurant with this id");
     if(createOrderInput.meals?.length === 0) throw new BadRequestException("Please select meal to make order");
-    const ActiveOrder = await this.OrdersModel.findOne({$and: [{user: createOrderInput.user}, {restaurant: createOrderInput.restaurant}, {$and: [{state: {$ne: "Completed"}}, {state: {$ne: "Deleted"}}, {state: {$ne: "Canceled"}}]}]}, {_id:  1});
+    const { _id } = await this.usersService.findId(createOrderInput.user);
+    const ActiveOrder = await this.OrdersModel.findOne({$and: [{user: _id}, {restaurant: createOrderInput.restaurant}, {$and: [{state: {$ne: "Completed"}}, {state: {$ne: "Deleted"}}, {state: {$ne: "Canceled"}}]}]}, {_id:  1});
     if(ActiveOrder) throw new BadRequestException("you have order in ordered.");
 
     const restaurant = await this.restaurantsService.findRestaurant(createOrderInput.restaurant);
     if(!restaurant) throw new BadRequestException("There isn't restaurant with this restaruant id");
 
-    let demoOrderDate :any = {...createOrderInput, type: "Auto"};
+    let demoOrderDate :any = {...createOrderInput, user: _id, type: "Auto"};
 
     // -> get meals data & calculate total price...
     let totalPrice: number = 0;
@@ -57,7 +59,7 @@ export class OrdersService {
     let priceAdditions: number = 0;
     let priceAfterDiscount: number = 0;
     let transaction = {
-      user: createOrderInput.user,
+      user: _id,
       amount: 0
     };
     let usePromoCode: boolean = false;
@@ -136,7 +138,7 @@ export class OrdersService {
 
     // -> sync promo code if exist...
     if(createOrderInput?.promoCode && createOrderInput?.paymentMethod !== "Points"){
-      const promoCode :any = await this.promoCodeService.check(createOrderInput.promoCode, createOrderInput.user);
+      const promoCode :any = await this.promoCodeService.check(createOrderInput.promoCode, _id);
       if(!promoCode?.name) throw new BadRequestException("You can't use promo code dosn't exist")
       usePromoCode = true;
       if(promoCode.type === 'Price') {
@@ -160,7 +162,7 @@ export class OrdersService {
     totalPrice += deliveryPrice;
 
     // -> sync wallet with order...
-    const wallet = await this.walletsService.findUserWallet(createOrderInput.user);
+    const wallet = await this.walletsService.findUserWallet(_id);
     demoOrderDate = {...demoOrderDate, walletPoints: wallet.points};
     if(createOrderInput?.paymentMethod !== 'Cash'){
       if(wallet?.amount && createOrderInput?.paymentMethod === 'Wallet'){
@@ -195,23 +197,24 @@ export class OrdersService {
     // -> creating order...
     const order = await this.OrdersModel.create({...demoOrderDate, totalPrice, price, state: "Pending", deliveryPrice, pointsBack, no});
     if(!order) throw new BadRequestException("you order haven't created please try again later");
-    if(usePromoCode && createOrderInput?.paymentMethod !== "Points") await this.promoCodeService.usePromoCode(createOrderInput.promoCode, createOrderInput.user);
+    if(usePromoCode && createOrderInput?.paymentMethod !== "Points") await this.promoCodeService.usePromoCode(createOrderInput.promoCode, _id);
     if(createOrderInput?.paymentMethod === "Wallet" && transaction.amount !== 0){
       await this.transactionsService.createTransaction({...transaction, order: order?._id, type: "Amount", procedure: "Minus", paymentMethod: "Wallet", state: "Pending", description: "payed for cost order" });
     } else if(createOrderInput?.paymentMethod === "Points" && transaction.amount !== 0){
       await this.transactionsService.createTransaction({...transaction, order: order?._id, type: "Points", procedure: "Minus", paymentMethod: "Points", state: "Pending", description: "payed for cost order points"});
     }
-    //TODO: send noti -> admins & driver? ...
+    await this.notificationsService.createVertual({user: _id, order: order._id, restaurant: createOrderInput.restaurant, type: "Management", title: "New order", titleEN: "New order", body: "you hane a new pending order", bodyEN: "you hane a new pending order"});
     return order;
   }
 
-  async findOrders(user: string, state?: orderStatus){
+  async findOrders(phoneNumber: string, state?: orderStatus){
+    const { _id } = await this.usersService.findId(phoneNumber);
     let orders = [];
     if(state && state === "Deleted") return;
     if(!state){
-      orders = await this.OrdersModel.find({$and: [{user}, {state: {$ne: "Deleted"}}]}).select(['-__v', '-updatedAt', '-type', '-user']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1} } ] );
+      orders = await this.OrdersModel.find({$and: [{user: _id}, {state: {$ne: "Deleted"}}]}).select(['-__v', '-updatedAt', '-type', '-user']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1} } ] );
     } else if(state) {
-      orders = await this.OrdersModel.find({$and: [{user}, {state}]}).select(['-__v', '-updatedAt', '-type', '-user']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1}} ] );
+      orders = await this.OrdersModel.find({$and: [{user: _id}, {state}]}).select(['-__v', '-updatedAt', '-type', '-user']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1}} ] );
     }
     for(const order of orders){
       if(order?.restaurant?.image) order.restaurant.image = this.awsService.getUrl(order.restaurant.image);
@@ -224,9 +227,10 @@ export class OrdersService {
     return orders;
   }
 
-  async findOrder(id: string, user: string) {
+  async findOrder(id: string, phoneNumber: string) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't order with this id");
-    const order : any = await this.OrdersModel.findOne({$and: [{_id: id}, {user}, {state: {$ne: "Deleted"}}]}).select(['-__v', '-updatedAt', '-type', '-user']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1}} ] );
+    const { _id } = await this.usersService.findId(phoneNumber);
+    const order : any = await this.OrdersModel.findOne({$and: [{_id: id}, {user: _id}, {state: {$ne: "Deleted"}}]}).select(['-__v', '-updatedAt', '-type', '-user']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1}} ] );
     if(order?.restaurant?.image) order.restaurant.image = this.awsService.getUrl(order.restaurant.image);
     if(order?.meals){
       for(const meal of order.meals){
@@ -237,35 +241,46 @@ export class OrdersService {
   }
 
     // -> this func. just for user & state = Pending...
-  async cancelOrder(id: string, user: string) {
+  async cancelOrder(id: string, phoneNumber: string) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't order with this id");
-    //! cancel transactions...
-    await this.OrdersModel.findOneAndUpdate({$and: [{_id: id}, {user}, {state: "Pending"}]}, {state: "Canceled"});
+    const { _id } = await this.usersService.findId(phoneNumber);
+    const order = await this.OrdersModel.findById(id);
+    if(!order) throw new BadRequestException("Sorry, order not found");
+    const updatedOrder = await this.OrdersModel.findOneAndUpdate({$and: [{_id: id}, {user: _id}, {state: "Pending"}]}, {state: "Canceled"});
+    if(!updatedOrder) throw new BadRequestException("Sorry, you can't canceled this order");
+    await this.transactionsService.cancelTransaction(order._id, _id);
+    await this.notificationsService.createVertual({user: _id, order: order._id, restaurant: order.restaurant as string, type: "Management", title: "Canceled order", titleEN: "Canceled order", body: "Order has been canceled", bodyEN: "Order has been canceled"});
     return "Success";
   }
 
   // -> this func. just for driver & state = InDelivery...
-  inDeliveryOrder(id: string, driver: string) {
+  async inDeliveryOrder(id: string, phoneNumber: string) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't order with this id");
-    return this.OrdersModel.findOneAndUpdate({$and: [{_id: id}, {driver}, {state: "InProgress"}]}, {state: "InDelivery"});
+    const { _id } = await this.driversService.findId(phoneNumber);
+    const updatedOrder = await this.OrdersModel.findOneAndUpdate({$and: [{_id: id}, {driver: _id}, {state: "InProgress"}]}, {state: "InDelivery"});
+    if(!updatedOrder) throw new BadRequestException("This order isn't in progress, make sure this order if an in progress state");
+    //TODO: send in delivery order notification to user...
+    return "Success";
   }
 
   // -> this func. just for driver & state = InDelivery...
-  async completeOrder(id: string, driver: string, recievedPrice: number) {
+  async completeOrder(id: string, phoneNumber: string, recievedPrice: number) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't order with this id");
-    //TODO: send rating notification to user...
-    //! find transaction and make it completed...
-    const order = await this.OrdersModel.findOne({$and: [{_id: id}, {driver}, {state: "InDelivery"}]}, {totalPrice: 1, pointsBack: 1, user: 1});
+    const { _id } = await this.driversService.findId(phoneNumber);
+    const order = await this.OrdersModel.findOne({$and: [{_id: id}, {driver: _id}, {state: "InDelivery"}]}, {totalPrice: 1, pointsBack: 1, user: 1});
     if(!order || order?.totalPrice > recievedPrice) throw new NotAcceptableException("There isn't order for this action or recieved price isn't enough");
+    await this.transactionsService.completeTransaction(order._id, _id);
     await this.OrdersModel.findByIdAndUpdate(order._id, {state: "Completed", recievedPrice});
     if(recievedPrice > order?.totalPrice){
       const amount = recievedPrice - order.totalPrice;
       // create user transaction...
       await this.transactionsService.createTransaction({user: order.user as string, amount, order: order?._id, type: "Amount", procedure: "Plus", paymentMethod: "Cash", state: "Completed", description: "Cash back from completed order recieved amount by driver"});
       // create driver transaction...
-      await this.transactionsService.createTransaction({driver, amount: recievedPrice, order: order?._id, type: "Amount", procedure: "Plus", paymentMethod: "Cash", state: "Completed", description: "Cash recieved from customer completed order"});
+      await this.transactionsService.createTransaction({driver: _id, amount: recievedPrice, order: order?._id, type: "Amount", procedure: "Plus", paymentMethod: "Cash", state: "Completed", description: "Cash recieved from customer completed order"});
     }
     if (order.pointsBack > 0) await this.transactionsService.createTransaction({user: order.user as string, amount: order.pointsBack, order: order?._id, type: "Points", procedure: "Plus", paymentMethod: "Points", state: "Completed", description: "Points back from completed order"});
+    //TODO: send rating notification to user...
+    //TODO: send completed order notification to user...
     return "Success";
   }
 
@@ -274,17 +289,19 @@ export class OrdersService {
     const { user, order, rate, description } = createRateOrderInput;
     if(!order || !user || !rate) throw new BadRequestException("order & user & rate required");
     if(!isValidObjectId(order)) throw new BadRequestException("There isn't order with this id");
-    const currentOrder :any = await this.OrdersModel.findOne({$and: [{_id: order}, {user}, {hasRating: false}]});
+    const { _id } = await this.usersService.findId(user);
+    const currentOrder :any = await this.OrdersModel.findOne({$and: [{_id: order}, {user: _id}, {hasRating: false}]});
     if(!currentOrder) throw new BadRequestException("you can't rate this order.");
     await this.OrdersModel.findByIdAndUpdate(currentOrder._id, {hasRating: true});
-    const resultRate = await this.ratesService.rateResaurant({user, rate, description, restaurant: currentOrder.restaurant});
+    const resultRate = await this.ratesService.rateResaurant({user: _id, rate, description, restaurant: currentOrder.restaurant});
     if(resultRate?.rates && resultRate?.rating) await this.restaurantsService.update(currentOrder.restaurant, {rates: resultRate.rates, rating: resultRate.rating});
     return "Success";
   }
 
-  async deleteOrder(id: string, user: string) {
+  async deleteOrder(id: string, phoneNumber: string) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't order with this id");
-    await this.OrdersModel.findOneAndDelete({$and: [{_id: id}, {user}, {$or: [{state: "Completed"}, {state: "Rejected"}]}]});
+    const { _id } = await this.usersService.findId(phoneNumber);
+    await this.OrdersModel.findOneAndDelete({$and: [{_id: id}, {user: _id}, {$or: [{state: "Completed"}, {state: "Rejected"}]}]});
     return "Success";
   }
 
@@ -542,10 +559,27 @@ export class OrdersService {
 
      //TODO: check if changed driver send notification to driver...
      //TODO: send notification to user...
+     //? if use wallet...
+     //TODO: update transaction && wallet...
+     //TODO: update order points back...
     return this.findOne(id);
   }
 
   async state(stateInput: StateInput){
+    const order = await this.OrdersModel.findById(stateInput.id);
+    if(stateInput.state === "Pending"){
+      //TODO: send noti -> user...
+    } else if(stateInput.state === "InProgress"){
+      //TODO: send noti -> user...
+    } else if(stateInput.state === "InDelivery") {
+      //TODO: send noti -> user, driver...
+    } else if(stateInput.state === "Completed"){
+      //TODO: send noti -> user...
+      //TODO: complete transaction...
+    } else if(stateInput.state === "Canceled"){
+      //TODO: send noti -> user, driver...
+      //TODO: cancele transaction...
+    }
     await this.OrdersModel.findByIdAndUpdate(stateInput.id, stateInput);
     return "Success";
   }

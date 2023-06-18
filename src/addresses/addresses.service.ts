@@ -1,14 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateAddressInput } from './dto/create-address.input';
 import { UpdateAddressInput } from './dto/update-address.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, isValidObjectId } from 'mongoose';
 import { AddressesDocument } from 'src/models/addresses.schema';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AddressesService {
   constructor(
     @InjectModel("Addresses") private AddressesModel: Model<AddressesDocument>,
+    @Inject(forwardRef(()=> UsersService)) private usersService: UsersService,
   ) {}
 
   //? -> dashborad...
@@ -37,29 +39,34 @@ export class AddressesService {
 
   //? -> application...
 
-  findAddresses(user: string) {
-    return this.AddressesModel.find({user}).select(["-__v", "-user"]);
+  async findAddresses(phoneNumber: string) {
+    const { _id } = await this.usersService.findId(phoneNumber);
+    return this.AddressesModel.find({user: _id}).select(["-__v", "-user"]);
   }
 
-  findAddress(id: string, user: string) {
+  async findAddress(id: string, phoneNumber: string) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't address with this id");
-    return this.AddressesModel.findOne({$and: [{_id: id}, {user}]}).select(["-__v", "-user"]);
+    const { _id } = await this.usersService.findId(phoneNumber);
+    return this.AddressesModel.findOne({$and: [{_id: id}, {user: _id}]}).select(["-__v", "-user"]);
   }
 
-  async updateAddress(updateAddressInput: UpdateAddressInput, user: string) {
+  async updateAddress(updateAddressInput: UpdateAddressInput, phoneNumber: string) {
     if(!isValidObjectId(updateAddressInput?.id)) throw new BadRequestException("There isn't address with this id");
-    await this.AddressesModel.findOneAndUpdate({$and: [{_id: updateAddressInput.id}, {user}]}, updateAddressInput);
+    const { _id } = await this.usersService.findId(phoneNumber);
+    await this.AddressesModel.findOneAndUpdate({$and: [{_id: updateAddressInput.id}, {user: _id}]}, updateAddressInput);
     return "Success";
   }
 
-  async removeAddress(id: string, user: string) {
+  async removeAddress(id: string, phoneNumber: string) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't address with this id");
-    await this.AddressesModel.findOneAndDelete({$and: [{_id: id}, {user}]});
+    const { _id } = await this.usersService.findId(phoneNumber);
+    await this.AddressesModel.findOneAndDelete({$and: [{_id: id}, {user: _id}]});
     return "Success";
   }
   
-  async clean(id: string){
-    await this.AddressesModel.deleteMany({user: id});
+  async clean(phoneNumber: string){
+    const { _id } = await this.usersService.findId(phoneNumber);
+    await this.AddressesModel.deleteMany({user: _id});
     return "Success";
   }
 }

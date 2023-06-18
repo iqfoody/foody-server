@@ -16,10 +16,13 @@ exports.AddressesService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const users_service_1 = require("../users/users.service");
 let AddressesService = class AddressesService {
     AddressesModel;
-    constructor(AddressesModel) {
+    usersService;
+    constructor(AddressesModel, usersService) {
         this.AddressesModel = AddressesModel;
+        this.usersService = usersService;
     }
     create(createAddressInput) {
         return this.AddressesModel.create(createAddressInput);
@@ -38,35 +41,42 @@ let AddressesService = class AddressesService {
         await this.AddressesModel.findByIdAndDelete(id);
         return "Success";
     }
-    findAddresses(user) {
-        return this.AddressesModel.find({ user }).select(["-__v", "-user"]);
+    async findAddresses(phoneNumber) {
+        const { _id } = await this.usersService.findId(phoneNumber);
+        return this.AddressesModel.find({ user: _id }).select(["-__v", "-user"]);
     }
-    findAddress(id, user) {
+    async findAddress(id, phoneNumber) {
         if (!(0, mongoose_2.isValidObjectId)(id))
             throw new common_1.BadRequestException("There isn't address with this id");
-        return this.AddressesModel.findOne({ $and: [{ _id: id }, { user }] }).select(["-__v", "-user"]);
+        const { _id } = await this.usersService.findId(phoneNumber);
+        return this.AddressesModel.findOne({ $and: [{ _id: id }, { user: _id }] }).select(["-__v", "-user"]);
     }
-    async updateAddress(updateAddressInput, user) {
+    async updateAddress(updateAddressInput, phoneNumber) {
         if (!(0, mongoose_2.isValidObjectId)(updateAddressInput?.id))
             throw new common_1.BadRequestException("There isn't address with this id");
-        await this.AddressesModel.findOneAndUpdate({ $and: [{ _id: updateAddressInput.id }, { user }] }, updateAddressInput);
+        const { _id } = await this.usersService.findId(phoneNumber);
+        await this.AddressesModel.findOneAndUpdate({ $and: [{ _id: updateAddressInput.id }, { user: _id }] }, updateAddressInput);
         return "Success";
     }
-    async removeAddress(id, user) {
+    async removeAddress(id, phoneNumber) {
         if (!(0, mongoose_2.isValidObjectId)(id))
             throw new common_1.BadRequestException("There isn't address with this id");
-        await this.AddressesModel.findOneAndDelete({ $and: [{ _id: id }, { user }] });
+        const { _id } = await this.usersService.findId(phoneNumber);
+        await this.AddressesModel.findOneAndDelete({ $and: [{ _id: id }, { user: _id }] });
         return "Success";
     }
-    async clean(id) {
-        await this.AddressesModel.deleteMany({ user: id });
+    async clean(phoneNumber) {
+        const { _id } = await this.usersService.findId(phoneNumber);
+        await this.AddressesModel.deleteMany({ user: _id });
         return "Success";
     }
 };
 AddressesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)("Addresses")),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => users_service_1.UsersService))),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        users_service_1.UsersService])
 ], AddressesService);
 exports.AddressesService = AddressesService;
 //# sourceMappingURL=addresses.service.js.map

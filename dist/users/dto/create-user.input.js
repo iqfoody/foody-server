@@ -29,7 +29,7 @@ __decorate([
     __metadata("design:type", String)
 ], CreateUserInput.prototype, "name", void 0);
 __decorate([
-    (0, graphql_1.Field)(),
+    (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)
 ], CreateUserInput.prototype, "phoneNumber", void 0);
 __decorate([
@@ -37,7 +37,7 @@ __decorate([
     __metadata("design:type", String)
 ], CreateUserInput.prototype, "email", void 0);
 __decorate([
-    (0, graphql_1.Field)(),
+    (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)
 ], CreateUserInput.prototype, "password", void 0);
 __decorate([

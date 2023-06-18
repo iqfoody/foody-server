@@ -121,6 +121,12 @@ let DriversService = class DriversService {
             this.awsService.removeImage(image);
         return "success";
     }
+    async findId(phoneNumber) {
+        const driver = await this.DriversModel.findOne({ phoneNumber }, { _id: 1, deviceToken: 1 });
+        if (!driver)
+            throw new common_1.BadRequestException("There isn't driver regestered with this phone number");
+        return driver;
+    }
     async home() {
         return this.DriversModel.countDocuments();
     }

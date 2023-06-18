@@ -13,12 +13,16 @@ const promo_codes_resolver_1 = require("./promo-codes.resolver");
 const promo_codes_controller_1 = require("./promo-codes.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const promoCodes_schema_1 = require("../models/promoCodes.schema");
+const users_module_1 = require("../users/users.module");
+const firebase_module_1 = require("../firebase/firebase.module");
 let PromoCodesModule = class PromoCodesModule {
 };
 PromoCodesModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: "PromoCodes", schema: promoCodes_schema_1.PromoCodesSchema }]),
+            (0, common_1.forwardRef)(() => users_module_1.UsersModule),
+            firebase_module_1.FirebaseModule
         ],
         providers: [promo_codes_resolver_1.PromoCodesResolver, promo_codes_service_1.PromoCodesService],
         exports: [promo_codes_service_1.PromoCodesService],

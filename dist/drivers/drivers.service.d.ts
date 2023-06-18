@@ -61,5 +61,8 @@ export declare class DriversService {
     password(id: string, updatePasswordDriver: UpdatePasswordUser): Promise<string>;
     state(stateInput: StateInput): Promise<string>;
     remove(_id: string): Promise<string>;
+    findId(phoneNumber: string): Promise<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
     home(): Promise<number>;
 }

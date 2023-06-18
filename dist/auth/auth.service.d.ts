@@ -54,11 +54,13 @@ export declare class AuthService {
         refreshToken: string;
         user: any;
     }>;
-    signup(createUserInput: CreateUserInput, context: any): Promise<{
-        user: any;
-        accessToken: string;
-    }>;
+    signup(createUserInput: CreateUserInput, context: any): Promise<Omit<import("mongoose").Document<unknown, import("../models/users.schema").IUsersQueryHelpers, import("../models/users.schema").UsersDocument> & Omit<import("../models/users.schema").Users & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>, never>>;
     logout(context: any, type: string): Promise<string>;
+    findInfoAdmin(context: any): Promise<string | (import("mongoose").Document<unknown, import("../models/admins.schema").IAdminsQueryHelpers, import("../models/admins.schema").AdminsDocument> & Omit<import("../models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>)>;
     refresh(context: any, type: string): Promise<string>;
     getTokens(user: any, metadata: string): Promise<{
         accessToken: string;

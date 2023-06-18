@@ -15,36 +15,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AddressesController = void 0;
 const common_1 = require("@nestjs/common");
 const addresses_service_1 = require("./addresses.service");
-const accessAuth_guard_1 = require("../guards/accessAuth.guard");
-const address_entity_1 = require("./entities/address.entity");
-const ability_factory_1 = require("../ability/ability.factory");
-const ability_decorator_1 = require("../ability/ability.decorator");
 const create_address_input_1 = require("./dto/create-address.input");
 const update_address_input_1 = require("./dto/update-address.input");
+const firebase_auth_guard_1 = require("../firebase-auth/firebase-auth.guard");
 let AddressesController = class AddressesController {
     addressesService;
     constructor(addressesService) {
         this.addressesService = addressesService;
     }
     async getAddress(id, req) {
-        return this.addressesService.findAddress(id, req.user._id);
+        return this.addressesService.findAddress(id, req.user);
     }
     async getAddresses(req) {
-        return this.addressesService.findAddresses(req.user._id);
+        return this.addressesService.findAddresses(req.user);
     }
     async createAddress(createAddressInput, req) {
-        return this.addressesService.create({ ...createAddressInput, user: req.user._id });
+        return this.addressesService.create({ ...createAddressInput, user: req.user });
     }
     async updateAddress(id, updateAddressInput, req) {
-        return this.addressesService.updateAddress({ ...updateAddressInput, id }, req.user._id);
+        return this.addressesService.updateAddress({ ...updateAddressInput, id }, req.user);
     }
     async deleteAddress(id, req) {
-        return this.addressesService.removeAddress(id, req.user._id);
+        return this.addressesService.removeAddress(id, req.user);
     }
 };
 __decorate([
     (0, common_1.Get)('/:id'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: address_entity_1.Address }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -53,7 +49,6 @@ __decorate([
 ], AddressesController.prototype, "getAddress", null);
 __decorate([
     (0, common_1.Get)('/'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: address_entity_1.Address }),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -61,7 +56,6 @@ __decorate([
 ], AddressesController.prototype, "getAddresses", null);
 __decorate([
     (0, common_1.Post)('/'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Add, subject: address_entity_1.Address }),
     __param(0, (0, common_1.Body)('createAddressInput')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -70,7 +64,6 @@ __decorate([
 ], AddressesController.prototype, "createAddress", null);
 __decorate([
     (0, common_1.Put)('/:id'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Edit, subject: address_entity_1.Address }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('updateAddressInput')),
     __param(2, (0, common_1.Req)()),
@@ -80,7 +73,6 @@ __decorate([
 ], AddressesController.prototype, "updateAddress", null);
 __decorate([
     (0, common_1.Delete)('/:id'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Remove, subject: address_entity_1.Address }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -88,7 +80,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AddressesController.prototype, "deleteAddress", null);
 AddressesController = __decorate([
-    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
+    (0, common_1.UseGuards)(firebase_auth_guard_1.FirebaseAuthGuard),
     (0, common_1.Controller)('addresses'),
     __metadata("design:paramtypes", [addresses_service_1.AddressesService])
 ], AddressesController);

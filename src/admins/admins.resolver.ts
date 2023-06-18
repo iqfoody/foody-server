@@ -8,7 +8,6 @@ import { UseGuards } from '@nestjs/common';
 import { StateInput } from 'src/constants/state.input';
 import { CheckAbilities } from 'src/ability/ability.decorator';
 import { Actions } from 'src/ability/ability.factory';
-import { PasswordUserInput } from 'src/users/dto/password-user.input';
 import { UpdatePasswordUser } from 'src/users/dto/update-password-user.input';
 
 @UseGuards(AccessAuthGuard)
@@ -32,12 +31,6 @@ export class AdminsResolver {
   @CheckAbilities({actions: Actions.Read, subject: Admin})
   findOne(@Args('id', { type: () => ID }) id: string) {
     return this.adminsService.findOne(id);
-  }
-
-  @Query(() => Admin, { name: 'infoAdmin' })
-  @CheckAbilities({actions: Actions.Info, subject: Admin})
-  infoAdmin(@Context() context) {
-    return this.adminsService.findInfo(context.req.user._id);
   }
 
   @Mutation(() => String)

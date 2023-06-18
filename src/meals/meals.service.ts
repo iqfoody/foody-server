@@ -82,7 +82,8 @@ export class MealsService {
   }
 
   async searchMeals(query: string){
-    const meals = await this.MealsModel.find({$and: [{$text: {$search: query}}, {state: "Active"}]}, {score: {$meta: "textScore"}} ).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']).sort({score: {$meta: "textScore"}});
+    const search = new RegExp(query, 'i');
+    const meals = await this.MealsModel.find({$and: [{$or: [{title: search}, {titleEN: search}, {description: search}, {descriptionEN: search}]}, {state: "Active"}]}).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']);
     for(const single of meals){
       if(single?.image) single.image = this.awsService.getUrl(single.image);
     }
@@ -161,7 +162,8 @@ export class MealsService {
   }
 
   async search(query: string){
-    const meals = await this.MealsModel.find({$text: {$search: query}}, {score: {$meta: "textScore"}} ).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']).sort({score: {$meta: "textScore"}});
+    const search = new RegExp(query, 'i');
+    const meals = await this.MealsModel.find({$and: [{$or: [{title: search}, {titleEN: search}, {description: search}, {descriptionEN: search}]}, {state: "Active"}]}).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']);
     for(const single of meals){
       if(single?.image) single.image = this.awsService.getUrl(single.image);
     }

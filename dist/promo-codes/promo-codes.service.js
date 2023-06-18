@@ -16,20 +16,25 @@ exports.PromoCodesService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const users_service_1 = require("../users/users.service");
 let PromoCodesService = class PromoCodesService {
     PromoCodesModel;
-    constructor(PromoCodesModel) {
+    usersService;
+    constructor(PromoCodesModel, usersService) {
         this.PromoCodesModel = PromoCodesModel;
+        this.usersService = usersService;
     }
-    findPromoCodes(user) {
-        return this.PromoCodesModel.find({ $and: [{ user }, { state: "Active" }] });
+    async findPromoCodes(phoneNumber) {
+        const { _id } = await this.usersService.findId(phoneNumber);
+        return this.PromoCodesModel.find({ $and: [{ user: _id }, { state: "Active" }] });
     }
-    async check(name, user) {
+    async check(name, phoneNumber) {
         if (!name)
             throw new common_1.BadRequestException("this promo code isn't valid");
+        const { _id } = await this.usersService.findId(phoneNumber);
         const promoCode = await this.PromoCodesModel.findOne({ $and: [{ name }, { expire: { $gte: new Date() } }, { state: "Active" }] });
         if (promoCode) {
-            if (promoCode?.users && promoCode?.users.includes(user))
+            if (promoCode?.users && promoCode?.users.includes(_id))
                 throw new common_1.NotAcceptableException('Promo code had used');
             if (promoCode?.usageTimes && promoCode?.usageTimes > 0 && promoCode?.usageTimes <= promoCode?.users?.length)
                 throw new common_1.NotAcceptableException('Promo code had expired');
@@ -37,7 +42,7 @@ let PromoCodesService = class PromoCodesService {
                 return { name: promoCode.name, discount: promoCode?.discount, type: promoCode.type };
             }
             else {
-                if (promoCode?.user && user == promoCode?.user) {
+                if (promoCode?.user && _id == promoCode?.user) {
                     return { name: promoCode.name, discount: promoCode?.discount, type: promoCode.type };
                 }
                 else
@@ -104,7 +109,9 @@ let PromoCodesService = class PromoCodesService {
 PromoCodesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)("PromoCodes")),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => users_service_1.UsersService))),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        users_service_1.UsersService])
 ], PromoCodesService);
 exports.PromoCodesService = PromoCodesService;
 //# sourceMappingURL=promo-codes.service.js.map

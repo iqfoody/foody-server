@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException, NotAcceptableException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUsersModel } from 'src/models/users.schema';
 import { CreateUserInput } from './dto/create-user.input';
@@ -6,8 +6,6 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { genSalt, hash } from 'bcryptjs'
 import { User } from './entities/user.entity';
 import { PasswordUserInput } from './dto/password-user.input';
-import { Response } from 'src/constants/response.entity';
-import { SearchUsersInput } from './dto/search-users.input';
 import { userTypes } from 'src/constants/types.type';
 import { AwsService } from 'src/aws/aws.service';
 import { StateInput } from 'src/constants/state.input';
@@ -168,8 +166,8 @@ export class UsersService {
     return this.UsersModel.findOne({_id: id}, {wallet: 1, _id: 0});
   }
 
-  async info(id: string) {
-    const user = await this.UsersModel.findOne({_id: id}, {name: 1, wallet: 1, phoneNumber: 1, type: 1, city: 1, image: 1, _id: 0}).populate({path: "wallet", select: {points: 1, amount: 1, _id: 0}});
+  async info(phoneNumber: string) {
+    const user = await this.UsersModel.findOne({phoneNumber}, {name: 1, wallet: 1, phoneNumber: 1, type: 1, city: 1, image: 1, _id: 0}).populate({path: "wallet", select: {points: 1, amount: 1, _id: 0}});
     if(user?.image) user.image = this.awsService.getUrl(user?.image);
     return user;
   }
@@ -206,16 +204,8 @@ export class UsersService {
     }
   }
 
-  async logout(id: string){
-    await this.UsersModel.findByIdAndUpdate(id, {refreshToken: null})
-  }
-
-  async refresh(id: string, token: string){
-    const user = await this.UsersModel.findById(id);
-    if(!user) throw new NotFoundException('Access Denied');
-    const isMatched = user.compareToken(token);
-    if (!isMatched) throw new ForbiddenException('Access Denied');
-    return user;
+  async logout(phoneNumber: string){
+    await this.UsersModel.findOneAndUpdate({phoneNumber}, {refreshToken: null})
   }
 
   async delete(id: string) {
@@ -241,9 +231,15 @@ export class UsersService {
     return user;
   }
 
-  async updateAny(id: string, updateUserInput: UpdateUserInput) {
-      await this.UsersModel.findByIdAndUpdate(id, updateUserInput);
+  async updateAny(phoneNumber: string, updateUserInput: UpdateUserInput) {
+      await this.UsersModel.findOneAndUpdate({phoneNumber}, updateUserInput);
     return {message: "account updated"};
+  }
+
+  async findId(phoneNumber: string) {
+    const user = await this.UsersModel.findOne({phoneNumber}, {_id: 1, deviceToken: 1});
+    if(!user) throw new BadRequestException("There isn't user regestered with this phone number");
+    return user;
   }
 
   async home() {

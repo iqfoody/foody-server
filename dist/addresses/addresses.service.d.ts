@@ -26,9 +26,11 @@ import { CreateAddressInput } from './dto/create-address.input';
 import { UpdateAddressInput } from './dto/update-address.input';
 import { Model } from 'mongoose';
 import { AddressesDocument } from 'src/models/addresses.schema';
+import { UsersService } from 'src/users/users.service';
 export declare class AddressesService {
     private AddressesModel;
-    constructor(AddressesModel: Model<AddressesDocument>);
+    private usersService;
+    constructor(AddressesModel: Model<AddressesDocument>, usersService: UsersService);
     create(createAddressInput: CreateAddressInput): Promise<import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
@@ -44,17 +46,13 @@ export declare class AddressesService {
     }, never>, {}, AddressesDocument>;
     update(id: string, updateAddressInput: UpdateAddressInput): Promise<string>;
     remove(id: string): Promise<string>;
-    findAddresses(user: string): import("mongoose").Query<(import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
+    findAddresses(phoneNumber: string): Promise<(import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>)[], import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
+    }, never>)[]>;
+    findAddress(id: string, phoneNumber: string): Promise<import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, AddressesDocument>;
-    findAddress(id: string, user: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, AddressesDocument>;
-    updateAddress(updateAddressInput: UpdateAddressInput, user: string): Promise<string>;
-    removeAddress(id: string, user: string): Promise<string>;
-    clean(id: string): Promise<string>;
+    }, never>>;
+    updateAddress(updateAddressInput: UpdateAddressInput, phoneNumber: string): Promise<string>;
+    removeAddress(id: string, phoneNumber: string): Promise<string>;
+    clean(phoneNumber: string): Promise<string>;
 }

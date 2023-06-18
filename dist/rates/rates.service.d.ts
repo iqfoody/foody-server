@@ -27,10 +27,12 @@ import { UpdateRateInput } from './dto/update-rate.input';
 import { Model } from 'mongoose';
 import { RatesDocument } from 'src/models/rates.schema';
 import { AwsService } from 'src/aws/aws.service';
+import { UsersService } from 'src/users/users.service';
 export declare class RatesService {
     private RatesModel;
+    private usersService;
     private readonly awsService;
-    constructor(RatesModel: Model<RatesDocument>, awsService: AwsService);
+    constructor(RatesModel: Model<RatesDocument>, usersService: UsersService, awsService: AwsService);
     create(createRateInput: CreateRateInput): Promise<import("mongoose").Document<unknown, {}, RatesDocument> & Omit<import("src/models/rates.schema").Rates & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;

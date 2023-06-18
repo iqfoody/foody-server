@@ -161,8 +161,8 @@ let UsersService = class UsersService {
     findWallet(id) {
         return this.UsersModel.findOne({ _id: id }, { wallet: 1, _id: 0 });
     }
-    async info(id) {
-        const user = await this.UsersModel.findOne({ _id: id }, { name: 1, wallet: 1, phoneNumber: 1, type: 1, city: 1, image: 1, _id: 0 }).populate({ path: "wallet", select: { points: 1, amount: 1, _id: 0 } });
+    async info(phoneNumber) {
+        const user = await this.UsersModel.findOne({ phoneNumber }, { name: 1, wallet: 1, phoneNumber: 1, type: 1, city: 1, image: 1, _id: 0 }).populate({ path: "wallet", select: { points: 1, amount: 1, _id: 0 } });
         if (user?.image)
             user.image = this.awsService.getUrl(user?.image);
         return user;
@@ -200,17 +200,8 @@ let UsersService = class UsersService {
             throw new common_1.BadRequestException('password E0005');
         }
     }
-    async logout(id) {
-        await this.UsersModel.findByIdAndUpdate(id, { refreshToken: null });
-    }
-    async refresh(id, token) {
-        const user = await this.UsersModel.findById(id);
-        if (!user)
-            throw new common_1.NotFoundException('Access Denied');
-        const isMatched = user.compareToken(token);
-        if (!isMatched)
-            throw new common_1.ForbiddenException('Access Denied');
-        return user;
+    async logout(phoneNumber) {
+        await this.UsersModel.findOneAndUpdate({ phoneNumber }, { refreshToken: null });
     }
     async delete(id) {
         await this.UsersModel.findByIdAndUpdate(id, { state: 'Deleted' }).exec();
@@ -231,9 +222,15 @@ let UsersService = class UsersService {
             user.image = this.awsService.getUrl(user?.image);
         return user;
     }
-    async updateAny(id, updateUserInput) {
-        await this.UsersModel.findByIdAndUpdate(id, updateUserInput);
+    async updateAny(phoneNumber, updateUserInput) {
+        await this.UsersModel.findOneAndUpdate({ phoneNumber }, updateUserInput);
         return { message: "account updated" };
+    }
+    async findId(phoneNumber) {
+        const user = await this.UsersModel.findOne({ phoneNumber }, { _id: 1, deviceToken: 1 });
+        if (!user)
+            throw new common_1.BadRequestException("There isn't user regestered with this phone number");
+        return user;
     }
     async home() {
         const users = await this.UsersModel.countDocuments();

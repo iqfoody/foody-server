@@ -1,33 +1,37 @@
-import { BadRequestException, Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotAcceptableException, NotFoundException, forwardRef } from '@nestjs/common';
 import { CreatePromoCodeInput } from './dto/create-promo-code.input';
 import { UpdatePromoCodeInput } from './dto/update-promo-code.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PromoCodesDocument } from 'src/models/promoCodes.schema';
 import { StateInput } from 'src/constants/state.input';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class PromoCodesService {
   constructor(
     @InjectModel("PromoCodes") private PromoCodesModel: Model<PromoCodesDocument>,
+    @Inject(forwardRef(()=> UsersService)) private usersService: UsersService,
   ) {}
 
   //? application...
 
-  findPromoCodes(user: string) {
-    return this.PromoCodesModel.find({$and: [{user}, {state: "Active"}]});
+  async findPromoCodes(phoneNumber: string) {
+    const { _id } = await this.usersService.findId(phoneNumber);
+    return this.PromoCodesModel.find({$and: [{user: _id}, {state: "Active"}]});
   }
 
-  async check(name: string, user: string) {
+  async check(name: string, phoneNumber: string) {
     if(!name) throw new BadRequestException("this promo code isn't valid");
+    const { _id } = await this.usersService.findId(phoneNumber);
     const promoCode = await this.PromoCodesModel.findOne({$and: [{name}, {expire: {$gte: new Date()}}, {state: "Active"}]});
     if(promoCode){
-      if(promoCode?.users && promoCode?.users.includes(user as any)) throw new NotAcceptableException('Promo code had used');
+      if(promoCode?.users && promoCode?.users.includes(_id as any)) throw new NotAcceptableException('Promo code had used');
       if(promoCode?.usageTimes && promoCode?.usageTimes > 0 && promoCode?.usageTimes <= promoCode?.users?.length) throw new NotAcceptableException('Promo code had expired');
       if(promoCode.isPublic){
         return {name: promoCode.name, discount: promoCode?.discount, type: promoCode.type};
       } else {
-        if(promoCode?.user && user == promoCode?.user){
+        if(promoCode?.user && _id == promoCode?.user){
           return {name: promoCode.name, discount: promoCode?.discount, type: promoCode.type};
         } else throw new NotFoundException('Promo code not found');
       }

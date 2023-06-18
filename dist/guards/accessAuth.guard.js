@@ -19,10 +19,6 @@ let AccessAuthGuard = class AccessAuthGuard extends (0, passport_1.AuthGuard)('j
             const access = request.cookies.osk;
             request.body = { ...request.body, access, handler };
         }
-        else if (request.headers.authorization) {
-            const access = request.headers.authorization.replace('Bearer', '').trim();
-            request.body = { ...request.body, access, handler };
-        }
         return request;
     }
 };

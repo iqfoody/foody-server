@@ -32,23 +32,23 @@ let AuthService = class AuthService {
         this.adminsService = adminsService;
         this.driversService = driversService;
         this.cookieOptions = {
-            domain: 'admin.iqfoody.com',
-            secure: true,
+            domain: 'localhost',
+            secure: false,
             sameSite: 'lax',
             httpOnly: true,
             path: '/',
             maxAge: 1000 * 60 * 60 * 24
         };
         this.cookieRefreshOptions = {
-            domain: 'admin.iqfoody.com',
-            secure: true,
+            domain: 'localhost',
+            secure: false,
             sameSite: 'lax',
             httpOnly: true,
             path: '/',
             maxAge: 1000 * 60 * 60 * 24 * 90
         };
-        this.accessOptions = { secret: process.env.ACCESS_TOKEN_USERS, expiresIn: enums_1.constants.jwtAccess };
-        this.refreshOptions = { secret: process.env.REFRESH_TOKEN_USERS, expiresIn: enums_1.constants.jwtRefresh };
+        this.accessOptions = { privateKey: process.env.PRIVATE_ACCESS_TOKEN, expiresIn: enums_1.constants.jwtAccess, algorithm: "RS256" };
+        this.refreshOptions = { privateKey: process.env.PRIVATE_REFRESH_TOKEN, expiresIn: enums_1.constants.jwtRefresh, algorithm: "RS256" };
     }
     async validateUser(phoneNumber) {
         const user = await this.usersService.findByPhoneNumber(phoneNumber);
@@ -59,7 +59,7 @@ let AuthService = class AuthService {
     async login(context, loginInput) {
         const ip = context?.ip;
         const platform = context?.get('user-agent');
-        await this.usersService.updateAny(context.user._id, { ip, platform, deviceToken: loginInput?.deviceToken });
+        await this.usersService.updateAny(context.user, { ip, platform, deviceToken: loginInput?.deviceToken });
         return context.user;
     }
     async loginAdmin(context, loginInput) {
@@ -91,50 +91,51 @@ let AuthService = class AuthService {
         return result;
     }
     async signup(createUserInput, context) {
-        if (createUserInput.password.length < 6)
-            throw new common_1.BadRequestException('password E0004');
-        if (createUserInput?.phoneNumber) {
-            let E0011 = await this.usersService.findByPhoneNumber(createUserInput?.phoneNumber);
+        if (context?.phoneNumber) {
+            let E0011 = await this.usersService.findByPhoneNumber(context?.phoneNumber);
             if (E0011)
                 throw new common_1.BadRequestException('phoneNumber E0011');
         }
         const ip = context?.ip;
         const platform = context?.get('user-agent');
-        const user = await this.usersService.create({ ...createUserInput, ip, platform });
-        const result = await this.getTokens(user, "User");
-        const refreshToken = await (0, bcryptjs_1.hash)(result.refreshToken, 10);
-        await this.usersService.updateAny(user._id, { refreshToken });
-        result.user.refreshToken = result.refreshToken;
-        return { user: result.user, accessToken: result.accessToken };
+        const user = await this.usersService.create({ ...createUserInput, phoneNumber: context?.phoneNumber, ip, platform });
+        return user;
     }
     async logout(context, type) {
         if (type === "User") {
-            await this.usersService.logout(context.user._id);
+            await this.usersService.logout(context);
             return 'success';
         }
-        else if (type === "Admin") {
-            await this.adminsService.logout(context.req.user._id);
+        else {
+            if (type === "Admin") {
+                await this.adminsService.logout(context.req.user._id);
+            }
+            else if (type === "Driver") {
+                await this.driversService.logout(context.user._id);
+            }
+            context.res.cookie('osk', '', { ...this.cookieOptions, maxAge: 0 });
+            context.res.cookie('iop', '', { ...this.cookieOptions, maxAge: 0 });
+            return 'success';
         }
-        else if (type === "Driver") {
-            await this.driversService.logout(context.user._id);
-        }
-        context.res.cookie('osk', '', { ...this.cookieOptions, maxAge: 0 });
-        context.res.cookie('iop', '', { ...this.cookieOptions, maxAge: 0 });
-        return 'success';
+    }
+    async findInfoAdmin(context) {
+        const admin = await this.adminsService.findInfo(context.req.user._id, context.req.user.refreshToken);
+        if (!admin)
+            return this.logout(context, "Admin");
+        const accessToken = await this.getNewAccessToken(admin, "Admin");
+        context.res.cookie('osk', accessToken, this.cookieOptions);
+        return admin;
     }
     async refresh(context, type) {
-        if (type === "User") {
-            const user = await this.usersService.refresh(context.user._id, context.user.refreshToken);
-            const accessToken = await this.getNewAccessToken(user, "User");
-            return accessToken;
-        }
-        else if (type === "Driver") {
+        if (type === "Driver") {
             const driver = await this.driversService.refresh(context.user._id, context.user.refreshToken);
             const accessToken = await this.getNewAccessToken(driver, "Driver");
             return accessToken;
         }
         else {
             const admin = await this.adminsService.refresh(context.req.user._id, context.req.user.refreshToken);
+            if (!admin)
+                return this.logout(context, "Admin");
             const accessToken = await this.getNewAccessToken(admin, "Admin");
             context.res.cookie('osk', accessToken, this.cookieOptions);
             return "success";

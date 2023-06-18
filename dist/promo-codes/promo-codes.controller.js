@@ -15,26 +15,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PromoCodesController = void 0;
 const common_1 = require("@nestjs/common");
 const promo_codes_service_1 = require("./promo-codes.service");
-const accessAuth_guard_1 = require("../guards/accessAuth.guard");
-const ability_decorator_1 = require("../ability/ability.decorator");
-const ability_factory_1 = require("../ability/ability.factory");
-const promo_code_entity_1 = require("./entities/promo-code.entity");
+const firebase_auth_guard_1 = require("../firebase-auth/firebase-auth.guard");
 let PromoCodesController = class PromoCodesController {
     promoCodesService;
     constructor(promoCodesService) {
         this.promoCodesService = promoCodesService;
     }
     async checkPromoCode(name, req) {
-        console.log(name);
-        return this.promoCodesService.check(name, req.user._id);
+        return this.promoCodesService.check(name, req.user);
     }
     async getPromoCodes(req) {
-        return this.promoCodesService.findPromoCodes(req.user._id);
+        return this.promoCodesService.findPromoCodes(req.user);
     }
 };
 __decorate([
     (0, common_1.Get)('/'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: promo_code_entity_1.PromoCode }),
     __param(0, (0, common_1.Query)('promoCode')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -43,14 +38,13 @@ __decorate([
 ], PromoCodesController.prototype, "checkPromoCode", null);
 __decorate([
     (0, common_1.Get)('/self'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: promo_code_entity_1.PromoCode }),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PromoCodesController.prototype, "getPromoCodes", null);
 PromoCodesController = __decorate([
-    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
+    (0, common_1.UseGuards)(firebase_auth_guard_1.FirebaseAuthGuard),
     (0, common_1.Controller)('promo-codes'),
     __metadata("design:paramtypes", [promo_codes_service_1.PromoCodesService])
 ], PromoCodesController);

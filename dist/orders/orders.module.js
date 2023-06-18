@@ -22,6 +22,8 @@ const rates_module_1 = require("../rates/rates.module");
 const restaurants_module_1 = require("../restaurants/restaurants.module");
 const drivers_module_1 = require("../drivers/drivers.module");
 const transactions_module_1 = require("../transactions/transactions.module");
+const firebase_module_1 = require("../firebase/firebase.module");
+const notifications_module_1 = require("../notifications/notifications.module");
 let OrdersModule = class OrdersModule {
 };
 OrdersModule = __decorate([
@@ -36,7 +38,9 @@ OrdersModule = __decorate([
             (0, common_1.forwardRef)(() => restaurants_module_1.RestaurantsModule),
             (0, common_1.forwardRef)(() => drivers_module_1.DriversModule),
             (0, common_1.forwardRef)(() => transactions_module_1.TransactionsModule),
+            (0, common_1.forwardRef)(() => notifications_module_1.NotificationsModule),
             aws_module_1.AwsModule,
+            firebase_module_1.FirebaseModule
         ],
         providers: [orders_resolver_1.OrdersResolver, orders_service_1.OrdersService],
         exports: [orders_service_1.OrdersService],

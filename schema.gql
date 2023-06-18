@@ -461,10 +461,10 @@ type Query {
   favorite(id: ID!): Favorite!
   addresses(id: ID!): [Address!]!
   address(id: ID!): Address!
+  infoAdmin: Admin!
   refresh: String!
   admins: [Admin!]!
   admin(id: ID!): Admin!
-  infoAdmin: Admin!
   drivers: [Driver!]!
   driver(id: ID!): Driver!
   advertisements: [Advertisement!]!
@@ -607,9 +607,9 @@ type Mutation {
 
 input CreateUserInput {
   name: String!
-  phoneNumber: String!
+  phoneNumber: String
   email: String
-  password: String!
+  password: String
   type: String
   city: String
   image: String
@@ -679,8 +679,8 @@ input UpdateAddressInput {
 }
 
 input LoginInput {
-  username: String!
-  password: String!
+  username: String
+  password: String
   deviceToken: String
 }
 

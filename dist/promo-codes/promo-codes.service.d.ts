@@ -27,15 +27,15 @@ import { UpdatePromoCodeInput } from './dto/update-promo-code.input';
 import { Model } from 'mongoose';
 import { PromoCodesDocument } from 'src/models/promoCodes.schema';
 import { StateInput } from 'src/constants/state.input';
+import { UsersService } from 'src/users/users.service';
 export declare class PromoCodesService {
     private PromoCodesModel;
-    constructor(PromoCodesModel: Model<PromoCodesDocument>);
-    findPromoCodes(user: string): import("mongoose").Query<(import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
+    private usersService;
+    constructor(PromoCodesModel: Model<PromoCodesDocument>, usersService: UsersService);
+    findPromoCodes(phoneNumber: string): Promise<(import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>)[], import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, PromoCodesDocument>;
-    check(name: string, user: string): Promise<{
+    }, never>)[]>;
+    check(name: string, phoneNumber: string): Promise<{
         name: string;
         discount: number;
         type: import("../constants/types.type").promoCodeTypes;

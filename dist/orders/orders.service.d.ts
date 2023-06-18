@@ -39,6 +39,7 @@ import { CreateRateOrderInput } from './dto/create-rate-order.input';
 import { RestaurantsService } from 'src/restaurants/restaurants.service';
 import { DriversService } from 'src/drivers/drivers.service';
 import { TransactionsService } from 'src/transactions/transactions.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 export declare class OrdersService {
     private OrdersModel;
     private mealsService;
@@ -49,22 +50,19 @@ export declare class OrdersService {
     private readonly restaurantsService;
     private readonly driversService;
     private readonly transactionsService;
+    private readonly notificationsService;
     private readonly awsService;
-    constructor(OrdersModel: Model<OrdersDocument>, mealsService: MealsService, promoCodeService: PromoCodesService, walletsService: WalletsService, usersService: UsersService, ratesService: RatesService, restaurantsService: RestaurantsService, driversService: DriversService, transactionsService: TransactionsService, awsService: AwsService);
+    constructor(OrdersModel: Model<OrdersDocument>, mealsService: MealsService, promoCodeService: PromoCodesService, walletsService: WalletsService, usersService: UsersService, ratesService: RatesService, restaurantsService: RestaurantsService, driversService: DriversService, transactionsService: TransactionsService, notificationsService: NotificationsService, awsService: AwsService);
     createOrder(createOrderInput: CreateOrderInput): Promise<import("mongoose").Document<unknown, {}, OrdersDocument> & Omit<import("src/models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    findOrders(user: string, state?: orderStatus): Promise<any[]>;
-    findOrder(id: string, user: string): Promise<any>;
-    cancelOrder(id: string, user: string): Promise<string>;
-    inDeliveryOrder(id: string, driver: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, OrdersDocument> & Omit<import("src/models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, import("mongoose").Document<unknown, {}, OrdersDocument> & Omit<import("src/models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, OrdersDocument>;
-    completeOrder(id: string, driver: string, recievedPrice: number): Promise<string>;
+    findOrders(phoneNumber: string, state?: orderStatus): Promise<any[]>;
+    findOrder(id: string, phoneNumber: string): Promise<any>;
+    cancelOrder(id: string, phoneNumber: string): Promise<string>;
+    inDeliveryOrder(id: string, phoneNumber: string): Promise<string>;
+    completeOrder(id: string, phoneNumber: string, recievedPrice: number): Promise<string>;
     rateOrder(createRateOrderInput: CreateRateOrderInput): Promise<string>;
-    deleteOrder(id: string, user: string): Promise<string>;
+    deleteOrder(id: string, phoneNumber: string): Promise<string>;
     create(createOrderInput: CreateOrderInput): Promise<any>;
     findAll(limitEntity: LimitEntity): Promise<{
         data: any;

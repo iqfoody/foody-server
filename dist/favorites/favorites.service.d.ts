@@ -26,9 +26,11 @@ import { CreateFavoriteInput } from './dto/create-favorite.input';
 import { UpdateFavoriteInput } from './dto/update-favorite.input';
 import { Model } from 'mongoose';
 import { FavoritesDocument } from 'src/models/favorites.schema';
+import { UsersService } from 'src/users/users.service';
 export declare class FavoritesService {
     private FavoritesModel;
-    constructor(FavoritesModel: Model<FavoritesDocument>);
+    private usersService;
+    constructor(FavoritesModel: Model<FavoritesDocument>, usersService: UsersService);
     create(createFavoriteInput: CreateFavoriteInput): Promise<import("mongoose").Document<unknown, {}, FavoritesDocument> & Omit<import("src/models/favorites.schema").Favorites & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
@@ -42,11 +44,9 @@ export declare class FavoritesService {
     }, never>, import("mongoose").Document<unknown, {}, FavoritesDocument> & Omit<import("src/models/favorites.schema").Favorites & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, {}, FavoritesDocument>;
-    findFavorite(user: string): import("mongoose").Query<import("mongoose").Document<unknown, {}, FavoritesDocument> & Omit<import("src/models/favorites.schema").Favorites & import("mongoose").Document<any, any, any> & {
+    findFavorite(phoneNumber: string): Promise<import("mongoose").Document<unknown, {}, FavoritesDocument> & Omit<import("src/models/favorites.schema").Favorites & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>, import("mongoose").Document<unknown, {}, FavoritesDocument> & Omit<import("src/models/favorites.schema").Favorites & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, FavoritesDocument>;
-    addFavorite(updateFavoriteInput: UpdateFavoriteInput, user: string): Promise<string>;
+    }, never>>;
+    addFavorite(updateFavoriteInput: UpdateFavoriteInput, phoneNumber: string): Promise<string>;
     remove(id: string): Promise<string>;
 }

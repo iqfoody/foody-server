@@ -20,6 +20,7 @@ const login_input_1 = require("./dto/login.input");
 const loginAdmin_entity_1 = require("./entities/loginAdmin.entity");
 const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const refreshAuth_guard_1 = require("../guards/refreshAuth.guard");
+const admin_entity_1 = require("../admins/entities/admin.entity");
 let AuthResolver = class AuthResolver {
     authService;
     constructor(authService) {
@@ -27,6 +28,9 @@ let AuthResolver = class AuthResolver {
     }
     loginAdmin(loginAdminInput, context) {
         return this.authService.loginAdmin(context, loginAdminInput);
+    }
+    infoAdmin(context) {
+        return this.authService.findInfoAdmin(context);
     }
     async logoutAdmin(context) {
         return this.authService.logout(context, "Admin");
@@ -43,6 +47,14 @@ __decorate([
     __metadata("design:paramtypes", [login_input_1.LoginInput, Object]),
     __metadata("design:returntype", void 0)
 ], AuthResolver.prototype, "loginAdmin", null);
+__decorate([
+    (0, graphql_1.Query)(() => admin_entity_1.Admin, { name: 'infoAdmin' }),
+    (0, common_1.UseGuards)(refreshAuth_guard_1.RefreshAuthGuard),
+    __param(0, (0, graphql_1.Context)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthResolver.prototype, "infoAdmin", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
     (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),

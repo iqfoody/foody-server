@@ -46,9 +46,10 @@ let NotificationsService = class NotificationsService {
         this.awsService = awsService;
     }
     async findNotifications(limitEntity) {
+        const { _id } = await this.usersService.findId(limitEntity?.user);
         const startIndex = limitEntity.limit * limitEntity.page;
-        const notifications = await this.NotificationsModel.find({ $or: [{ type: "Public" }, { user: limitEntity?.user }] }).limit(limitEntity.limit).skip(startIndex).sort({ _id: -1 });
-        const total = await this.NotificationsModel.countDocuments({ $or: [{ type: "Public" }, { user: limitEntity?.user }] });
+        const notifications = await this.NotificationsModel.find({ $or: [{ type: "Public" }, { user: _id }] }).limit(limitEntity.limit).skip(startIndex).sort({ _id: -1 });
+        const total = await this.NotificationsModel.countDocuments({ $or: [{ type: "Public" }, { user: _id }] });
         for (const single of notifications) {
             if (single?.image)
                 single.image = this.awsService.getUrl(single.image);

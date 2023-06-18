@@ -67,6 +67,7 @@ export class Admins {
   comparePassword: (password: string) => Promise<boolean>;
 
   compareToken:  (refreshToken: string) => Promise<boolean>;
+
 }
 
 export const AdminsSchema = SchemaFactory.createForClass(Admins);

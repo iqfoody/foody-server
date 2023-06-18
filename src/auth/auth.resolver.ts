@@ -12,6 +12,8 @@ import { CreateUserInput } from 'src/users/dto/create-user.input';
 import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
 import { RefreshAuthGuard } from 'src/guards/refreshAuth.guard';
 import { Admin } from 'src/admins/entities/admin.entity';
+import { CheckAbilities } from 'src/ability/ability.decorator';
+import { Actions } from 'src/ability/ability.factory';
 
 @Resolver()
 export class AuthResolver {
@@ -26,6 +28,12 @@ export class AuthResolver {
   @Mutation(() => LoginAdmin)
   loginAdmin(@Args('loginAdminInput') loginAdminInput: LoginInput, @Context() context: any,) {
     return this.authService.loginAdmin(context, loginAdminInput);
+  }
+
+  @Query(() => Admin, { name: 'infoAdmin' })
+  @UseGuards(RefreshAuthGuard)
+  infoAdmin(@Context() context) {
+    return this.authService.findInfoAdmin(context);
   }
 
   // @Mutation(() => LoginDriver)

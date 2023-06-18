@@ -24,8 +24,8 @@ const users_service_1 = require("../users/users.service");
 const drivers_service_1 = require("../drivers/drivers.service");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
-const user_entity_1 = require("../users/entities/user.entity");
 const driver_entity_1 = require("../drivers/entities/driver.entity");
+const firebase_auth_guard_1 = require("../firebase-auth/firebase-auth.guard");
 let AuthController = class AuthController {
     authService;
     usersService;
@@ -36,19 +36,13 @@ let AuthController = class AuthController {
         this.driversService = driversService;
     }
     async login(loginInput, req) {
-        return "success";
+        return this.authService.login(req, loginInput);
     }
     async signup(createUserInput, req) {
         return this.authService.signup(createUserInput, req);
     }
-    async logout(req) {
-        return this.authService.logout(req, "User");
-    }
     async info(req) {
-        return this.usersService.info(req.user._id);
-    }
-    async refresh(req) {
-        return this.authService.refresh(req, "User");
+        return this.usersService.info(req.user);
     }
     async loginDriver(loginInput, req) {
         return this.authService.loginDriver(req, loginInput);
@@ -81,31 +75,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signup", null);
 __decorate([
-    (0, common_1.Post)('/logout'),
-    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
-    __param(0, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "logout", null);
-__decorate([
     (0, common_1.Get)('/info'),
-    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Info, subject: user_entity_1.User }),
+    (0, common_1.UseGuards)(firebase_auth_guard_1.FirebaseAuthGuard),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "info", null);
-__decorate([
-    (0, common_1.Get)('/refresh'),
-    (0, common_1.UseGuards)(refreshAuth_guard_1.RefreshAuthGuard),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Refresh, subject: user_entity_1.User }),
-    __param(0, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "refresh", null);
 __decorate([
     (0, common_1.Post)('/driver/login'),
     __param(0, (0, common_1.Body)()),

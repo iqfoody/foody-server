@@ -17,11 +17,11 @@ let LoginInput = class LoginInput {
     deviceToken;
 };
 __decorate([
-    (0, graphql_1.Field)(),
+    (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)
 ], LoginInput.prototype, "username", void 0);
 __decorate([
-    (0, graphql_1.Field)(),
+    (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)
 ], LoginInput.prototype, "password", void 0);
 __decorate([

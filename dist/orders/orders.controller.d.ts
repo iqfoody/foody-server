@@ -36,9 +36,7 @@ export declare class OrdersController {
     }, never>>;
     ratingOrder(id: string, createRateOrderInput: CreateRateOrderInput, req: any): Promise<string>;
     cancelOrder(id: string, req: any): Promise<string>;
-    inDeliveryOrder(id: string, req: any): Promise<import("mongoose").Document<unknown, {}, import("../models/orders.schema").OrdersDocument> & Omit<import("../models/orders.schema").Orders & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    inDeliveryOrder(id: string, req: any): Promise<string>;
     completeOrder(id: string, recievedPrice: number, req: any): Promise<string>;
     getOrder(id: string, req: any): Promise<any>;
     deleteOrder(id: string, req: any): Promise<string>;

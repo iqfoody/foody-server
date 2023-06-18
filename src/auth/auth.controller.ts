@@ -24,8 +24,7 @@ export class AuthController {
     @Post('/login')
     @UseGuards(GqlAuthGuard)
     async login(@Body('loginUserInput') loginInput: LoginInput, @Req() req){
-        // return this.authService.login(req, loginInput);
-        return "success";
+        return this.authService.login(req, loginInput);
     }
 
     @Post('/signup')
@@ -33,25 +32,24 @@ export class AuthController {
         return this.authService.signup(createUserInput, req);
     }
 
-    @Post('/logout')
-    @UseGuards(AccessAuthGuard)
-    async logout(@Req() req){
-        return this.authService.logout(req, "User");
-    }
+    // @Post('/logout')
+    // @UseGuards(FirebaseAuthGuard)
+    // async logout(@Req() req){
+    //     return this.authService.logout(req.user, "User");
+    // }
 
     @Get('/info')
-    @UseGuards(AccessAuthGuard)
-    @CheckAbilities({actions: Actions.Info, subject: User})
+    @UseGuards(FirebaseAuthGuard)
     async info(@Req() req){
-        return this.usersService.info(req.user._id);
+        return this.usersService.info(req.user);
     }
 
-    @Get('/refresh')
-    @UseGuards(RefreshAuthGuard)
-    @CheckAbilities({actions: Actions.Refresh, subject: User})
-    async refresh(@Req() req){
-        return this.authService.refresh(req, "User");
-    }
+    // @Get('/refresh')
+    // @UseGuards(RefreshAuthGuard)
+    // @CheckAbilities({actions: Actions.Refresh, subject: User})
+    // async refresh(@Req() req){
+    //     return this.authService.refresh(req, "User");
+    // }
 
     // drivers routes...
 
@@ -79,4 +77,5 @@ export class AuthController {
     async refreshDriver(@Req() req){
         return this.authService.refresh(req, "Driver");
     }
+
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FirebaseService } from 'src/firebase/firebase.service';
 import { NotificationsService } from './notifications.service';
 import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
@@ -7,6 +7,7 @@ import { Actions } from 'src/ability/ability.factory';
 import { Notification } from './entities/notification.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateNotificationInput } from './dto/create-notification.input';
+import { FirebaseAuthGuard } from 'src/firebase-auth/firebase-auth.guard';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -15,11 +16,10 @@ export class NotificationsController {
         private readonly firebaseService: FirebaseService,
     ) {}
 
-    //TODO: AuthGuard
     @Get('/')
-    async getMealsInfinty(@Query('limit') limit: number, @Query('page') page: number){
-        const user = '';
-        return this.notificationsService.findNotifications({limit, page, user})
+    @UseGuards(FirebaseAuthGuard)
+    async getNotificationsInfinty(@Query('limit') limit: number, @Query('page') page: number, @Req() req){
+        return this.notificationsService.findNotifications({limit, page, user: req.user})
     }
 
     //? -> dashboard...
@@ -28,7 +28,7 @@ export class NotificationsController {
     @UseGuards(AccessAuthGuard)
     @CheckAbilities({actions: Actions.Create, subject: Notification})
     @UseInterceptors(FileInterceptor('image'))
-    async createRestaurant(@Body() createNotificationInput: CreateNotificationInput, @UploadedFile() file) {
+    async createNotification(@Body() createNotificationInput: CreateNotificationInput, @UploadedFile() file) {
         return this.notificationsService.create(createNotificationInput, file);
     }
 

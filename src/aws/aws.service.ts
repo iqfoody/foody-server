@@ -17,8 +17,8 @@ export class AwsService {
   
   constructor () {
     const region = process.env.AWS_BUCKET_REGION
-    const accessKeyId = process.env.AWS_ACCESS_KEY_PRODUCTION
-    const secretAccessKey = process.env.AWS_SECRET_KEY_PRODUCTION
+    const accessKeyId = process.env.AWS_ACCESS_KEY_LOCAL
+    const secretAccessKey = process.env.AWS_SECRET_KEY_LOCAL
 
     this.otps = [];
     

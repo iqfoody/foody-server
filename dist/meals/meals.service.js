@@ -99,7 +99,8 @@ let MealsService = class MealsService {
         return meal;
     }
     async searchMeals(query) {
-        const meals = await this.MealsModel.find({ $and: [{ $text: { $search: query } }, { state: "Active" }] }, { score: { $meta: "textScore" } }).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']).sort({ score: { $meta: "textScore" } });
+        const search = new RegExp(query, 'i');
+        const meals = await this.MealsModel.find({ $and: [{ $or: [{ title: search }, { titleEN: search }, { description: search }, { descriptionEN: search }] }, { state: "Active" }] }).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']);
         for (const single of meals) {
             if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
@@ -171,7 +172,8 @@ let MealsService = class MealsService {
         return this.MealsModel.findOne({ $and: [{ _id }, { restaurant }] }, { additions: 1, ingredients: 1, price: 1, points: 1, pointsBack: 1, discount: 1, _id: 0 });
     }
     async search(query) {
-        const meals = await this.MealsModel.find({ $text: { $search: query } }, { score: { $meta: "textScore" } }).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']).sort({ score: { $meta: "textScore" } });
+        const search = new RegExp(query, 'i');
+        const meals = await this.MealsModel.find({ $and: [{ $or: [{ title: search }, { titleEN: search }, { description: search }, { descriptionEN: search }] }, { state: "Active" }] }).select(['-__v', '-updatedAt', '-createdAt', '-state', '-position', '-points', '-pointsBack', '-restaurantCategory']);
         for (const single of meals) {
             if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
