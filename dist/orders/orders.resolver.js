@@ -27,6 +27,7 @@ const ordersResponse_entity_1 = require("./entities/ordersResponse.entity");
 const homeResponse_entity_1 = require("../constants/homeResponse.entity");
 const reportsResults_entity_1 = require("../constants/reportsResults.entity");
 const state_input_1 = require("../constants/state.input");
+const mongoose_1 = require("mongoose");
 let OrdersResolver = class OrdersResolver {
     ordersService;
     constructor(ordersService) {
@@ -42,21 +43,33 @@ let OrdersResolver = class OrdersResolver {
         return this.ordersService.home();
     }
     findAllUserOrders(limitEntity) {
+        if (!(0, mongoose_1.isValidObjectId)(limitEntity?.user))
+            throw new common_1.BadRequestException("There isn't order with this id");
         return this.ordersService.findUserOrders(limitEntity);
     }
     findAllDriverOrders(limitEntity) {
+        if (!(0, mongoose_1.isValidObjectId)(limitEntity?.user))
+            throw new common_1.BadRequestException("There isn't order with this id");
         return this.ordersService.findDriverOrders(limitEntity);
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't order with this id");
         return this.ordersService.findOne(id);
     }
     updateOrder(updateOrderInput) {
+        if (!(0, mongoose_1.isValidObjectId)(updateOrderInput?.id))
+            throw new common_1.BadRequestException("There isn't order with this id");
         return this.ordersService.update(updateOrderInput.id, updateOrderInput);
     }
     stateOrder(stateInput) {
+        if (!(0, mongoose_1.isValidObjectId)(stateInput?.id))
+            throw new common_1.BadRequestException("There isn't order with this id");
         return this.ordersService.state(stateInput);
     }
     removeOrder(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't order with this id");
         return this.ordersService.remove(id);
     }
     profitsReports(date) {
@@ -68,7 +81,7 @@ let OrdersResolver = class OrdersResolver {
 };
 __decorate([
     (0, graphql_1.Mutation)(() => order_entity_1.Order),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: order_entity_1.Order }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "Order" }),
     __param(0, (0, graphql_1.Args)('createOrderInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_order_input_1.CreateOrderInput]),
@@ -76,7 +89,7 @@ __decorate([
 ], OrdersResolver.prototype, "createOrder", null);
 __decorate([
     (0, graphql_1.Query)(() => ordersResponse_entity_1.OrdersResponse, { name: 'orders' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Order" }),
     __param(0, (0, graphql_1.Args)('limitEntity', { type: () => limitEntity_1.LimitEntity })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
@@ -84,14 +97,14 @@ __decorate([
 ], OrdersResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => homeResponse_entity_1.HomeResponse),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Home" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], OrdersResolver.prototype, "homeValues", null);
 __decorate([
     (0, graphql_1.Query)(() => ordersResponse_entity_1.OrdersResponse, { name: 'ordersUser' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Order" }),
     __param(0, (0, graphql_1.Args)('limitEntity', { type: () => limitEntity_1.LimitEntity })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
@@ -99,7 +112,7 @@ __decorate([
 ], OrdersResolver.prototype, "findAllUserOrders", null);
 __decorate([
     (0, graphql_1.Query)(() => ordersResponse_entity_1.OrdersResponse, { name: 'ordersDriver' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Order" }),
     __param(0, (0, graphql_1.Args)('limitEntity', { type: () => limitEntity_1.LimitEntity })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
@@ -107,7 +120,7 @@ __decorate([
 ], OrdersResolver.prototype, "findAllDriverOrders", null);
 __decorate([
     (0, graphql_1.Query)(() => order_entity_1.Order, { name: 'order' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Order" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -115,7 +128,7 @@ __decorate([
 ], OrdersResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => order_entity_1.Order),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: order_entity_1.Order }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Order" }),
     __param(0, (0, graphql_1.Args)('updateOrderInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_order_input_1.UpdateOrderInput]),
@@ -123,7 +136,7 @@ __decorate([
 ], OrdersResolver.prototype, "updateOrder", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: order_entity_1.Order }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Order" }),
     __param(0, (0, graphql_1.Args)('stateInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [state_input_1.StateInput]),
@@ -131,7 +144,7 @@ __decorate([
 ], OrdersResolver.prototype, "stateOrder", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: order_entity_1.Order }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "Order" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -139,7 +152,7 @@ __decorate([
 ], OrdersResolver.prototype, "removeOrder", null);
 __decorate([
     (0, graphql_1.Query)(() => reportsResults_entity_1.Months, { name: 'profitsReport' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Order" }),
     __param(0, (0, graphql_1.Args)('date', { type: () => String })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -147,7 +160,7 @@ __decorate([
 ], OrdersResolver.prototype, "profitsReports", null);
 __decorate([
     (0, graphql_1.Query)(() => reportsResults_entity_1.Months, { name: 'ordersReport' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: order_entity_1.Order }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Order" }),
     __param(0, (0, graphql_1.Args)('date', { type: () => String })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

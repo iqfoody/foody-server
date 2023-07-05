@@ -1,5 +1,7 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
-import { adminTypes } from 'src/constants/types.type';
+import { InputType, Field } from '@nestjs/graphql';
+import GraphQLUpload from 'src/Graphql/GraphQLUpload';
+import Upload from 'src/constants/Upload';
+import { AdminPermissionsInput } from './create-admin-permissions.input';
 
 @InputType()
 export class CreateAdminInput {
@@ -12,9 +14,9 @@ export class CreateAdminInput {
   @Field()
   password: string;
 
-  @Field()
-  type: adminTypes;
+  @Field(() => [AdminPermissionsInput])
+  permissions: AdminPermissionsInput[];
 
-  @Field({nullable: true})
-  image?: string;
+  @Field(()=> GraphQLUpload, {nullable: true})
+  image?: Upload;
 }

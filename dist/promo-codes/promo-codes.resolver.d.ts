@@ -27,10 +27,14 @@ import { PromoCodesService } from './promo-codes.service';
 import { CreatePromoCodeInput } from './dto/create-promo-code.input';
 import { UpdatePromoCodeInput } from './dto/update-promo-code.input';
 import { StateInput } from 'src/constants/state.input';
+import { CheckPromoCodeInput } from './dto/check-promo-code.input';
 export declare class PromoCodesResolver {
     private readonly promoCodesService;
     constructor(promoCodesService: PromoCodesService);
     createPromoCode(createPromoCodeInput: CreatePromoCodeInput): Promise<import("mongoose").Document<unknown, {}, import("../models/promoCodes.schema").PromoCodesDocument> & Omit<import("../models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
+    checkPromoCode(checkPromoCodeInput: CheckPromoCodeInput): Promise<import("mongoose").Document<unknown, {}, import("../models/promoCodes.schema").PromoCodesDocument> & Omit<import("../models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     findAll(): import("mongoose").Query<Omit<import("mongoose").Document<unknown, {}, import("../models/promoCodes.schema").PromoCodesDocument> & Omit<import("../models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {

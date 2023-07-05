@@ -24,6 +24,7 @@ const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
 const state_input_1 = require("../constants/state.input");
 const position_input_1 = require("../constants/position.input");
+const mongoose_1 = require("mongoose");
 let TagsResolver = class TagsResolver {
     tagsService;
     constructor(tagsService) {
@@ -36,24 +37,32 @@ let TagsResolver = class TagsResolver {
         return this.tagsService.findAll();
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't tag with this id");
         return this.tagsService.findOne(id);
     }
     updateTag(updateTagInput) {
+        if (!(0, mongoose_1.isValidObjectId)(updateTagInput?.id))
+            throw new common_1.BadRequestException("There isn't tag with this id");
         return this.tagsService.update(updateTagInput.id, updateTagInput);
     }
     stateTag(stateInput) {
+        if (!(0, mongoose_1.isValidObjectId)(stateInput?.id))
+            throw new common_1.BadRequestException("There isn't tag with this id");
         return this.tagsService.state(stateInput);
     }
     positionTag(updatePositionInput) {
         return this.tagsService.position(updatePositionInput);
     }
     removeTag(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't tag with this id");
         return this.tagsService.remove(id);
     }
 };
 __decorate([
     (0, graphql_1.Mutation)(() => tag_entity_1.Tag),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: tag_entity_1.Tag }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "Tag" }),
     __param(0, (0, graphql_1.Args)('createTagInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_tag_input_1.CreateTagInput]),
@@ -61,14 +70,14 @@ __decorate([
 ], TagsResolver.prototype, "createTag", null);
 __decorate([
     (0, graphql_1.Query)(() => [tag_entity_1.Tag], { name: 'tags' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: tag_entity_1.Tag }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Tag" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], TagsResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => tag_entity_1.Tag, { name: 'tag' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: tag_entity_1.Tag }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Tag" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -76,7 +85,7 @@ __decorate([
 ], TagsResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: tag_entity_1.Tag }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Tag" }),
     __param(0, (0, graphql_1.Args)('updateTagInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_tag_input_1.UpdateTagInput]),
@@ -84,7 +93,7 @@ __decorate([
 ], TagsResolver.prototype, "updateTag", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: tag_entity_1.Tag }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Tag" }),
     __param(0, (0, graphql_1.Args)('stateInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [state_input_1.StateInput]),
@@ -92,7 +101,7 @@ __decorate([
 ], TagsResolver.prototype, "stateTag", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: tag_entity_1.Tag }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Tag" }),
     __param(0, (0, graphql_1.Args)('updatePositionInput', { type: () => [position_input_1.UpdatePositionInput] })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Array]),
@@ -100,7 +109,7 @@ __decorate([
 ], TagsResolver.prototype, "positionTag", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: tag_entity_1.Tag }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "Tag" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

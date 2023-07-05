@@ -10,7 +10,6 @@ exports.AdminsModule = void 0;
 const common_1 = require("@nestjs/common");
 const admins_service_1 = require("./admins.service");
 const admins_resolver_1 = require("./admins.resolver");
-const admins_controller_1 = require("./admins.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const admins_schema_1 = require("../models/admins.schema");
 const aws_module_1 = require("../aws/aws.module");
@@ -25,8 +24,7 @@ AdminsModule = __decorate([
             aws_module_1.AwsModule,
         ],
         providers: [admins_resolver_1.AdminsResolver, admins_service_1.AdminsService],
-        exports: [admins_service_1.AdminsService],
-        controllers: [admins_controller_1.AdminsController]
+        exports: [admins_service_1.AdminsService]
     })
 ], AdminsModule);
 exports.AdminsModule = AdminsModule;

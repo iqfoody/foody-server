@@ -2,7 +2,6 @@ import { Resolver, Query, Args, Int } from '@nestjs/graphql';
 import { SearchesService } from './searches.service';
 import { Search } from './entities/search.entity';
 import { SearchInput } from 'src/constants/searchQuery.input';
-import { User } from 'src/users/entities/user.entity';
 import { Actions } from 'src/ability/ability.factory';
 import { CheckAbilities } from 'src/ability/ability.decorator';
 import { AccessAuthGuard } from 'src/guards/accessAuth.guard';
@@ -19,7 +18,7 @@ export class SearchesResolver {
     ) {}
 
   @Query(() => UsersResponse, { name: 'searchUsers' })
-  @CheckAbilities({actions: Actions.Search, subject: User})
+  @CheckAbilities({actions: Actions.Read, subject: "User"})
   findAll(@Args("searchQuery") searchQuery: SearchInput) {
     return this.usersService.search(searchQuery);
   }

@@ -23,16 +23,16 @@ export class AuthService {
     private driversService: DriversService,
   ) {
     this.cookieOptions = {
-      domain: 'localhost', // <- change it to your client domain... -> admin.iqfoody.com
-      secure: false, // <- should be true in production...
+      domain: 'admin.iqfoody.com', // <- change it to your client domain... -> admin.iqfoody.com
+      secure: true, // <- should be true in production...
       sameSite: 'lax',
       httpOnly: true,
       path: '/',
       maxAge: 1000*60*60*24
     };
     this.cookieRefreshOptions = {
-      domain: 'localhost', // <- change it to your client domain... -> admin.iqfoody.com
-      secure: false, // <- should be true in production...
+      domain: 'admin.iqfoody.com', // <- change it to your client domain... -> admin.iqfoody.com
+      secure: true, // <- should be true in production...
       sameSite: 'lax',
       httpOnly: true,
       path: '/',
@@ -46,7 +46,7 @@ export class AuthService {
     //if(loginInput.password.length < 6) throw new BadRequestException('password E0004');
     const user = await this.usersService.findByPhoneNumber(phoneNumber);
     if (user) return user;
-    throw new BadRequestException('phoneNumber E0010');
+    throw new BadRequestException('phoneNumber E0009');
   }
 
   async login(context: any, loginInput: LoginInput) {
@@ -132,7 +132,7 @@ export class AuthService {
   }
 
   async getTokens(user: any, metadata: string) {
-    const userData = { _id: user?._id, type: user?.type, name: user?.name, phoneNumber: user?.phoneNumber, email: user?.email, metadata };
+    const userData = { _id: user?._id, type: user?.type, name: user?.name, phoneNumber: user?.phoneNumber, email: user?.email, permissions: user?.permissions, metadata };
     const [at, rt] = await Promise.all([
       this.jwtService.sign( userData, this.accessOptions ),
       this.jwtService.sign( userData, this.refreshOptions ),
@@ -141,7 +141,7 @@ export class AuthService {
   }
 
   async getNewAccessToken(user: any, metadata: string){
-    const userData = { _id: user?._id, type: user?.type, name: user?.name, phoneNumber: user?.phoneNumber, email: user?.email, metadata };
+    const userData = { _id: user?._id, type: user?.type, name: user?.name, phoneNumber: user?.phoneNumber, email: user?.email, permissions: user?.permissions, metadata };
     return this.jwtService.sign( userData, this.accessOptions )
   }
 

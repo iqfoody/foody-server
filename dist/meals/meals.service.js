@@ -38,8 +38,9 @@ let MealsService = class MealsService {
     }
     async findMealsInfinty(limitEntity) {
         const skipIndex = limitEntity.page * limitEntity.limit;
+        const orderBy = limitEntity?.orderBy === "Max" ? -1 : 1;
         const total = await this.MealsModel.countDocuments({ state: "Active" });
-        const meals = await this.MealsModel.find({ state: "Active" }).select(['-position', '-state', '-__v', '-createdAt', '-updatedAt']).limit(limitEntity.limit).skip(skipIndex).sort({ position: 1 });
+        const meals = await this.MealsModel.find({ state: "Active" }).select(['-position', '-state', '-__v', '-createdAt', '-updatedAt']).limit(limitEntity.limit).skip(skipIndex).sort({ price: orderBy });
         for (const single of meals) {
             if (single?.image)
                 single.image = this.awsService.getUrl(single.image);
@@ -93,7 +94,7 @@ let MealsService = class MealsService {
     async findMeal(id) {
         if (!(0, mongoose_2.isValidObjectId)(id))
             throw new common_1.BadRequestException("There isn't meal with this id");
-        const meal = await this.MealsModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }).select(['-__v', '-createdAt', '-updatedAt', '-state', '-position', '-restaurant', '-tag', '-restaurantCategory']);
+        const meal = await this.MealsModel.findOne({ $and: [{ _id: id }, { state: "Active" }] }).select(['-__v', '-createdAt', '-updatedAt', '-state', '-position', '-tag', '-restaurantCategory']).populate({ path: "restaurant", select: { title: 1, titleEN: 1, titleKR: 1 } });
         if (meal?.image)
             meal.image = this.awsService.getUrl(meal.image);
         return meal;
@@ -108,12 +109,15 @@ let MealsService = class MealsService {
         return meals;
     }
     async create(createMealInput) {
+        if (!createMealInput?.image)
+            return new common_1.BadRequestException("image required");
         const position = await this.MealsModel.countDocuments();
-        return this.MealsModel.create({ ...createMealInput, position });
-    }
-    async createImage(id, image) {
-        await this.MealsModel.findByIdAndUpdate(id, { image });
-        return this.awsService.getUrl(image);
+        const meal = new this.MealsModel({ ...createMealInput, position });
+        const result = await this.awsService.createImage(createMealInput.image, meal._id);
+        meal.image = result?.Key;
+        await meal.save();
+        meal.image = this.awsService.getUrl(result?.Key);
+        return meal;
     }
     async findAll(limitEntity) {
         const startIndex = limitEntity.page * limitEntity.limit;
@@ -145,8 +149,12 @@ let MealsService = class MealsService {
         if (updateMealInput?.image) {
             const { image } = await this.MealsModel.findOne({ _id: updateMealInput.id }, { image: 1, _id: 0 });
             this.awsService.removeImage(image);
+            const result = await this.awsService.createImage(updateMealInput.image, id);
+            await this.MealsModel.findByIdAndUpdate(id, { ...updateMealInput, image: result?.Key });
         }
-        await this.MealsModel.findByIdAndUpdate(id, updateMealInput);
+        else {
+            await this.MealsModel.findByIdAndUpdate(id, updateMealInput);
+        }
         return "Success";
     }
     async state(stateInput) {

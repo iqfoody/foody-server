@@ -26,14 +26,15 @@
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantInput } from './dto/create-restaurant.input';
 import { UpdateRestaurantInput } from './dto/update-restaurant.input';
+import { BadRequestException } from '@nestjs/common';
 import { StateInput } from 'src/constants/state.input';
 import { UpdatePositionInput } from 'src/constants/position.input';
 export declare class RestaurantsResolver {
     private readonly restaurantsService;
     constructor(restaurantsService: RestaurantsService);
-    createRestaurant(createRestaurantInput: CreateRestaurantInput): Promise<import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
+    createRestaurant(createRestaurantInput: CreateRestaurantInput): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    }, never>)>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;

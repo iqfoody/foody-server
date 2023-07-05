@@ -44,7 +44,7 @@ export declare class DriversService {
     refresh(id: string, token: string): Promise<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    create(createDriverInput: CreateDriverInput, file: any): Promise<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
+    create(createDriverInput: CreateDriverInput): Promise<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     findAll(): Promise<Omit<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
@@ -62,6 +62,9 @@ export declare class DriversService {
     state(stateInput: StateInput): Promise<string>;
     remove(_id: string): Promise<string>;
     findId(phoneNumber: string): Promise<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
+    findDeviceToken(_id: string): Promise<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     home(): Promise<number>;

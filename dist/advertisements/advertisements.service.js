@@ -40,12 +40,12 @@ let AdvertisementsService = class AdvertisementsService {
             advertisement.image = this.awsService.getUrl(advertisement.image);
         return advertisement;
     }
-    async create(createAdvertisementInput, file) {
-        if (!file)
+    async create(createAdvertisementInput) {
+        if (!createAdvertisementInput?.image)
             return new common_1.BadRequestException("image required");
         const position = await this.AdvertisementsModel.countDocuments();
         const advertisement = new this.AdvertisementsModel({ ...createAdvertisementInput, position });
-        const result = await this.awsService.createImage(file, advertisement._id);
+        const result = await this.awsService.createImage(createAdvertisementInput.image, advertisement._id);
         advertisement.image = result?.Key;
         await advertisement.save();
         advertisement.image = this.awsService.getUrl(result?.Key);
@@ -79,8 +79,12 @@ let AdvertisementsService = class AdvertisementsService {
         if (updateAdvertisementInput?.image) {
             const { image } = await this.AdvertisementsModel.findOne({ _id: updateAdvertisementInput.id }, { image: 1, _id: 0 });
             this.awsService.removeImage(image);
+            const result = await this.awsService.createImage(updateAdvertisementInput.image, id);
+            await this.AdvertisementsModel.findByIdAndUpdate(id, { ...updateAdvertisementInput, image: result?.Key });
         }
-        await this.AdvertisementsModel.findByIdAndUpdate(id, updateAdvertisementInput);
+        else {
+            await this.AdvertisementsModel.findByIdAndUpdate(id, updateAdvertisementInput);
+        }
         return "Success";
     }
     async state(stateInput) {

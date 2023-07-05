@@ -6,6 +6,20 @@ import { LoginInput } from 'src/auth/dto/login.input';
 import { BadRequestException } from '@nestjs/common';
 import { Wallets } from './wallets.schema';
 
+@Schema()
+export class Permissions {
+
+  @Prop({unique: [true, "object name is unique"]})
+  object: string;
+
+  @Prop({type: [String]})
+  abilities: string[];
+  
+}
+// export const PermissionsSchema = SchemaFactory.createForClass(Permissions);
+
+const AdminPermission = typeof Permissions;
+
 export type AdminsDocument = Admins & Document;
 @Schema({
   timestamps: true,
@@ -43,7 +57,7 @@ export class Admins {
   @Prop({ required: [true, 'password E0004'], minlength: [6, 'password E0004']})
   password: string;
 
-  @Prop({ required: [true, 'type field is required'],  })
+  @Prop({ default: "Sub Admin" })
   type: adminTypes;
 
   @Prop()
@@ -63,6 +77,9 @@ export class Admins {
 
   @Prop()
   refreshToken: string;
+
+  @Prop({type: [AdminPermission]})
+  permissions: Permissions[];
 
   comparePassword: (password: string) => Promise<boolean>;
 

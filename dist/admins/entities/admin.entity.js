@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Admin = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const wallet_entity_1 = require("../../wallets/entities/wallet.entity");
+const admin_permissions_entity_1 = require("./admin-permissions.entity");
 let Admin = class Admin {
     _id;
     wallet;
@@ -19,6 +20,7 @@ let Admin = class Admin {
     email;
     password;
     type;
+    permissions;
     image;
     state;
     createdAt;
@@ -52,6 +54,10 @@ __decorate([
     (0, graphql_1.Field)(),
     __metadata("design:type", String)
 ], Admin.prototype, "type", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [admin_permissions_entity_1.AdminPermission]),
+    __metadata("design:type", Array)
+], Admin.prototype, "permissions", void 0);
 __decorate([
     (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)

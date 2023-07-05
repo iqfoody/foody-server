@@ -1,5 +1,6 @@
 import { adminTypes, publicStatus } from 'src/constants/types.type';
 import { Wallet } from 'src/wallets/entities/wallet.entity';
+import { AdminPermission } from './admin-permissions.entity';
 export declare class Admin {
     _id: string;
     wallet: string | Wallet;
@@ -7,6 +8,7 @@ export declare class Admin {
     email: string;
     password: string;
     type: adminTypes;
+    permissions: AdminPermission[];
     image?: string;
     state: publicStatus;
     createdAt?: any;

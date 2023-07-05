@@ -33,13 +33,13 @@ let AdminsService = class AdminsService {
             admin.image = this.awsService.getUrl(admin?.image);
         return admin;
     }
-    async create(_id, createAdminInput, file) {
+    async create(_id, createAdminInput) {
         const superAdmin = await this.AdminsModel.findOne({ $and: [{ _id }, { type: "Admin" }] });
         if (!superAdmin)
             throw new common_1.ForbiddenException("Access Denied");
         const admin = new this.AdminsModel(createAdminInput);
-        if (file) {
-            const result = await this.awsService.createImage(file, admin._id);
+        if (createAdminInput?.image) {
+            const result = await this.awsService.createImage(createAdminInput.image, admin._id);
             admin.image = result?.Key;
         }
         const wallet = await this.walletsService.create({ admin: admin._id });
@@ -85,7 +85,7 @@ let AdminsService = class AdminsService {
         return;
     }
     async updateAdmin(_id, updateAdminInput) {
-        await this.AdminsModel.findOneAndUpdate({ $and: [{ _id }, { type: "Admin" }] }, updateAdminInput);
+        await this.AdminsModel.findOneAndUpdate({ _id }, updateAdminInput);
         return;
     }
     async update(id, updateAdminInput) {
@@ -96,8 +96,12 @@ let AdminsService = class AdminsService {
             const { image } = await this.AdminsModel.findOne({ _id: updateAdminInput.id }, { image: 1, _id: 0 });
             if (image)
                 this.awsService.removeImage(image);
+            const result = await this.awsService.createImage(updateAdminInput.image, id);
+            await this.AdminsModel.findByIdAndUpdate(id, { ...updateAdminInput, image: result?.Key });
         }
-        await this.AdminsModel.findByIdAndUpdate(id, updateAdminInput);
+        else {
+            await this.AdminsModel.findByIdAndUpdate(id, updateAdminInput);
+        }
         return "admin updated";
     }
     async passwordAdmin(id, updatePasswordAdmin) {

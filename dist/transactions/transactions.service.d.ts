@@ -18,6 +18,7 @@ export declare class TransactionsService {
     private readonly awsService;
     constructor(TransactionsModel: Model<TransactionsDocument>, ordersService: OrdersService, adminsService: AdminsService, usersService: UsersService, walletsService: WalletsService, awsService: AwsService);
     createTransaction(createTransactionInput: CreateTransactionInput): Promise<void>;
+    updateTransaction(updateTransactionInput: UpdateTransactionInput): Promise<void>;
     cancelTransaction(order: string, user: string): Promise<string>;
     completeTransaction(order: string, user: string): Promise<string>;
     findAll(limitEntity: LimitEntity): Promise<{
@@ -61,4 +62,10 @@ export declare class TransactionsService {
     findOne(id: string): Promise<any>;
     update(id: string, updateTransactionInput: UpdateTransactionInput): Promise<string>;
     remove(id: string): Promise<string>;
+    home(): Promise<{
+        minusAmount: any;
+        plusAmount: any;
+        minusPoints: any;
+        plusPoints: any;
+    }>;
 }

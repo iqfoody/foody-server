@@ -41,6 +41,9 @@ let OrdersController = class OrdersController {
     async completeOrder(id, recievedPrice, req) {
         return this.ordersService.completeOrder(id, req.user, recievedPrice);
     }
+    async getOrderesDriver(req, state) {
+        return this.ordersService.findOrdersDriver(req.user, state);
+    }
     async getOrder(id, req) {
         return this.ordersService.findOrder(id, req.user);
     }
@@ -98,6 +101,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Number, Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "completeOrder", null);
+__decorate([
+    (0, common_1.Get)('/driver/history'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)('state')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "getOrderesDriver", null);
 __decorate([
     (0, common_1.Get)('/:id'),
     __param(0, (0, common_1.Param)('id')),

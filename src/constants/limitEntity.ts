@@ -10,8 +10,8 @@ export class LimitEntity {
   @Field(() => Int)
   limit: number;
 
-  @Field(() => Int, {nullable: true})
-  orderBy?: number;
+  @Field({nullable: true})
+  orderBy?: string;
 
   @Field({nullable: true})
   state?: storeOrdersStatus;

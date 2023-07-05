@@ -8,9 +8,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateAdvertisementInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
+const GraphQLUpload_1 = __importDefault(require("../../Graphql/GraphQLUpload"));
 let CreateAdvertisementInput = class CreateAdvertisementInput {
     meal;
     restaurant;
@@ -46,8 +50,8 @@ __decorate([
     __metadata("design:type", String)
 ], CreateAdvertisementInput.prototype, "titleKR", void 0);
 __decorate([
-    (0, graphql_1.Field)({ nullable: true }),
-    __metadata("design:type", String)
+    (0, graphql_1.Field)(() => GraphQLUpload_1.default),
+    __metadata("design:type", Object)
 ], CreateAdvertisementInput.prototype, "image", void 0);
 __decorate([
     (0, graphql_1.Field)({ nullable: true }),

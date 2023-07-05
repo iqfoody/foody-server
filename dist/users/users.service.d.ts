@@ -63,7 +63,7 @@ export declare class UsersService {
     findOne(id: string): Promise<import("mongoose").Document<unknown, import("src/models/users.schema").IUsersQueryHelpers, import("src/models/users.schema").UsersDocument> & Omit<import("src/models/users.schema").Users & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    createUser(createUserInput: CreateUserInput, file: any): Promise<{
+    createUser(createUserInput: CreateUserInput): Promise<{
         _id: any;
         name: any;
         phoneNumber: any;
@@ -95,8 +95,8 @@ export declare class UsersService {
     info(phoneNumber: string): Promise<import("mongoose").Document<unknown, import("src/models/users.schema").IUsersQueryHelpers, import("src/models/users.schema").UsersDocument> & Omit<import("src/models/users.schema").Users & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    update(id: string, updateUserInfo: UpdateUserInfo): Promise<string>;
-    password(id: string, passwordUserInput: PasswordUserInput): Promise<string>;
+    update(updateUserInfo: UpdateUserInfo): Promise<string>;
+    password(phoneNumber: string, passwordUserInput: PasswordUserInput): Promise<string>;
     logout(phoneNumber: string): Promise<void>;
     delete(id: string): Promise<string>;
     getCreatedAt(_id: string): Promise<Partial<User>>;

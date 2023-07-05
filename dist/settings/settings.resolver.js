@@ -48,7 +48,7 @@ let SettingsResolver = class SettingsResolver {
 };
 __decorate([
     (0, graphql_1.Mutation)(() => setting_entity_1.Setting),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: setting_entity_1.Setting }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "Setting" }),
     __param(0, (0, graphql_1.Args)('createSettingInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_setting_input_1.CreateSettingInput]),
@@ -56,21 +56,21 @@ __decorate([
 ], SettingsResolver.prototype, "createSetting", null);
 __decorate([
     (0, graphql_1.Query)(() => [setting_entity_1.Setting], { name: 'settings' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: setting_entity_1.Setting }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Setting" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], SettingsResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => setting_entity_1.Setting, { name: 'support' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: setting_entity_1.Setting }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Setting" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], SettingsResolver.prototype, "findSupport", null);
 __decorate([
     (0, graphql_1.Query)(() => setting_entity_1.Setting, { name: 'setting' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: setting_entity_1.Setting }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Setting" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -78,7 +78,7 @@ __decorate([
 ], SettingsResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: setting_entity_1.Setting }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Setting" }),
     __param(0, (0, graphql_1.Args)('updateSettingInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_setting_input_1.UpdateSettingInput]),
@@ -86,7 +86,7 @@ __decorate([
 ], SettingsResolver.prototype, "updateSetting", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: setting_entity_1.Setting }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "Setting" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

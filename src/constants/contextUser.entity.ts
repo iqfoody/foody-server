@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { AdminPermission } from 'src/admins/entities/admin-permissions.entity';
 
 @ObjectType()
 export class ContextUser {
@@ -26,6 +27,9 @@ export class ContextUser {
 
   @Field({ nullable: true })
   deviceToken?: string;
+
+  @Field(() => [AdminPermission])
+  permissions: AdminPermission[];
   
 }
 

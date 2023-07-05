@@ -24,9 +24,6 @@ let AddressesService = class AddressesService {
         this.AddressesModel = AddressesModel;
         this.usersService = usersService;
     }
-    create(createAddressInput) {
-        return this.AddressesModel.create(createAddressInput);
-    }
     findAll(user) {
         return this.AddressesModel.find({ user });
     }
@@ -40,6 +37,10 @@ let AddressesService = class AddressesService {
     async remove(id) {
         await this.AddressesModel.findByIdAndDelete(id);
         return "Success";
+    }
+    async create(createAddressInput) {
+        const { _id } = await this.usersService.findId(createAddressInput.user);
+        return this.AddressesModel.create({ ...createAddressInput, user: _id });
     }
     async findAddresses(phoneNumber) {
         const { _id } = await this.usersService.findId(phoneNumber);
@@ -65,9 +66,8 @@ let AddressesService = class AddressesService {
         await this.AddressesModel.findOneAndDelete({ $and: [{ _id: id }, { user: _id }] });
         return "Success";
     }
-    async clean(phoneNumber) {
-        const { _id } = await this.usersService.findId(phoneNumber);
-        await this.AddressesModel.deleteMany({ user: _id });
+    async clean(user) {
+        await this.AddressesModel.deleteMany({ user });
         return "Success";
     }
 };

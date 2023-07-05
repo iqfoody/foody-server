@@ -15,22 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MealsController = void 0;
 const common_1 = require("@nestjs/common");
 const meals_service_1 = require("./meals.service");
-const aws_service_1 = require("../aws/aws.service");
-const accessAuth_guard_1 = require("../guards/accessAuth.guard");
-const ability_decorator_1 = require("../ability/ability.decorator");
-const ability_factory_1 = require("../ability/ability.factory");
-const platform_express_1 = require("@nestjs/platform-express");
-const update_meal_input_1 = require("./dto/update-meal.input");
-const meal_entity_1 = require("./entities/meal.entity");
 let MealsController = class MealsController {
     mealsService;
-    awsService;
-    constructor(mealsService, awsService) {
+    constructor(mealsService) {
         this.mealsService = mealsService;
-        this.awsService = awsService;
     }
-    async getMealsInfinty() {
-        return this.mealsService.findMealsInfinty({ limit: 10, page: 0 });
+    async getMealsInfinty(limit, page, orderBy) {
+        return this.mealsService.findMealsInfinty({ limit, page, orderBy });
     }
     async getRestaurants(restaurant) {
         return this.mealsService.findForRestaurant(restaurant);
@@ -44,19 +35,14 @@ let MealsController = class MealsController {
     async getMeal(id) {
         return this.mealsService.findMeal(id);
     }
-    async createMeal(id, file) {
-        const result = await this.awsService.createImage(file, id);
-        return this.mealsService.createImage(id, result?.Key);
-    }
-    async updateMeal(updateMealInput, file) {
-        const result = await this.awsService.createImage(file, updateMealInput.id);
-        return this.mealsService.update(updateMealInput.id, { ...updateMealInput, image: result?.Key });
-    }
 };
 __decorate([
     (0, common_1.Get)('/main'),
+    __param(0, (0, common_1.Query)('limit')),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('orderBy')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, Number, String]),
     __metadata("design:returntype", Promise)
 ], MealsController.prototype, "getMealsInfinty", null);
 __decorate([
@@ -87,32 +73,9 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], MealsController.prototype, "getMeal", null);
-__decorate([
-    (0, common_1.Post)('/:id'),
-    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: meal_entity_1.Meal }),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.UploadedFile)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
-], MealsController.prototype, "createMeal", null);
-__decorate([
-    (0, common_1.Put)('/'),
-    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.UploadedFile)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_meal_input_1.UpdateMealInput, Object]),
-    __metadata("design:returntype", Promise)
-], MealsController.prototype, "updateMeal", null);
 MealsController = __decorate([
     (0, common_1.Controller)('meals'),
-    __metadata("design:paramtypes", [meals_service_1.MealsService,
-        aws_service_1.AwsService])
+    __metadata("design:paramtypes", [meals_service_1.MealsService])
 ], MealsController);
 exports.MealsController = MealsController;
 //# sourceMappingURL=meals.controller.js.map

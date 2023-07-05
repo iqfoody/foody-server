@@ -1,6 +1,7 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { adminTypes, publicStatus } from 'src/constants/types.type';
 import { Wallet } from 'src/wallets/entities/wallet.entity';
+import { AdminPermission } from './admin-permissions.entity';
 
 @ObjectType()
 export class Admin {
@@ -22,6 +23,9 @@ export class Admin {
 
   @Field()
   type: adminTypes;
+
+  @Field(()=> [AdminPermission])
+  permissions: AdminPermission[];
 
   @Field({nullable: true})
   image?: string;

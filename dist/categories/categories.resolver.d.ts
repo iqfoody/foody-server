@@ -25,11 +25,16 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { CategoriesService } from './categories.service';
 import { UpdateCategoryInput } from './dto/update-category.input';
+import { BadRequestException } from '@nestjs/common';
 import { StateInput } from 'src/constants/state.input';
 import { UpdatePositionInput } from 'src/constants/position.input';
+import { CreateCategoryInput } from './dto/create-category.input';
 export declare class CategoriesResolver {
     private readonly categoriesService;
     constructor(categoriesService: CategoriesService);
+    createCategory(createCategoryInput: CreateCategoryInput): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, import("../models/categories.schema").CategoriesDocument> & Omit<import("../models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>)>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, import("../models/categories.schema").CategoriesDocument> & Omit<import("../models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;

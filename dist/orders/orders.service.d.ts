@@ -57,6 +57,7 @@ export declare class OrdersService {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     findOrders(phoneNumber: string, state?: orderStatus): Promise<any[]>;
+    findOrdersDriver(phoneNumber: string, state?: orderStatus): Promise<any[]>;
     findOrder(id: string, phoneNumber: string): Promise<any>;
     cancelOrder(id: string, phoneNumber: string): Promise<string>;
     inDeliveryOrder(id: string, phoneNumber: string): Promise<string>;
@@ -109,6 +110,12 @@ export declare class OrdersService {
         restaurants: number;
         meals: number;
         drivers: number;
+        transactions: {
+            minusAmount: any;
+            plusAmount: any;
+            minusPoints: any;
+            plusPoints: any;
+        };
     }>;
     ordersReport(date: string): Promise<{
         m0: {
@@ -892,4 +899,5 @@ export declare class OrdersService {
             d31: number;
         };
     }>;
+    findUnread(): Promise<number>;
 }

@@ -1,3 +1,4 @@
+import Upload from 'src/constants/Upload';
 export declare class CreateRestaurantInput {
     title: string;
     titleEN: string;
@@ -5,7 +6,7 @@ export declare class CreateRestaurantInput {
     description: string;
     descriptionEN: string;
     descriptionKR?: string;
-    image?: string;
+    image: Upload;
     time: number;
     deliveryPrice?: number;
     discount: number;

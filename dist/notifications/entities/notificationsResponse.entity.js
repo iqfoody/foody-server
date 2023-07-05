@@ -15,6 +15,7 @@ const notification_entity_1 = require("./notification.entity");
 let NotificationsResponse = class NotificationsResponse {
     data;
     pages;
+    orders;
 };
 __decorate([
     (0, graphql_1.Field)(() => [notification_entity_1.Notification]),
@@ -24,6 +25,10 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int),
     __metadata("design:type", Number)
 ], NotificationsResponse.prototype, "pages", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], NotificationsResponse.prototype, "orders", void 0);
 NotificationsResponse = __decorate([
     (0, graphql_1.ObjectType)()
 ], NotificationsResponse);

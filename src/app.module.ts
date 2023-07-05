@@ -45,7 +45,6 @@ import { SettingsModule } from './settings/settings.module';
         return {req, res}
       },
       path: 'foody',
-
     }),
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.dbURL),

@@ -64,10 +64,11 @@ export class RestaurantsService {
 
   //? dashboard...
 
-  async create(createRestaurantInput: CreateRestaurantInput, file: any) {
+  async create(createRestaurantInput: CreateRestaurantInput) {
+    if(!createRestaurantInput?.image) return new BadRequestException("image required");
     const position = await this.RestaurantsModel.countDocuments();
     const restaurant = new this.RestaurantsModel({...createRestaurantInput, position});
-    const result = await this.awsService.createImage(file, restaurant._id);
+    const result = await this.awsService.createImage(createRestaurantInput.image, restaurant._id);
     restaurant.image = result?.Key;
     await restaurant.save();
     restaurant.image = this.awsService.getUrl(result?.Key);
@@ -92,8 +93,11 @@ export class RestaurantsService {
     if(updateRestaurantInput?.image){
       const {image} = await this.RestaurantsModel.findOne({_id: updateRestaurantInput.id}, {image: 1, _id: 0});
       this.awsService.removeImage(image);
+      const result = await this.awsService.createImage(updateRestaurantInput.image, id);
+      await this.RestaurantsModel.findByIdAndUpdate(id, {...updateRestaurantInput, image: result?.Key});
+    } else {
+      await this.RestaurantsModel.findByIdAndUpdate(id, updateRestaurantInput);
     }
-    await this.RestaurantsModel.findByIdAndUpdate(id, updateRestaurantInput);
     return "Success";
   }
 

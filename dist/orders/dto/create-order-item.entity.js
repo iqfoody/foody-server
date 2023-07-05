@@ -17,6 +17,7 @@ let CreateOrderItemInput = class CreateOrderItemInput {
     addIngredients;
     removeIngredients;
     quantity;
+    description;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
@@ -38,6 +39,10 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int),
     __metadata("design:type", Number)
 ], CreateOrderItemInput.prototype, "quantity", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], CreateOrderItemInput.prototype, "description", void 0);
 CreateOrderItemInput = __decorate([
     (0, graphql_1.InputType)()
 ], CreateOrderItemInput);

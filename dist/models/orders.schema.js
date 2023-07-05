@@ -40,6 +40,7 @@ let OrderItems = class OrderItems {
     addIngredients;
     removeIngredients;
     quantity;
+    description;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Meals', required: [true, "Meals required"] }),
@@ -61,6 +62,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, required: [true, "Quantity required"], minlength: [1, "Min quantity 1"] }),
     __metadata("design:type", Number)
 ], OrderItems.prototype, "quantity", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], OrderItems.prototype, "description", void 0);
 OrderItems = __decorate([
     (0, mongoose_1.Schema)()
 ], OrderItems);
@@ -82,6 +87,8 @@ let Orders = class Orders {
     paymentMethod;
     state;
     promoCode;
+    promoCodeDiscount;
+    totalDiscount;
     discount;
     discountType;
     walletAmount;
@@ -90,6 +97,7 @@ let Orders = class Orders {
     totalPoints;
     price;
     no;
+    readed;
 };
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.ObjectId, ref: 'Users', required: [true, "user required"] }),
@@ -154,6 +162,14 @@ __decorate([
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number }),
     __metadata("design:type", Number)
+], Orders.prototype, "promoCodeDiscount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0 }),
+    __metadata("design:type", Number)
+], Orders.prototype, "totalDiscount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number }),
+    __metadata("design:type", Number)
 ], Orders.prototype, "discount", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
@@ -183,6 +199,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Number, default: 0 }),
     __metadata("design:type", Number)
 ], Orders.prototype, "no", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.default.Schema.Types.Boolean, default: false }),
+    __metadata("design:type", Boolean)
+], Orders.prototype, "readed", void 0);
 Orders = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Orders);

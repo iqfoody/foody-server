@@ -1,5 +1,5 @@
 type province = "Baghdad" | "Mosul" | "Basrah" | "Nasiriyah" | "Babil" | "Suleymaniyah" | "Erbil" | "Ramadi" | "Diyala" | "Kirkuk" | "Tikrit" | "Najaf" | "Kut" | "Dohuk" | "Diwaniyah" | "Karbala" | "Maysan" | "Muthanna";
-type adminTypes = "Admin" | "Data Entery" | "Accounter" | "Human Resources" | "Support" | "Store Keeper";
+type adminTypes = "Admin" | "Sub Admin";
 type employerTypes = "chef" | "Data Entery" | "Accounter" | "Human Resources" | "Support" | "Store Keeper" | "Developer" | "Driver" | "Sales Representative" | "Sanitation Worker";
 type weekDays = "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
 type genders = "Male" | "Female";

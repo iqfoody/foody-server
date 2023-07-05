@@ -24,36 +24,47 @@ const state_input_1 = require("../constants/state.input");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
 const update_password_user_input_1 = require("../users/dto/update-password-user.input");
+const mongoose_1 = require("mongoose");
 let AdminsResolver = class AdminsResolver {
     adminsService;
     constructor(adminsService) {
         this.adminsService = adminsService;
     }
     createAdmin(createAdminInput, context) {
-        return this.adminsService.create(context.req.user._id, createAdminInput, null);
+        return this.adminsService.create(context.req.user._id, createAdminInput);
     }
     findAll() {
         return this.adminsService.findAll();
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't admin with this id");
         return this.adminsService.findOne(id);
     }
     updateAdmin(updateAdminInput) {
+        if (!(0, mongoose_1.isValidObjectId)(updateAdminInput?.id))
+            throw new common_1.BadRequestException("There isn't admin with this id");
         return this.adminsService.update(updateAdminInput.id, updateAdminInput);
     }
     async passwordUser(passwordAdminInput) {
+        if (!(0, mongoose_1.isValidObjectId)(passwordAdminInput?.id))
+            throw new common_1.BadRequestException("There isn't admin with this id");
         return this.adminsService.passwordAdmin(passwordAdminInput.id, passwordAdminInput);
     }
     async stateAdmin(stateInput) {
+        if (!(0, mongoose_1.isValidObjectId)(stateInput?.id))
+            throw new common_1.BadRequestException("There isn't admin with this id");
         return this.adminsService.state(stateInput);
     }
     removeAdmin(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't admin with this id");
         return this.adminsService.remove(id);
     }
 };
 __decorate([
     (0, graphql_1.Mutation)(() => admin_entity_1.Admin),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: admin_entity_1.Admin }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "Admin" }),
     __param(0, (0, graphql_1.Args)('createAdminInput')),
     __param(1, (0, graphql_1.Context)()),
     __metadata("design:type", Function),
@@ -62,14 +73,14 @@ __decorate([
 ], AdminsResolver.prototype, "createAdmin", null);
 __decorate([
     (0, graphql_1.Query)(() => [admin_entity_1.Admin], { name: 'admins' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: admin_entity_1.Admin }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Admin" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AdminsResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => admin_entity_1.Admin, { name: 'admin' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: admin_entity_1.Admin }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Admin" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -77,7 +88,7 @@ __decorate([
 ], AdminsResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: admin_entity_1.Admin }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Admin" }),
     __param(0, (0, graphql_1.Args)('updateAdminInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_admin_input_1.UpdateAdminInput]),
@@ -85,7 +96,7 @@ __decorate([
 ], AdminsResolver.prototype, "updateAdmin", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String, { name: 'passwordAdmin' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: admin_entity_1.Admin }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Admin" }),
     __param(0, (0, graphql_1.Args)('passwordAdminInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_password_user_input_1.UpdatePasswordUser]),
@@ -93,7 +104,7 @@ __decorate([
 ], AdminsResolver.prototype, "passwordUser", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.State, subject: admin_entity_1.Admin }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Admin" }),
     __param(0, (0, graphql_1.Args)('stateInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [state_input_1.StateInput]),
@@ -101,7 +112,7 @@ __decorate([
 ], AdminsResolver.prototype, "stateAdmin", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: admin_entity_1.Admin }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "Admin" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

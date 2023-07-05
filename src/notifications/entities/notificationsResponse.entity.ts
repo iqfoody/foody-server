@@ -10,4 +10,7 @@ export class NotificationsResponse {
     @Field(()=> Int)
     pages: number;
 
+    @Field(()=> Int, {nullable: true})
+    orders?: number;
+
 }

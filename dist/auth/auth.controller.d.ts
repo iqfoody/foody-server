@@ -45,9 +45,7 @@ export declare class AuthController {
         refreshToken: string;
         user: any;
     }>;
-    logoutDriver(req: any): Promise<string>;
     infoDriver(req: any): Promise<import("mongoose").Document<unknown, import("../models/drivers.schema").IDriversQueryHelpers, import("../models/drivers.schema").DriversDocument> & Omit<import("../models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    refreshDriver(req: any): Promise<string>;
 }

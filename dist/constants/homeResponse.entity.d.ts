@@ -1,4 +1,5 @@
 import { Order } from "src/orders/entities/order.entity";
+import { TransactionsHomeResponse } from "src/transactions/entities/transactionsHomeResponse.entity";
 import { User } from "src/users/entities/user.entity";
 export declare class RatingResponse {
     user: User;
@@ -33,4 +34,5 @@ export declare class HomeResponse {
     restaurants?: number;
     meals: number;
     drivers: number;
+    transactions: TransactionsHomeResponse;
 }

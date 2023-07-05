@@ -1,6 +1,4 @@
 import { InputType, Int, Field, ID } from '@nestjs/graphql';
-import { CreateMealAdditionInput } from 'src/meals/dto/create-meal-addition.input';
-import { CreateMealIngredientInput } from 'src/meals/dto/create-meal-ingredient.input';
 
 @InputType()
 export class CreateOrderItemInput {
@@ -19,5 +17,8 @@ export class CreateOrderItemInput {
 
   @Field(()=> Int)
   quantity: number;
+
+  @Field({nullable: true})
+  description?: string
 
 }

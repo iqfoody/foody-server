@@ -22,6 +22,7 @@
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
+import { BadRequestException } from '@nestjs/common';
 import { CreateMealInput } from './dto/create-meal.input';
 import { UpdateMealInput } from './dto/update-meal.input';
 import { Model } from 'mongoose';
@@ -61,10 +62,9 @@ export declare class MealsService {
     searchMeals(query: string): Promise<(import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    create(createMealInput: CreateMealInput): Promise<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+    create(createMealInput: CreateMealInput): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>>;
-    createImage(id: string, image: string): Promise<string>;
+    }, never>)>;
     findAll(limitEntity: LimitEntity): Promise<{
         data: Omit<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
             _id: import("mongoose").Types.ObjectId;

@@ -23,40 +23,61 @@ const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
 const state_input_1 = require("../constants/state.input");
 const position_input_1 = require("../constants/position.input");
+const create_category_input_1 = require("./dto/create-category.input");
+const mongoose_1 = require("mongoose");
 let CategoriesResolver = class CategoriesResolver {
     categoriesService;
     constructor(categoriesService) {
         this.categoriesService = categoriesService;
     }
+    createCategory(createCategoryInput) {
+        return this.categoriesService.create(createCategoryInput);
+    }
     findAll() {
         return this.categoriesService.findAll();
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't category with this id");
         return this.categoriesService.findOne(id);
     }
     updateCategory(updateCategoryInput) {
+        if (!(0, mongoose_1.isValidObjectId)(updateCategoryInput?.id))
+            throw new common_1.BadRequestException("There isn't category with this id");
         return this.categoriesService.update(updateCategoryInput.id, updateCategoryInput);
     }
     positionCategory(updatePositionInput) {
         return this.categoriesService.position(updatePositionInput);
     }
     stateCategory(stateInput) {
+        if (!(0, mongoose_1.isValidObjectId)(stateInput?.id))
+            throw new common_1.BadRequestException("There isn't category with this id");
         return this.categoriesService.state(stateInput);
     }
     removeCategory(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't category with this id");
         return this.categoriesService.remove(id);
     }
 };
 __decorate([
+    (0, graphql_1.Mutation)(() => category_entity_1.Category),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "Category" }),
+    __param(0, (0, graphql_1.Args)('createCategoryInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_category_input_1.CreateCategoryInput]),
+    __metadata("design:returntype", void 0)
+], CategoriesResolver.prototype, "createCategory", null);
+__decorate([
     (0, graphql_1.Query)(() => [category_entity_1.Category], { name: 'categories' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: category_entity_1.Category }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Category" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], CategoriesResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => category_entity_1.Category, { name: 'category' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: category_entity_1.Category }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Category" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -64,7 +85,7 @@ __decorate([
 ], CategoriesResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: category_entity_1.Category }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Category" }),
     __param(0, (0, graphql_1.Args)('updateCategoryInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_category_input_1.UpdateCategoryInput]),
@@ -72,7 +93,7 @@ __decorate([
 ], CategoriesResolver.prototype, "updateCategory", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: category_entity_1.Category }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Category" }),
     __param(0, (0, graphql_1.Args)('updatePositionInput', { type: () => [position_input_1.UpdatePositionInput] })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Array]),
@@ -80,7 +101,7 @@ __decorate([
 ], CategoriesResolver.prototype, "positionCategory", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: category_entity_1.Category }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Category" }),
     __param(0, (0, graphql_1.Args)('stateInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [state_input_1.StateInput]),
@@ -88,7 +109,7 @@ __decorate([
 ], CategoriesResolver.prototype, "stateCategory", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: category_entity_1.Category }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "Category" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

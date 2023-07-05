@@ -1,4 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
+import GraphQLUpload from 'src/Graphql/GraphQLUpload';
+import Upload from 'src/constants/Upload';
 import { province, userTypes } from 'src/constants/types.type';
 
 @InputType()
@@ -22,8 +24,8 @@ export class CreateUserInput {
   @Field({nullable: true})
   city?: province;
 
-  @Field({nullable: true})
-  image?: string;
+  @Field(()=> GraphQLUpload, {nullable: true})
+  image?: Upload;
 
   @Field({nullable: true})
   deviceToken?: string;

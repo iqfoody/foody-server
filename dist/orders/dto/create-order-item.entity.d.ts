@@ -4,4 +4,5 @@ export declare class CreateOrderItemInput {
     addIngredients?: string[];
     removeIngredients?: string[];
     quantity: number;
+    description?: string;
 }

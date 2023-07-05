@@ -80,6 +80,33 @@ let TransactionsService = class TransactionsService {
         }
         return;
     }
+    async updateTransaction(updateTransactionInput) {
+        const transaction = await this.TransactionsModel.findOne({ $and: [{ order: updateTransactionInput.order }, { user: updateTransactionInput.user }] });
+        if (!transaction)
+            throw new common_1.BadRequestException("There isn't transaction with this order");
+        const wallet = await this.walletsService.findUserWallet(updateTransactionInput.user);
+        if (transaction.type === "Amount") {
+            if (transaction.amount > updateTransactionInput.amount) {
+                const newAmount = wallet.amount + (transaction.amount - updateTransactionInput.amount);
+                await this.walletsService.update(wallet._id, { amount: newAmount });
+            }
+            else if (transaction.amount < updateTransactionInput.amount) {
+                const newAmount = wallet.amount - (updateTransactionInput.amount - transaction.amount);
+                await this.walletsService.update(wallet._id, { amount: newAmount });
+            }
+        }
+        else if (transaction.type === "Points") {
+            if (transaction.amount > updateTransactionInput.amount) {
+                const newPoints = wallet.points + (transaction.amount - updateTransactionInput.amount);
+                await this.walletsService.update(wallet._id, { points: newPoints });
+            }
+            else if (transaction.amount < updateTransactionInput.amount) {
+                const newPoints = wallet.points - (updateTransactionInput.amount - transaction.amount);
+                await this.walletsService.update(wallet._id, { points: newPoints });
+            }
+        }
+        return;
+    }
     async cancelTransaction(order, user) {
         const transaction = await this.TransactionsModel.findOne({ $and: [{ order }, { user }] });
         const wallet = await this.walletsService.findUserWallet(user);
@@ -294,6 +321,26 @@ let TransactionsService = class TransactionsService {
     async remove(id) {
         await this.TransactionsModel.findByIdAndDelete(id);
         return "Success";
+    }
+    async home() {
+        const data = new Date().setDate(new Date().getDate() - 7);
+        const minusPoints = await this.TransactionsModel.aggregate([
+            { $match: { $and: [{ createdAt: { $gt: new Date(data) } }, { type: "Points" }, { procedure: "Minus" }] } },
+            { $group: { _id: "Points", total: { $sum: "$amount" } } },
+        ]);
+        const plusPoints = await this.TransactionsModel.aggregate([
+            { $match: { $and: [{ createdAt: { $gt: new Date(data) } }, { type: "Points" }, { procedure: "Plus" }] } },
+            { $group: { _id: "Points", total: { $sum: "$amount" } } },
+        ]);
+        const minusAmount = await this.TransactionsModel.aggregate([
+            { $match: { $and: [{ createdAt: { $gt: new Date(data) } }, { type: "Amount" }, { procedure: "Minus" }] } },
+            { $group: { _id: "Amount", total: { $sum: "$amount" } } },
+        ]);
+        const plusAmount = await this.TransactionsModel.aggregate([
+            { $match: { $and: [{ createdAt: { $gt: new Date(data) } }, { type: "Amount" }, { procedure: "Plus" }] } },
+            { $group: { _id: "Amount", total: { $sum: "$amount" } } },
+        ]);
+        return { minusAmount: minusAmount[0]?.total || 0, plusAmount: plusAmount[0]?.total || 0, minusPoints: minusPoints[0]?.total || 0, plusPoints: plusPoints[0]?.total || 0 };
     }
 };
 TransactionsService = __decorate([

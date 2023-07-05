@@ -26,6 +26,7 @@
 import { MealsService } from './meals.service';
 import { CreateMealInput } from './dto/create-meal.input';
 import { UpdateMealInput } from './dto/update-meal.input';
+import { BadRequestException } from '@nestjs/common';
 import { LimitEntity } from 'src/constants/limitEntity';
 import { StateInput } from 'src/constants/state.input';
 import { UpdatePositionInput } from 'src/constants/position.input';
@@ -35,9 +36,9 @@ import { RemoveMealObject } from './dto/remove-mea-object.input';
 export declare class MealsResolver {
     private readonly mealsService;
     constructor(mealsService: MealsService);
-    createMeal(createMealInput: CreateMealInput): Promise<import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+    createMeal(createMealInput: CreateMealInput): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    }, never>)>;
     findAll(limitEntity: LimitEntity): Promise<{
         data: Omit<import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
             _id: import("mongoose").Types.ObjectId;

@@ -17,7 +17,6 @@ const graphql_1 = require("@nestjs/graphql");
 const searches_service_1 = require("./searches.service");
 const search_entity_1 = require("./entities/search.entity");
 const searchQuery_input_1 = require("../constants/searchQuery.input");
-const user_entity_1 = require("../users/entities/user.entity");
 const ability_factory_1 = require("../ability/ability.factory");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const accessAuth_guard_1 = require("../guards/accessAuth.guard");
@@ -40,7 +39,7 @@ let SearchesResolver = class SearchesResolver {
 };
 __decorate([
     (0, graphql_1.Query)(() => usersResponse_entity_1.UsersResponse, { name: 'searchUsers' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Search, subject: user_entity_1.User }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "User" }),
     __param(0, (0, graphql_1.Args)("searchQuery")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [searchQuery_input_1.SearchInput]),

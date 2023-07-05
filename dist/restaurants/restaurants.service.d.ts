@@ -22,6 +22,7 @@
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
+import { BadRequestException } from '@nestjs/common';
 import { CreateRestaurantInput } from './dto/create-restaurant.input';
 import { UpdateRestaurantInput } from './dto/update-restaurant.input';
 import { Model } from 'mongoose';
@@ -51,9 +52,9 @@ export declare class RestaurantsService {
     searchRestaurant(query: string): Promise<(import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    create(createRestaurantInput: CreateRestaurantInput, file: any): Promise<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
+    create(createRestaurantInput: CreateRestaurantInput): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
-    }, never>>;
+    }, never>)>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;

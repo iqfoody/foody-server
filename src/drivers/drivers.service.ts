@@ -46,12 +46,12 @@ export class DriversService {
 
   //? dashboard...
 
-  async create(createDriverInput: CreateDriverInput, file: any) {
+  async create(createDriverInput: CreateDriverInput) {
     let E0011 = await this.findByPhoneNumber(createDriverInput.phoneNumber);
     if(E0011) throw new Error('phoneNumber E0011')
     const driver = new this.DriversModel(createDriverInput);
-    if(file){
-      const result = await this.awsService.createImage(file, driver._id);
+    if(createDriverInput?.image){
+      const result = await this.awsService.createImage(createDriverInput.image, driver._id);
       driver.image = result?.Key;
     }
     // create wallet...
@@ -93,8 +93,11 @@ export class DriversService {
     if(updateDriverInput?.image){
       const { image } = await this.DriversModel.findOne({_id: updateDriverInput.id}, {image: 1, _id: 0});
       if(image) this.awsService.removeImage(image);
+      const result = await this.awsService.createImage(updateDriverInput.image, id);
+      await this.DriversModel.findByIdAndUpdate(id, {...updateDriverInput, image: result?.Key});
+    } else {
+      await this.DriversModel.findByIdAndUpdate(id, updateDriverInput);
     }
-    await this.DriversModel.findByIdAndUpdate(id, updateDriverInput);
     return "account updated";
   }
 
@@ -122,6 +125,10 @@ export class DriversService {
     const driver = await this.DriversModel.findOne({phoneNumber}, {_id: 1, deviceToken: 1});
     if(!driver) throw new BadRequestException("There isn't driver regestered with this phone number");
     return driver;
+  }
+
+  async findDeviceToken(_id: string){
+    return this.DriversModel.findOne({_id}, {deviceToken: 1, _id: 0})
   }
 
   async home() {

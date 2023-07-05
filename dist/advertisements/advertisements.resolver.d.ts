@@ -25,11 +25,16 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { AdvertisementsService } from './advertisements.service';
 import { UpdateAdvertisementInput } from './dto/update-advertisement.input';
+import { BadRequestException } from '@nestjs/common';
 import { UpdatePositionInput } from 'src/constants/position.input';
 import { StateInput } from 'src/constants/state.input';
+import { CreateAdvertisementInput } from './dto/create-advertisement.input';
 export declare class AdvertisementsResolver {
     private readonly advertisementsService;
     constructor(advertisementsService: AdvertisementsService);
+    createAdvertisement(createAdvertisementInput: CreateAdvertisementInput): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>)>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;

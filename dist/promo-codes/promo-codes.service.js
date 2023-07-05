@@ -87,6 +87,30 @@ let PromoCodesService = class PromoCodesService {
             return promoCode.populate("user");
         }
     }
+    async checkPromoCode(checkPromoCodeInput) {
+        if (!checkPromoCodeInput?.name || !checkPromoCodeInput?.user)
+            throw new common_1.BadRequestException("this promo code isn't valid");
+        const { _id } = await this.usersService.findOne(checkPromoCodeInput.user);
+        const promoCode = await this.PromoCodesModel.findOne({ $and: [{ name: checkPromoCodeInput.name }, { expire: { $gte: new Date() } }, { state: "Active" }] });
+        if (promoCode) {
+            if (promoCode?.users && promoCode?.users.includes(_id))
+                throw new common_1.NotAcceptableException('Promo code had used');
+            if (promoCode?.usageTimes && promoCode?.usageTimes > 0 && promoCode?.usageTimes <= promoCode?.users?.length)
+                throw new common_1.NotAcceptableException('Promo code had expired');
+            if (promoCode.isPublic) {
+                return promoCode;
+            }
+            else {
+                if (promoCode?.user && _id == promoCode?.user) {
+                    return promoCode;
+                }
+                else
+                    throw new common_1.NotFoundException('Promo code not found');
+            }
+        }
+        else
+            throw new common_1.NotFoundException('Promo code not found or expire');
+    }
     findAll() {
         return this.PromoCodesModel.find().populate("user").sort({ _id: -1 });
     }

@@ -37,7 +37,7 @@ export class Users {
   @Prop({ required: [true, 'name field required'] })
   name: string;
 
-  @Prop({ length: [11, 'phoneNumber E0009'], required: [true, "phoneNumber E0009"], unique: [true, 'phoneNumber E0011'] })
+  @Prop({ length: [14, 'phoneNumber E0009'], required: [true, "phoneNumber E0009"], unique: [true, 'phoneNumber E0011'] })
   phoneNumber: string;
 
   @Prop({ lowercase: true })

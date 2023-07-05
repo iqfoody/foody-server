@@ -31,9 +31,6 @@ export declare class AddressesService {
     private AddressesModel;
     private usersService;
     constructor(AddressesModel: Model<AddressesDocument>, usersService: UsersService);
-    create(createAddressInput: CreateAddressInput): Promise<import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
     findAll(user: string): import("mongoose").Query<(import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[], import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
@@ -46,6 +43,9 @@ export declare class AddressesService {
     }, never>, {}, AddressesDocument>;
     update(id: string, updateAddressInput: UpdateAddressInput): Promise<string>;
     remove(id: string): Promise<string>;
+    create(createAddressInput: CreateAddressInput): Promise<import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
     findAddresses(phoneNumber: string): Promise<(import("mongoose").Document<unknown, {}, AddressesDocument> & Omit<import("src/models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
@@ -54,5 +54,5 @@ export declare class AddressesService {
     }, never>>;
     updateAddress(updateAddressInput: UpdateAddressInput, phoneNumber: string): Promise<string>;
     removeAddress(id: string, phoneNumber: string): Promise<string>;
-    clean(phoneNumber: string): Promise<string>;
+    clean(user: string): Promise<string>;
 }

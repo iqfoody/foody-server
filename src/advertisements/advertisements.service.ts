@@ -38,11 +38,11 @@ export class AdvertisementsService {
 
   //? dashborad...
 
-  async create(createAdvertisementInput: CreateAdvertisementInput, file: any) {
-    if(!file) return new BadRequestException("image required");
+  async create(createAdvertisementInput: CreateAdvertisementInput) {
+    if(!createAdvertisementInput?.image) return new BadRequestException("image required");
     const position = await this.AdvertisementsModel.countDocuments();
     const advertisement = new this.AdvertisementsModel({...createAdvertisementInput, position});
-    const result = await this.awsService.createImage(file, advertisement._id);
+    const result = await this.awsService.createImage(createAdvertisementInput.image, advertisement._id);
     advertisement.image = result?.Key;
     await advertisement.save();
     advertisement.image = this.awsService.getUrl(result?.Key);
@@ -74,8 +74,11 @@ export class AdvertisementsService {
     if(updateAdvertisementInput?.image){
       const {image} = await this.AdvertisementsModel.findOne({_id: updateAdvertisementInput.id}, {image: 1, _id: 0});
       this.awsService.removeImage(image);
+      const result = await this.awsService.createImage(updateAdvertisementInput.image, id);
+      await this.AdvertisementsModel.findByIdAndUpdate(id, {...updateAdvertisementInput, image: result?.Key});
+    } else {
+      await this.AdvertisementsModel.findByIdAndUpdate(id, updateAdvertisementInput);
     }
-    await this.AdvertisementsModel.findByIdAndUpdate(id, updateAdvertisementInput);
     return "Success";
   }
 

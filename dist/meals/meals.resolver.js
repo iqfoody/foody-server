@@ -30,6 +30,7 @@ const create_meal_object_input_1 = require("./dto/create-meal-object.input");
 const update_meal_object_input_1 = require("./dto/update-meal-object.input");
 const remove_mea_object_input_1 = require("./dto/remove-mea-object.input");
 const meal_addition_entity_1 = require("./entities/meal-addition.entity");
+const mongoose_1 = require("mongoose");
 let MealsResolver = class MealsResolver {
     mealsService;
     constructor(mealsService) {
@@ -42,24 +43,34 @@ let MealsResolver = class MealsResolver {
         return this.mealsService.findAll(limitEntity);
     }
     findAllForRestaurant(limitEntity) {
+        if (!(0, mongoose_1.isValidObjectId)(limitEntity?.user))
+            throw new common_1.BadRequestException("There isn't restaruant with this id");
         return this.mealsService.findAllForRestaurant(limitEntity);
     }
     search(query) {
         return this.mealsService.search(query);
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't meal with this id");
         return this.mealsService.findOne(id);
     }
     updateMeal(updateMealInput) {
+        if (!(0, mongoose_1.isValidObjectId)(updateMealInput?.id))
+            throw new common_1.BadRequestException("There isn't meal with this id");
         return this.mealsService.update(updateMealInput.id, updateMealInput);
     }
     stateMeal(stateInput) {
+        if (!(0, mongoose_1.isValidObjectId)(stateInput?.id))
+            throw new common_1.BadRequestException("There isn't meal with this id");
         return this.mealsService.state(stateInput);
     }
     positionMeal(updatePositionInput) {
         return this.mealsService.position(updatePositionInput);
     }
     removeMeal(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't meal with this id");
         return this.mealsService.remove(id);
     }
     createMealObject(createMealObject) {
@@ -74,7 +85,7 @@ let MealsResolver = class MealsResolver {
 };
 __decorate([
     (0, graphql_1.Mutation)(() => meal_entity_1.Meal),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('createMealInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_meal_input_1.CreateMealInput]),
@@ -82,7 +93,7 @@ __decorate([
 ], MealsResolver.prototype, "createMeal", null);
 __decorate([
     (0, graphql_1.Query)(() => mealsResponse_entity_1.MealsResponse, { name: 'meals' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('limitEntity')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
@@ -90,7 +101,7 @@ __decorate([
 ], MealsResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => mealsResponse_entity_1.MealsResponse, { name: 'mealsRestaurant' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('limitEntity')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
@@ -98,7 +109,7 @@ __decorate([
 ], MealsResolver.prototype, "findAllForRestaurant", null);
 __decorate([
     (0, graphql_1.Query)(() => [meal_entity_1.Meal], { name: 'searchMeals' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('query', { type: () => String })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -106,7 +117,7 @@ __decorate([
 ], MealsResolver.prototype, "search", null);
 __decorate([
     (0, graphql_1.Query)(() => meal_entity_1.Meal, { name: 'meal' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -114,7 +125,7 @@ __decorate([
 ], MealsResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('updateMealInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_meal_input_1.UpdateMealInput]),
@@ -122,7 +133,7 @@ __decorate([
 ], MealsResolver.prototype, "updateMeal", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('stateInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [state_input_1.StateInput]),
@@ -130,7 +141,7 @@ __decorate([
 ], MealsResolver.prototype, "stateMeal", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('updatePositionInput', { type: () => [position_input_1.UpdatePositionInput] })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Array]),
@@ -138,7 +149,7 @@ __decorate([
 ], MealsResolver.prototype, "positionMeal", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -146,7 +157,7 @@ __decorate([
 ], MealsResolver.prototype, "removeMeal", null);
 __decorate([
     (0, graphql_1.Mutation)(() => meal_addition_entity_1.MealAddition),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('createMealObject')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_meal_object_input_1.CreateMealObject]),
@@ -154,7 +165,7 @@ __decorate([
 ], MealsResolver.prototype, "createMealObject", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('updateMealObject')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_meal_object_input_1.UpdateMealObject]),
@@ -162,7 +173,7 @@ __decorate([
 ], MealsResolver.prototype, "updateMealObject", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: meal_entity_1.Meal }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('removeMealObject')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [remove_mea_object_input_1.RemoveMealObject]),

@@ -24,13 +24,9 @@
 /// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
 import { RestaurantsService } from './restaurants.service';
-import { AwsService } from 'src/aws/aws.service';
-import { CreateRestaurantInput } from './dto/create-restaurant.input';
-import { UpdateRestaurantInput } from './dto/update-restaurant.input';
 export declare class RestaurantsController {
     private readonly restaurantsService;
-    private readonly awsService;
-    constructor(restaurantsService: RestaurantsService, awsService: AwsService);
+    constructor(restaurantsService: RestaurantsService);
     getRestaurant(restaurant: string): Promise<any>;
     getRestaurants(): Promise<(import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
@@ -41,8 +37,4 @@ export declare class RestaurantsController {
         }, never>)[];
         pages: number;
     }>;
-    createRestaurant(createRestaurantInput: CreateRestaurantInput, file: any): Promise<import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
-    updateRestaurant(updateRestaurantInput: UpdateRestaurantInput, file: any): Promise<string>;
 }

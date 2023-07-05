@@ -34,11 +34,11 @@ export class CategoriesService {
 
   //? dashboard...
 
-  async create(createCategoryInput: CreateCategoryInput, file: any) {
-    if(!file) return new BadRequestException("image required");
+  async create(createCategoryInput: CreateCategoryInput) {
+    if(!createCategoryInput.image) return new BadRequestException("image required");
     const position = await this.CategoriesModel.countDocuments();
     const category = new this.CategoriesModel({...createCategoryInput, position});
-    const result = await this.awsService.createImage(file, category._id);
+    const result = await this.awsService.createImage(createCategoryInput.image, category._id);
     category.image = result?.Key;
     await category.save();
     category.image = this.awsService.getUrl(result?.Key);
@@ -63,8 +63,11 @@ export class CategoriesService {
     if(updateCategoryInput?.image){
       const {image} = await this.CategoriesModel.findOne({_id: updateCategoryInput.id}, {image: 1, _id: 0});
       this.awsService.removeImage(image);
+      const result = await this.awsService.createImage(updateCategoryInput.image, id);
+      await this.CategoriesModel.findByIdAndUpdate(id, {...updateCategoryInput, image: result?.Key});
+    } else {
+      await this.CategoriesModel.findByIdAndUpdate(id, updateCategoryInput);
     }
-    await this.CategoriesModel.findByIdAndUpdate(id, updateCategoryInput);
     return "Success";
   }
 

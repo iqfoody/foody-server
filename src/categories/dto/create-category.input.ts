@@ -1,4 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
+import GraphQLUpload from 'src/Graphql/GraphQLUpload';
+import Upload from 'src/constants/Upload';
 
 @InputType()
 export class CreateCategoryInput {
@@ -12,7 +14,7 @@ export class CreateCategoryInput {
   @Field({nullable: true})
   titleKR?: string;
 
-  @Field({nullable: true})
-  image?: string;
+  @Field(()=> GraphQLUpload)
+  image: Upload;
 
 }

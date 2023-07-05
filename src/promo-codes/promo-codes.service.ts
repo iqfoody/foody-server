@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { PromoCodesDocument } from 'src/models/promoCodes.schema';
 import { StateInput } from 'src/constants/state.input';
 import { UsersService } from 'src/users/users.service';
+import { CheckPromoCodeInput } from './dto/check-promo-code.input';
 
 @Injectable()
 export class PromoCodesService {
@@ -67,6 +68,23 @@ export class PromoCodesService {
       const promoCode = await this.PromoCodesModel.create(createPromoCodeInput);
       return promoCode.populate("user");
     }
+  }
+
+  async checkPromoCode(checkPromoCodeInput: CheckPromoCodeInput) {
+    if(!checkPromoCodeInput?.name || !checkPromoCodeInput?.user) throw new BadRequestException("this promo code isn't valid");
+    const { _id } = await this.usersService.findOne(checkPromoCodeInput.user);
+    const promoCode = await this.PromoCodesModel.findOne({$and: [{name: checkPromoCodeInput.name}, {expire: {$gte: new Date()}}, {state: "Active"}]});
+    if(promoCode){
+      if(promoCode?.users && promoCode?.users.includes(_id as any)) throw new NotAcceptableException('Promo code had used');
+      if(promoCode?.usageTimes && promoCode?.usageTimes > 0 && promoCode?.usageTimes <= promoCode?.users?.length) throw new NotAcceptableException('Promo code had expired');
+      if(promoCode.isPublic){
+        return promoCode;
+      } else {
+        if(promoCode?.user && _id == promoCode?.user){
+          return promoCode;
+        } else throw new NotFoundException('Promo code not found');
+      }
+    } else throw new NotFoundException('Promo code not found or expire');
   }
 
   findAll() {

@@ -40,7 +40,7 @@ export declare class AdvertisementsService {
     findAdvertisement(id: string): Promise<import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    create(createAdvertisementInput: CreateAdvertisementInput, file: any): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
+    create(createAdvertisementInput: CreateAdvertisementInput): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, AdvertisementsDocument> & Omit<import("src/models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {

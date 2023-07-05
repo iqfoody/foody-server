@@ -15,10 +15,6 @@ export class AddressesService {
 
   //? -> dashborad...
 
-  create(createAddressInput: CreateAddressInput) {
-    return this.AddressesModel.create(createAddressInput);
-  }
-
   findAll(user: string) {
     return this.AddressesModel.find({user});
   }
@@ -38,6 +34,11 @@ export class AddressesService {
   }
 
   //? -> application...
+
+  async create(createAddressInput: CreateAddressInput) {
+    const { _id } = await this.usersService.findId(createAddressInput.user);
+    return this.AddressesModel.create({...createAddressInput, user: _id});
+  }
 
   async findAddresses(phoneNumber: string) {
     const { _id } = await this.usersService.findId(phoneNumber);
@@ -64,9 +65,8 @@ export class AddressesService {
     return "Success";
   }
   
-  async clean(phoneNumber: string){
-    const { _id } = await this.usersService.findId(phoneNumber);
-    await this.AddressesModel.deleteMany({user: _id});
+  async clean(user: string){
+    await this.AddressesModel.deleteMany({user});
     return "Success";
   }
 }

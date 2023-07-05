@@ -17,6 +17,7 @@ const aws_module_1 = require("../aws/aws.module");
 const wallets_module_1 = require("../wallets/wallets.module");
 const favorites_module_1 = require("../favorites/favorites.module");
 const addresses_module_1 = require("../addresses/addresses.module");
+const firebase_module_1 = require("../firebase/firebase.module");
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
@@ -27,6 +28,7 @@ UsersModule = __decorate([
             (0, common_1.forwardRef)(() => favorites_module_1.FavoritesModule),
             (0, common_1.forwardRef)(() => addresses_module_1.AddressesModule),
             aws_module_1.AwsModule,
+            firebase_module_1.FirebaseModule
         ],
         providers: [users_resolver_1.UsersResolver, users_service_1.UsersService],
         exports: [users_service_1.UsersService],

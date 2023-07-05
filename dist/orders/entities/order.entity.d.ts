@@ -23,6 +23,8 @@ export declare class Order {
     paymentMethod: paymentMethodsType;
     state: orderStatus;
     promoCode?: string;
+    promoCodeDiscount?: number;
+    totalDiscount?: number;
     discount?: number;
     discountType?: promoCodeTypes;
     walletAmount?: number;
@@ -31,4 +33,5 @@ export declare class Order {
     createdAt?: Date;
     updatedAt?: Date;
     no?: number;
+    readed?: boolean;
 }

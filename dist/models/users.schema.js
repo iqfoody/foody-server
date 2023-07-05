@@ -46,7 +46,7 @@ __decorate([
     __metadata("design:type", String)
 ], Users.prototype, "name", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ length: [11, 'phoneNumber E0009'], required: [true, "phoneNumber E0009"], unique: [true, 'phoneNumber E0011'] }),
+    (0, mongoose_1.Prop)({ length: [14, 'phoneNumber E0009'], required: [true, "phoneNumber E0009"], unique: [true, 'phoneNumber E0011'] }),
     __metadata("design:type", String)
 ], Users.prototype, "phoneNumber", void 0);
 __decorate([

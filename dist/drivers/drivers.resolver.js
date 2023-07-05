@@ -24,36 +24,47 @@ const state_input_1 = require("../constants/state.input");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
 const update_password_user_input_1 = require("../users/dto/update-password-user.input");
+const mongoose_1 = require("mongoose");
 let DriversResolver = class DriversResolver {
     driversService;
     constructor(driversService) {
         this.driversService = driversService;
     }
     createDriver(createDriverInput) {
-        return this.driversService.create(createDriverInput, null);
+        return this.driversService.create(createDriverInput);
     }
     findAll() {
         return this.driversService.findAll();
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't driver with this id");
         return this.driversService.findOne(id);
     }
     updateDriver(updateDriverInput) {
+        if (!(0, mongoose_1.isValidObjectId)(updateDriverInput?.id))
+            throw new common_1.BadRequestException("There isn't driver with this id");
         return this.driversService.update(updateDriverInput.id, updateDriverInput);
     }
     async passwordUser(passwordDriverInput) {
+        if (!(0, mongoose_1.isValidObjectId)(passwordDriverInput?.id))
+            throw new common_1.BadRequestException("There isn't driver with this id");
         return this.driversService.password(passwordDriverInput.id, passwordDriverInput);
     }
     stateDriver(stateInput) {
+        if (!(0, mongoose_1.isValidObjectId)(stateInput?.id))
+            throw new common_1.BadRequestException("There isn't driver with this id");
         return this.driversService.state(stateInput);
     }
     removeDriver(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't driver with this id");
         return this.driversService.remove(id);
     }
 };
 __decorate([
     (0, graphql_1.Mutation)(() => driver_entity_1.Driver),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: driver_entity_1.Driver }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "Driver" }),
     __param(0, (0, graphql_1.Args)('createDriverInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_driver_input_1.CreateDriverInput]),
@@ -61,14 +72,14 @@ __decorate([
 ], DriversResolver.prototype, "createDriver", null);
 __decorate([
     (0, graphql_1.Query)(() => [driver_entity_1.Driver], { name: 'drivers' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: driver_entity_1.Driver }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Driver" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], DriversResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => driver_entity_1.Driver, { name: 'driver' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: driver_entity_1.Driver }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Driver" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -76,7 +87,7 @@ __decorate([
 ], DriversResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: driver_entity_1.Driver }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Driver" }),
     __param(0, (0, graphql_1.Args)('updateDriverInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_driver_input_1.UpdateDriverInput]),
@@ -84,7 +95,7 @@ __decorate([
 ], DriversResolver.prototype, "updateDriver", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String, { name: 'passwordDriver' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: driver_entity_1.Driver }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Driver" }),
     __param(0, (0, graphql_1.Args)('passwordDriverInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_password_user_input_1.UpdatePasswordUser]),
@@ -92,7 +103,7 @@ __decorate([
 ], DriversResolver.prototype, "passwordUser", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.State, subject: driver_entity_1.Driver }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Driver" }),
     __param(0, (0, graphql_1.Args)('stateInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [state_input_1.StateInput]),
@@ -100,7 +111,7 @@ __decorate([
 ], DriversResolver.prototype, "stateDriver", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: driver_entity_1.Driver }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "Driver" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

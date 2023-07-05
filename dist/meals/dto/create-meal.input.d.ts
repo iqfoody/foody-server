@@ -1,5 +1,6 @@
 import { CreateMealIngredientInput } from './create-meal-ingredient.input';
 import { CreateMealAdditionInput } from './create-meal-addition.input';
+import Upload from 'src/constants/Upload';
 export declare class CreateMealInput {
     category?: string;
     restaurant: string;
@@ -11,7 +12,7 @@ export declare class CreateMealInput {
     description: string;
     descriptionEN: string;
     descriptionKR?: string;
-    image?: string;
+    image: Upload;
     additions?: CreateMealAdditionInput[];
     ingredients?: CreateMealIngredientInput[];
     price: number;

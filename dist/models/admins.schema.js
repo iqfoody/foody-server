@@ -12,11 +12,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminsSchema = exports.Admins = void 0;
+exports.AdminsSchema = exports.Admins = exports.Permissions = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
 const bcryptjs_1 = require("bcryptjs");
 const common_1 = require("@nestjs/common");
+let Permissions = class Permissions {
+    object;
+    abilities;
+};
+__decorate([
+    (0, mongoose_1.Prop)({ unique: [true, "object name is unique"] }),
+    __metadata("design:type", String)
+], Permissions.prototype, "object", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [String] }),
+    __metadata("design:type", Array)
+], Permissions.prototype, "abilities", void 0);
+Permissions = __decorate([
+    (0, mongoose_1.Schema)()
+], Permissions);
+exports.Permissions = Permissions;
+const AdminPermission = typeof Permissions;
 let Admins = class Admins {
     wallet;
     name;
@@ -29,6 +46,7 @@ let Admins = class Admins {
     platform;
     deviceToken;
     refreshToken;
+    permissions;
     comparePassword;
     compareToken;
 };
@@ -49,7 +67,7 @@ __decorate([
     __metadata("design:type", String)
 ], Admins.prototype, "password", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: [true, 'type field is required'], }),
+    (0, mongoose_1.Prop)({ default: "Sub Admin" }),
     __metadata("design:type", String)
 ], Admins.prototype, "type", void 0);
 __decorate([
@@ -76,6 +94,10 @@ __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], Admins.prototype, "refreshToken", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [AdminPermission] }),
+    __metadata("design:type", Array)
+], Admins.prototype, "permissions", void 0);
 Admins = __decorate([
     (0, mongoose_1.Schema)({
         timestamps: true,

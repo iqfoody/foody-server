@@ -24,13 +24,10 @@
 /// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
 import { MealsService } from './meals.service';
-import { AwsService } from 'src/aws/aws.service';
-import { UpdateMealInput } from './dto/update-meal.input';
 export declare class MealsController {
     private readonly mealsService;
-    private readonly awsService;
-    constructor(mealsService: MealsService, awsService: AwsService);
-    getMealsInfinty(): Promise<{
+    constructor(mealsService: MealsService);
+    getMealsInfinty(limit: number, page: number, orderBy: string): Promise<{
         data: (import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
             _id: import("mongoose").Types.ObjectId;
         }, never>)[];
@@ -48,6 +45,4 @@ export declare class MealsController {
     getMeal(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    createMeal(id: string, file: any): Promise<string>;
-    updateMeal(updateMealInput: UpdateMealInput, file: any): Promise<string>;
 }

@@ -1,4 +1,6 @@
 import { InputType, Int, Field, Float } from '@nestjs/graphql';
+import GraphQLUpload from 'src/Graphql/GraphQLUpload';
+import Upload from 'src/constants/Upload';
 
 @InputType()
 export class CreateRestaurantInput {
@@ -21,8 +23,8 @@ export class CreateRestaurantInput {
   @Field({nullable: true})
   descriptionKR?: string;
 
-  @Field({nullable: true})
-  image?: string;
+  @Field(()=> GraphQLUpload)
+  image: Upload;
 
   @Field(()=> Int)
   time: number;

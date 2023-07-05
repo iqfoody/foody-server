@@ -17,13 +17,9 @@ const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const users_service_1 = require("./users.service");
 const aws_service_1 = require("../aws/aws.service");
-const ability_decorator_1 = require("../ability/ability.decorator");
-const ability_factory_1 = require("../ability/ability.factory");
-const user_entity_1 = require("./entities/user.entity");
 const password_user_input_1 = require("./dto/password-user.input");
-const update_user_input_1 = require("./dto/update-user.input");
 const update_info_input_1 = require("./dto/update-info.input");
-const create_user_input_1 = require("./dto/create-user.input");
+const firebase_auth_guard_1 = require("../firebase-auth/firebase-auth.guard");
 let UsersController = class UsersController {
     usersService;
     awsService;
@@ -33,33 +29,20 @@ let UsersController = class UsersController {
     }
     async update(updateUserInfo, file, req) {
         if (file) {
-            const result = await this.awsService.createImage(file, req.user._id);
-            return this.usersService.update(req.user._id, { ...updateUserInfo, image: result?.Key });
+            const result = await this.awsService.createRestImage(file, req.user);
+            return this.usersService.update({ ...updateUserInfo, image: result?.Key, phoneNumber: req.user });
         }
         else {
-            return this.usersService.update(req.user._id, updateUserInfo);
+            return this.usersService.update({ ...updateUserInfo, phoneNumber: req.user });
         }
     }
     async password(passwordUserInput, req) {
-        return this.usersService.password(req.user._id, passwordUserInput);
-    }
-    async createUser(createUserInput, file) {
-        return this.usersService.createUser(createUserInput, file);
-    }
-    async updateUser(updateUserInput, file) {
-        const result = await this.awsService.createImage(file, updateUserInput.id);
-        return this.usersService.updateUser(updateUserInput.id, { ...updateUserInput, image: result?.Key });
-    }
-    async sendOtp(otp) {
-        return this.awsService.sendOtp(otp.phoneNumber);
-    }
-    async verifyOtp(otp) {
-        return this.awsService.verifyOtp(otp.phoneNumber, otp.otp);
+        return this.usersService.password(req.user, passwordUserInput);
     }
 };
 __decorate([
     (0, common_1.Put)('/profile'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.UpdateInfo, subject: user_entity_1.User }),
+    (0, common_1.UseGuards)(firebase_auth_guard_1.FirebaseAuthGuard),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.UploadedFile)()),
@@ -70,47 +53,13 @@ __decorate([
 ], UsersController.prototype, "update", null);
 __decorate([
     (0, common_1.Post)('/password'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Password, subject: user_entity_1.User }),
+    (0, common_1.UseGuards)(firebase_auth_guard_1.FirebaseAuthGuard),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [password_user_input_1.PasswordUserInput, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "password", null);
-__decorate([
-    (0, common_1.Post)('/'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: user_entity_1.User }),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.UploadedFile)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_user_input_1.CreateUserInput, Object]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "createUser", null);
-__decorate([
-    (0, common_1.Put)('/'),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: user_entity_1.User }),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.UploadedFile)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_user_input_1.UpdateUserInput, Object]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "updateUser", null);
-__decorate([
-    (0, common_1.Post)('/test'),
-    __param(0, (0, common_1.Body)('otp')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "sendOtp", null);
-__decorate([
-    (0, common_1.Post)('/test1'),
-    __param(0, (0, common_1.Body)('otp')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "verifyOtp", null);
 UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService,

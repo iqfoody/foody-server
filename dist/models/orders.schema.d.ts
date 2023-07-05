@@ -24,6 +24,7 @@ export declare class OrderItems {
     addIngredients: MealIngredients[];
     removeIngredients: MealIngredients[];
     quantity: number;
+    description: string;
 }
 export declare const OrderItemSchema: mongoose.Schema<OrderItems, mongoose.Model<OrderItems, any, any, any, mongoose.Document<unknown, any, OrderItems> & Omit<OrderItems & {
     _id: mongoose.Types.ObjectId;
@@ -46,6 +47,8 @@ export declare class Orders {
     paymentMethod: paymentMethodsType;
     state: orderStatus;
     promoCode: string;
+    promoCodeDiscount: number;
+    totalDiscount: number;
     discount: number;
     discountType: promoCodeTypes;
     walletAmount: number;
@@ -54,6 +57,7 @@ export declare class Orders {
     totalPoints: number;
     price: number;
     no: number;
+    readed: boolean;
 }
 export declare const OrdersSchema: mongoose.Schema<Orders, mongoose.Model<Orders, any, any, any, mongoose.Document<unknown, any, Orders> & Omit<Orders & {
     _id: mongoose.Types.ObjectId;

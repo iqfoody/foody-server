@@ -1,7 +1,10 @@
 import { getSignedUrl } from '@aws-sdk/cloudfront-signer';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { S3, SNS } from 'aws-sdk';
 import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront';
+import { createReadStream, createWriteStream } from 'fs';
+import Upload from 'src/constants/Upload';
+import { unlink } from 'fs/promises';
 
 @Injectable()
 export class AwsService {
@@ -14,13 +17,25 @@ export class AwsService {
   public cloudFrontPrivateKey: string;
   public distributionId: string;
   public otps: {phoneNumber: string, otp: string}[];
+  public imageTypes: string[];
   
   constructor () {
     const region = process.env.AWS_BUCKET_REGION
-    const accessKeyId = process.env.AWS_ACCESS_KEY_LOCAL
-    const secretAccessKey = process.env.AWS_SECRET_KEY_LOCAL
+    const accessKeyId = process.env.AWS_ACCESS_KEY_PRODUCTION
+    const secretAccessKey = process.env.AWS_SECRET_KEY_PRODUCTION
 
     this.otps = [];
+
+    this.imageTypes =[
+      "image/jpg",
+      "image/JPG",
+      "image/png",
+      "image/PNG",
+      "image/jpeg",
+      "image/JPEG",
+      "image/webp",
+      "image/WEBP"
+    ];
     
     this.s3 = new S3({
       region,
@@ -64,11 +79,27 @@ export class AwsService {
     return result;
   }
 
-  createImage(file: any, Key?: string) {
-    const uploadParams = {
+  async createImage(file: Upload, Key: string) {
+    if(!this.imageTypes.includes(file.mimetype)) throw new BadRequestException("Invalide image extention")
+    const filename = file.filename;
+    const path = `./src/uploads/${filename}`;
+    const saved = await this.getReadStream(file, path);
+    if(!saved) await this.getReadStream(file, path);
+    const fileStraem = createReadStream(path);
+    const uploadParams: S3.Types.PutObjectRequest = {
         Bucket: this.bucketImages,
-        Body: file.buffer,
-        Key: Date.now()+'-'+Key+'-'+file.originalname
+        Body: fileStraem,
+        Key: Date.now()+'-'+Key+'-'+filename
+    }
+    // unlink(path);
+    return this.s3.upload(uploadParams).promise();
+  }
+
+  createRestImage(file: any, Key: string){
+    const uploadParams: S3.Types.PutObjectRequest = {
+      Bucket: this.bucketImages,
+      Body: file.buffer,
+      Key: Date.now()+'-'+Key+'-'+file.originalname
     }
     return this.s3.upload(uploadParams).promise();
   }
@@ -98,6 +129,15 @@ export class AwsService {
     }
     const invalidationCommand = new CreateInvalidationCommand(invalidationParams);
     this.cloudFront.send(invalidationCommand);
+  }
+
+  async getReadStream(file: Upload, path: string): Promise<boolean>{
+    return new Promise(async (resolve, reject) => 
+    (await file.createReadStream())
+      .pipe(createWriteStream(path))
+      .on("finish", ()=> resolve(true))
+      .on("error", ()=> reject(false))
+    )
   }
 
 //* this under testing, isn't completed...

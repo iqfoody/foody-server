@@ -35,6 +35,8 @@ let Order = class Order {
     paymentMethod;
     state;
     promoCode;
+    promoCodeDiscount;
+    totalDiscount;
     discount;
     discountType;
     walletAmount;
@@ -43,6 +45,7 @@ let Order = class Order {
     createdAt;
     updatedAt;
     no;
+    readed;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
@@ -119,6 +122,14 @@ __decorate([
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
     __metadata("design:type", Number)
+], Order.prototype, "promoCodeDiscount", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
+], Order.prototype, "totalDiscount", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
+    __metadata("design:type", Number)
 ], Order.prototype, "discount", void 0);
 __decorate([
     (0, graphql_1.Field)({ nullable: true }),
@@ -148,6 +159,10 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
     __metadata("design:type", Number)
 ], Order.prototype, "no", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => Boolean, { nullable: true }),
+    __metadata("design:type", Boolean)
+], Order.prototype, "readed", void 0);
 Order = __decorate([
     (0, graphql_1.ObjectType)()
 ], Order);

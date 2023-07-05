@@ -44,6 +44,11 @@ export class OrdersController {
         return this.ordersService.completeOrder(id, req.user, recievedPrice);
     }
 
+    @Get('/driver/history')
+    async getOrderesDriver(@Req() req, @Query('state') state?: orderStatus){
+        return this.ordersService.findOrdersDriver(req.user, state);
+    }
+
     //? -> users...
     @Get('/:id')
     async getOrder(@Param('id') id: string, @Req() req){

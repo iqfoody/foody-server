@@ -27,8 +27,8 @@ __decorate([
     __metadata("design:type", Number)
 ], LimitEntity.prototype, "limit", void 0);
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.Int, { nullable: true }),
-    __metadata("design:type", Number)
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
 ], LimitEntity.prototype, "orderBy", void 0);
 __decorate([
     (0, graphql_1.Field)({ nullable: true }),

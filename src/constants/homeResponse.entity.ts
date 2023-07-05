@@ -1,5 +1,6 @@
 import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
 import { Order } from "src/orders/entities/order.entity";
+import { TransactionsHomeResponse } from "src/transactions/entities/transactionsHomeResponse.entity";
 import { User } from "src/users/entities/user.entity";
 
 @ObjectType()
@@ -96,5 +97,8 @@ export class HomeResponse {
 
     @Field(()=> Int)
     drivers: number;
+
+    @Field(()=> TransactionsHomeResponse)
+    transactions: TransactionsHomeResponse
 
 }

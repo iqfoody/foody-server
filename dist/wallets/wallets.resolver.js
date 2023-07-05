@@ -20,18 +20,21 @@ const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
+const mongoose_1 = require("mongoose");
 let WalletsResolver = class WalletsResolver {
     walletsService;
     constructor(walletsService) {
         this.walletsService = walletsService;
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't wallet with this id");
         return this.walletsService.findOne(id);
     }
 };
 __decorate([
     (0, graphql_1.Query)(() => wallet_entity_1.Wallet, { name: 'wallet' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: wallet_entity_1.Wallet }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Wallet" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

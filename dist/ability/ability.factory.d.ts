@@ -1,4 +1,4 @@
-import { InferSubjects, MongoAbility, ConditionsMatcher, FieldMatcher, MongoQuery } from '@casl/ability';
+import { InferSubjects, MongoAbility, FieldMatcher, MongoQuery } from '@casl/ability';
 import { User } from "src/users/entities/user.entity";
 import { Admin } from 'src/admins/entities/admin.entity';
 import { Driver } from 'src/drivers/entities/driver.entity';
@@ -21,25 +21,14 @@ import { Setting } from 'src/settings/entities/setting.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
 export declare enum Actions {
     Manage = "manage",
-    Create = "create",
-    Update = "update",
-    Read = "read",
-    Delete = "delete",
-    Search = "search",
-    Info = "info",
-    UpdateInfo = "updateInfo",
-    Add = "add",
-    Edit = "edit",
-    Remove = "remove",
-    State = "state",
-    Self = "self",
-    Password = "password",
-    Refresh = "refresh",
-    Complete = "complete"
+    Create = "Create",
+    Update = "Update",
+    Read = "Read",
+    Delete = "Delete"
 }
-export type Subjects = InferSubjects<typeof User | typeof Admin | typeof Driver | typeof Address | typeof Advertisement | typeof Category | typeof Favorite | typeof Feedback | typeof Meal | typeof Order | typeof PromoCode | typeof Rate | typeof RestaurantCategory | typeof Restaurant | typeof Tag | typeof Wallet | typeof Transaction | typeof Setting | typeof Notification> | 'all';
+export type Subjects = InferSubjects<typeof User | "User" | typeof Admin | "Admin" | typeof Driver | "Driver" | typeof Address | "Address" | typeof Advertisement | "Advertisement" | typeof Category | "Category" | typeof Favorite | "Favorite" | typeof Feedback | "Feedback" | typeof Meal | "Meal" | typeof Order | "Order" | typeof PromoCode | "PromoCode" | typeof Rate | "Rate" | typeof RestaurantCategory | "RestaurantCategory" | typeof Restaurant | "Restaurant" | typeof Tag | "Tag" | typeof Wallet | "Wallet" | typeof Transaction | "Transaction" | typeof Setting | "Setting" | typeof Notification | "Notification" | "Home"> | 'all';
 export type AppAbility = MongoAbility<[Actions, Subjects], MongoQuery>;
-export declare const conditionsMatcher: ConditionsMatcher<MongoQuery<import("@casl/ability/dist/types/types").AnyObject>>;
+export declare const conditionsMatcher: import("@casl/ability").ConditionsMatcher<MongoQuery<import("@casl/ability/dist/types/types").AnyObject>>;
 export declare const fieldMatcher: FieldMatcher;
 export declare class AbilityFactory {
     defineAbility(user: ContextUser): AppAbility;

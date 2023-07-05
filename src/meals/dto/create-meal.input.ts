@@ -1,6 +1,8 @@
 import { InputType, Int, Field, ID } from '@nestjs/graphql';
 import { CreateMealIngredientInput } from './create-meal-ingredient.input';
 import { CreateMealAdditionInput } from './create-meal-addition.input';
+import Upload from 'src/constants/Upload';
+import GraphQLUpload from 'src/Graphql/GraphQLUpload';
 
 @InputType()
 export class CreateMealInput {
@@ -35,8 +37,8 @@ export class CreateMealInput {
   @Field({nullable: true})
   descriptionKR?: string;
 
-  @Field({nullable: true})
-  image?: string;
+  @Field(()=> GraphQLUpload)
+  image: Upload;
 
   @Field(()=> [CreateMealAdditionInput], {nullable: true})
   additions?: CreateMealAdditionInput[];

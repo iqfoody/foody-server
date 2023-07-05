@@ -14,6 +14,7 @@ const cloudfront_signer_1 = require("@aws-sdk/cloudfront-signer");
 const common_1 = require("@nestjs/common");
 const aws_sdk_1 = require("aws-sdk");
 const client_cloudfront_1 = require("@aws-sdk/client-cloudfront");
+const fs_1 = require("fs");
 let AwsService = class AwsService {
     s3;
     sns;
@@ -24,11 +25,22 @@ let AwsService = class AwsService {
     cloudFrontPrivateKey;
     distributionId;
     otps;
+    imageTypes;
     constructor() {
         const region = process.env.AWS_BUCKET_REGION;
         const accessKeyId = process.env.AWS_ACCESS_KEY_LOCAL;
         const secretAccessKey = process.env.AWS_SECRET_KEY_LOCAL;
         this.otps = [];
+        this.imageTypes = [
+            "image/jpg",
+            "image/JPG",
+            "image/png",
+            "image/PNG",
+            "image/jpeg",
+            "image/JPEG",
+            "image/webp",
+            "image/WEBP"
+        ];
         this.s3 = new aws_sdk_1.S3({
             region,
             accessKeyId,
@@ -67,7 +79,23 @@ let AwsService = class AwsService {
             return url;
         return result;
     }
-    createImage(file, Key) {
+    async createImage(file, Key) {
+        if (!this.imageTypes.includes(file.mimetype))
+            throw new common_1.BadRequestException("Invalide image extention");
+        const filename = file.filename;
+        const path = `./src/uploads/${filename}`;
+        const saved = await this.getReadStream(file, path);
+        if (!saved)
+            await this.getReadStream(file, path);
+        const fileStraem = (0, fs_1.createReadStream)(path);
+        const uploadParams = {
+            Bucket: this.bucketImages,
+            Body: fileStraem,
+            Key: Date.now() + '-' + Key + '-' + filename
+        };
+        return this.s3.upload(uploadParams).promise();
+    }
+    createRestImage(file, Key) {
         const uploadParams = {
             Bucket: this.bucketImages,
             Body: file.buffer,
@@ -99,6 +127,12 @@ let AwsService = class AwsService {
         };
         const invalidationCommand = new client_cloudfront_1.CreateInvalidationCommand(invalidationParams);
         this.cloudFront.send(invalidationCommand);
+    }
+    async getReadStream(file, path) {
+        return new Promise(async (resolve, reject) => (await file.createReadStream())
+            .pipe((0, fs_1.createWriteStream)(path))
+            .on("finish", () => resolve(true))
+            .on("error", () => reject(false)));
     }
     async sendOtp(phoneNumber) {
         const challengeAnswer = Math.random().toString(10).substring(2, 8);

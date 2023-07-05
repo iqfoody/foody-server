@@ -1,4 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
+import GraphQLUpload from 'src/Graphql/GraphQLUpload';
+import Upload from 'src/constants/Upload';
 import { province } from 'src/constants/types.type';
 
 @InputType()
@@ -19,6 +21,6 @@ export class CreateDriverInput {
   @Field()
   city: province;
 
-  @Field({nullable: true})
-  image?: string;
+  @Field(()=> GraphQLUpload, {nullable: true})
+  image?: Upload;
 }

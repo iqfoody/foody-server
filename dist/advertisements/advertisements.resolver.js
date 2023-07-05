@@ -23,40 +23,61 @@ const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
 const position_input_1 = require("../constants/position.input");
 const state_input_1 = require("../constants/state.input");
+const create_advertisement_input_1 = require("./dto/create-advertisement.input");
+const mongoose_1 = require("mongoose");
 let AdvertisementsResolver = class AdvertisementsResolver {
     advertisementsService;
     constructor(advertisementsService) {
         this.advertisementsService = advertisementsService;
     }
+    createAdvertisement(createAdvertisementInput) {
+        return this.advertisementsService.create(createAdvertisementInput);
+    }
     findAll() {
         return this.advertisementsService.findAll();
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't advertisement with this id");
         return this.advertisementsService.findOne(id);
     }
     updateAdvertisement(updateAdvertisementInput) {
+        if (!(0, mongoose_1.isValidObjectId)(updateAdvertisementInput?.id))
+            throw new common_1.BadRequestException("There isn't advertisement with this id");
         return this.advertisementsService.update(updateAdvertisementInput.id, updateAdvertisementInput);
     }
     positionAdvertisement(updatePositionInput) {
         return this.advertisementsService.position(updatePositionInput);
     }
     stateAdvertisement(stateInput) {
+        if (!(0, mongoose_1.isValidObjectId)(stateInput?.id))
+            throw new common_1.BadRequestException("There isn't advertisement with this id");
         return this.advertisementsService.state(stateInput);
     }
     removeAdvertisement(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't advertisement with this id");
         return this.advertisementsService.remove(id);
     }
 };
 __decorate([
+    (0, graphql_1.Mutation)(() => advertisement_entity_1.Advertisement),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Advertisement" }),
+    __param(0, (0, graphql_1.Args)('createAdvertisementInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_advertisement_input_1.CreateAdvertisementInput]),
+    __metadata("design:returntype", void 0)
+], AdvertisementsResolver.prototype, "createAdvertisement", null);
+__decorate([
     (0, graphql_1.Query)(() => [advertisement_entity_1.Advertisement], { name: 'advertisements' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: advertisement_entity_1.Advertisement }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Advertisement" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AdvertisementsResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => advertisement_entity_1.Advertisement, { name: 'advertisement' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: advertisement_entity_1.Advertisement }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Advertisement" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -64,7 +85,7 @@ __decorate([
 ], AdvertisementsResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: advertisement_entity_1.Advertisement }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Advertisement" }),
     __param(0, (0, graphql_1.Args)('updateAdvertisementInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_advertisement_input_1.UpdateAdvertisementInput]),
@@ -72,7 +93,7 @@ __decorate([
 ], AdvertisementsResolver.prototype, "updateAdvertisement", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: advertisement_entity_1.Advertisement }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Advertisement" }),
     __param(0, (0, graphql_1.Args)('updatePositionInput', { type: () => [position_input_1.UpdatePositionInput] })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Array]),
@@ -80,7 +101,7 @@ __decorate([
 ], AdvertisementsResolver.prototype, "positionAdvertisement", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: advertisement_entity_1.Advertisement }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Advertisement" }),
     __param(0, (0, graphql_1.Args)('stateInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [state_input_1.StateInput]),
@@ -88,7 +109,7 @@ __decorate([
 ], AdvertisementsResolver.prototype, "stateAdvertisement", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: advertisement_entity_1.Advertisement }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "Advertisement" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

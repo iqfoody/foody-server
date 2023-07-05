@@ -27,30 +27,41 @@ const ability_factory_1 = require("../ability/ability.factory");
 const limitEntity_1 = require("../constants/limitEntity");
 const update_password_user_input_1 = require("./dto/update-password-user.input");
 const reportsResults_entity_1 = require("../constants/reportsResults.entity");
+const mongoose_1 = require("mongoose");
 let UsersResolver = class UsersResolver {
     usersService;
     constructor(usersService) {
         this.usersService = usersService;
     }
     createUser(createUserInput) {
-        return this.usersService.createUser(createUserInput, null);
+        return this.usersService.createUser(createUserInput);
     }
     async findAll(limitEntity) {
         return this.usersService.findAllUsers(limitEntity);
     }
     async findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't user with this id");
         return this.usersService.findOne(id);
     }
     async updateUser(updateUserInput) {
+        if (!(0, mongoose_1.isValidObjectId)(updateUserInput?.id))
+            throw new common_1.BadRequestException("There isn't user with this id");
         return this.usersService.updateUser(updateUserInput.id, updateUserInput);
     }
     async passwordUser(passwordUserInput) {
+        if (!(0, mongoose_1.isValidObjectId)(passwordUserInput?.id))
+            throw new common_1.BadRequestException("There isn't user with this id");
         return this.usersService.passwordUser(passwordUserInput.id, passwordUserInput);
     }
     async stateUser(stateInput) {
+        if (!(0, mongoose_1.isValidObjectId)(stateInput?.id))
+            throw new common_1.BadRequestException("There isn't user with this id");
         return this.usersService.state(stateInput);
     }
     async removeUser(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't user with this id");
         return this.usersService.remove(id);
     }
     usersReports(date) {
@@ -59,7 +70,7 @@ let UsersResolver = class UsersResolver {
 };
 __decorate([
     (0, graphql_1.Mutation)(() => user_entity_1.User),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: user_entity_1.User }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "User" }),
     __param(0, (0, graphql_1.Args)('createUserInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_input_1.CreateUserInput]),
@@ -67,7 +78,7 @@ __decorate([
 ], UsersResolver.prototype, "createUser", null);
 __decorate([
     (0, graphql_1.Query)(() => usersResponse_entity_1.UsersResponse, { name: 'users' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: user_entity_1.User }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "User" }),
     __param(0, (0, graphql_1.Args)('limitEntity')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
@@ -75,7 +86,7 @@ __decorate([
 ], UsersResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => user_entity_1.User, { name: 'user' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: user_entity_1.User }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "User" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -83,7 +94,7 @@ __decorate([
 ], UsersResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: user_entity_1.User }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "User" }),
     __param(0, (0, graphql_1.Args)('updateUserInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_user_input_1.UpdateUserInput]),
@@ -91,7 +102,7 @@ __decorate([
 ], UsersResolver.prototype, "updateUser", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String, { name: 'passwordUser' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: user_entity_1.User }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "User" }),
     __param(0, (0, graphql_1.Args)('passwordUserInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_password_user_input_1.UpdatePasswordUser]),
@@ -99,7 +110,7 @@ __decorate([
 ], UsersResolver.prototype, "passwordUser", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.State, subject: user_entity_1.User }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "User" }),
     __param(0, (0, graphql_1.Args)('stateInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [state_input_1.StateInput]),
@@ -107,7 +118,7 @@ __decorate([
 ], UsersResolver.prototype, "stateUser", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: user_entity_1.User }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "User" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -115,7 +126,7 @@ __decorate([
 ], UsersResolver.prototype, "removeUser", null);
 __decorate([
     (0, graphql_1.Query)(() => reportsResults_entity_1.Months, { name: 'usersReport' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: user_entity_1.User }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "User" }),
     __param(0, (0, graphql_1.Args)('date', { type: () => String })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

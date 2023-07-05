@@ -23,6 +23,8 @@ const ability_factory_1 = require("../ability/ability.factory");
 const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
 const state_input_1 = require("../constants/state.input");
+const check_promo_code_input_1 = require("./dto/check-promo-code.input");
+const mongoose_1 = require("mongoose");
 let PromoCodesResolver = class PromoCodesResolver {
     promoCodesService;
     constructor(promoCodesService) {
@@ -31,40 +33,59 @@ let PromoCodesResolver = class PromoCodesResolver {
     createPromoCode(createPromoCodeInput) {
         return this.promoCodesService.create(createPromoCodeInput);
     }
+    checkPromoCode(checkPromoCodeInput) {
+        return this.promoCodesService.checkPromoCode(checkPromoCodeInput);
+    }
     findAll() {
         return this.promoCodesService.findAll();
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't promo code with this id");
         return this.promoCodesService.findOne(id);
     }
     updatePromoCode(updatePromoCodeInput) {
+        if (!(0, mongoose_1.isValidObjectId)(updatePromoCodeInput?.id))
+            throw new common_1.BadRequestException("There isn't promo code with this id");
         return this.promoCodesService.update(updatePromoCodeInput.id, updatePromoCodeInput);
     }
     statePromoCode(stateInput) {
+        if (!(0, mongoose_1.isValidObjectId)(stateInput?.id))
+            throw new common_1.BadRequestException("There isn't promo code with this id");
         return this.promoCodesService.state(stateInput);
     }
     removePromoCode(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't promo code with this id");
         return this.promoCodesService.remove(id);
     }
 };
 __decorate([
     (0, graphql_1.Mutation)(() => promo_code_entity_1.PromoCode),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: promo_code_entity_1.PromoCode }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "PromoCode" }),
     __param(0, (0, graphql_1.Args)('createPromoCodeInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_promo_code_input_1.CreatePromoCodeInput]),
     __metadata("design:returntype", void 0)
 ], PromoCodesResolver.prototype, "createPromoCode", null);
 __decorate([
+    (0, graphql_1.Mutation)(() => promo_code_entity_1.PromoCode),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "Order" }),
+    __param(0, (0, graphql_1.Args)('checkPromoCodeInput')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [check_promo_code_input_1.CheckPromoCodeInput]),
+    __metadata("design:returntype", void 0)
+], PromoCodesResolver.prototype, "checkPromoCode", null);
+__decorate([
     (0, graphql_1.Query)(() => [promo_code_entity_1.PromoCode], { name: 'promoCodes' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: promo_code_entity_1.PromoCode }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "PromoCode" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], PromoCodesResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => promo_code_entity_1.PromoCode, { name: 'promoCode' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: promo_code_entity_1.PromoCode }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "PromoCode" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -72,7 +93,7 @@ __decorate([
 ], PromoCodesResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: promo_code_entity_1.PromoCode }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "PromoCode" }),
     __param(0, (0, graphql_1.Args)('updatePromoCodeInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_promo_code_input_1.UpdatePromoCodeInput]),
@@ -80,7 +101,7 @@ __decorate([
 ], PromoCodesResolver.prototype, "updatePromoCode", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: promo_code_entity_1.PromoCode }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "PromoCode" }),
     __param(0, (0, graphql_1.Args)('stateInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [state_input_1.StateInput]),
@@ -88,7 +109,7 @@ __decorate([
 ], PromoCodesResolver.prototype, "statePromoCode", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: promo_code_entity_1.PromoCode }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "PromoCode" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

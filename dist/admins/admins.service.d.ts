@@ -37,7 +37,7 @@ export declare class AdminsService {
     private readonly awsService;
     constructor(AdminsModel: IAdminsModel, walletsService: WalletsService, awsService: AwsService);
     login(loginInput: LoginInput): Promise<import("src/models/admins.schema").AdminsDocument>;
-    create(_id: string, createAdminInput: CreateAdminInput, file: any): Promise<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
+    create(_id: string, createAdminInput: CreateAdminInput): Promise<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     findAll(): Promise<Omit<import("mongoose").Document<unknown, import("src/models/admins.schema").IAdminsQueryHelpers, import("src/models/admins.schema").AdminsDocument> & Omit<import("src/models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {

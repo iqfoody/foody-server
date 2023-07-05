@@ -45,53 +45,53 @@ type UsersResponse {
   pages: Int!
 }
 
-type Admin {
-  _id: ID!
-  wallet: Wallet!
-  name: String!
-  email: String!
-  password: String!
-  type: String!
-  image: String
-  state: String!
-  createdAt: Timestamp
-  updatedAt: Timestamp
-  ip: String
-  platform: String
-  refreshToken: String
-  deviceToken: String
+type Days {
+  d1: Int!
+  d2: Int!
+  d3: Int!
+  d4: Int!
+  d5: Int!
+  d6: Int!
+  d7: Int!
+  d8: Int!
+  d9: Int!
+  d10: Int!
+  d11: Int!
+  d12: Int!
+  d13: Int!
+  d14: Int!
+  d15: Int!
+  d16: Int!
+  d17: Int!
+  d18: Int!
+  d19: Int!
+  d20: Int!
+  d21: Int!
+  d22: Int!
+  d23: Int!
+  d24: Int!
+  d25: Int!
+  d26: Int!
+  d27: Int!
+  d28: Int
+  d29: Int
+  d30: Int
+  d31: Int
 }
 
-type Driver {
-  _id: ID!
-  wallet: Wallet!
-  name: String!
-  phoneNumber: String!
-  country: String
-  city: String!
-  image: String
-  state: String!
-  createdAt: Timestamp
-  updatedAt: Timestamp
-  ip: String
-  platform: String
-  refreshToken: String
-  deviceToken: String
-}
-
-type Address {
-  _id: ID!
-  user: String!
-  title: String!
-  country: String
-  phoneNumber: String
-  city: String
-  address: String
-  building: String
-  apartment: String
-  description: String
-  latitude: Float
-  longitude: Float
+type Months {
+  m0: Days!
+  m1: Days!
+  m2: Days!
+  m3: Days!
+  m4: Days!
+  m5: Days!
+  m6: Days!
+  m7: Days!
+  m8: Days!
+  m9: Days!
+  m10: Days!
+  m11: Days!
 }
 
 type Restaurant {
@@ -195,6 +195,86 @@ type Favorite {
   meals: String
 }
 
+type Address {
+  _id: ID!
+  user: String!
+  title: String!
+  country: String
+  phoneNumber: String
+  city: String
+  address: String
+  building: String
+  apartment: String
+  description: String
+  latitude: Float
+  longitude: Float
+}
+
+type AdminPermission {
+  object: String!
+  abilities: [String!]!
+}
+
+type Admin {
+  _id: ID!
+  wallet: Wallet!
+  name: String!
+  email: String!
+  password: String!
+  type: String!
+  permissions: [AdminPermission!]!
+  image: String
+  state: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  ip: String
+  platform: String
+  refreshToken: String
+  deviceToken: String
+}
+
+type LoginAdmin {
+  accessToken: String!
+  refreshToken: String!
+  user: Admin!
+}
+
+type Driver {
+  _id: ID!
+  wallet: Wallet!
+  name: String!
+  phoneNumber: String!
+  country: String
+  city: String!
+  image: String
+  state: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  ip: String
+  platform: String
+  refreshToken: String
+  deviceToken: String
+}
+
+type Advertisement {
+  _id: ID!
+  meal: Meal
+  restaurant: Restaurant
+  user: User
+  title: String!
+  titleEN: String!
+  titleKR: String
+  image: String!
+  type: String
+  position: Int!
+  state: String!
+}
+
+type MealsResponse {
+  data: [Meal!]!
+  pages: Int!
+}
+
 type Feedback {
   _id: ID!
   subject: String!
@@ -202,6 +282,11 @@ type Feedback {
   name: String
   phoneNumber: String
   user: User
+}
+
+type FeedbacksLimit {
+  data: [Feedback!]!
+  pages: Int!
 }
 
 type OrderMealAddition {
@@ -236,6 +321,8 @@ type Order {
   paymentMethod: String!
   state: String!
   promoCode: String
+  promoCodeDiscount: Int
+  totalDiscount: Int
   discount: Int
   discountType: String
   walletAmount: Int
@@ -244,108 +331,7 @@ type Order {
   createdAt: Timestamp
   updatedAt: Timestamp
   no: Int
-}
-
-type PromoCode {
-  _id: ID!
-  name: String!
-  users: [String!]
-  user: User
-  type: String!
-  discount: Int!
-  usageTimes: Int!
-  isPublic: Boolean!
-  expire: Timestamp!
-  state: String!
-  createdAt: Timestamp
-  updatedAt: Timestamp
-}
-
-type Rate {
-  _id: ID!
-  user: String!
-  restaurant: String!
-  rate: Int!
-  description: String
-}
-
-type Days {
-  d1: Int!
-  d2: Int!
-  d3: Int!
-  d4: Int!
-  d5: Int!
-  d6: Int!
-  d7: Int!
-  d8: Int!
-  d9: Int!
-  d10: Int!
-  d11: Int!
-  d12: Int!
-  d13: Int!
-  d14: Int!
-  d15: Int!
-  d16: Int!
-  d17: Int!
-  d18: Int!
-  d19: Int!
-  d20: Int!
-  d21: Int!
-  d22: Int!
-  d23: Int!
-  d24: Int!
-  d25: Int!
-  d26: Int!
-  d27: Int!
-  d28: Int
-  d29: Int
-  d30: Int
-  d31: Int
-}
-
-type Months {
-  m0: Days!
-  m1: Days!
-  m2: Days!
-  m3: Days!
-  m4: Days!
-  m5: Days!
-  m6: Days!
-  m7: Days!
-  m8: Days!
-  m9: Days!
-  m10: Days!
-  m11: Days!
-}
-
-type LoginAdmin {
-  accessToken: String!
-  refreshToken: String!
-  user: Admin!
-}
-
-type Advertisement {
-  _id: ID!
-  meal: Meal
-  restaurant: Restaurant
-  user: User
-  title: String!
-  titleEN: String!
-  titleKR: String
-  image: String!
-  type: String
-  position: Int!
-  state: String!
-}
-
-type MealsResponse {
-  data: [Meal!]!
-  pages: Int!
-}
-
-type FeedbacksLimit {
-  data: [Feedback!]!
-  pages: Int!
+  readed: Boolean
 }
 
 type Notification {
@@ -375,11 +361,19 @@ type Notification {
 type NotificationsResponse {
   data: [Notification!]!
   pages: Int!
+  orders: Int
 }
 
 type OrdersResponse {
   data: [Order!]!
   pages: Int!
+}
+
+type TransactionsHomeResponse {
+  minusAmount: Int!
+  plusAmount: Int!
+  minusPoints: Int!
+  plusPoints: Int!
 }
 
 type RatingResponse {
@@ -418,6 +412,30 @@ type HomeResponse {
   restaurants: Int
   meals: Int!
   drivers: Int!
+  transactions: TransactionsHomeResponse!
+}
+
+type PromoCode {
+  _id: ID!
+  name: String!
+  users: [String!]
+  user: User
+  type: String!
+  discount: Int!
+  usageTimes: Int!
+  isPublic: Boolean!
+  expire: Timestamp!
+  state: String!
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+type Rate {
+  _id: ID!
+  user: String!
+  restaurant: String!
+  rate: Int!
+  description: String
 }
 
 type Transaction {
@@ -518,7 +536,7 @@ type Query {
 input LimitEntity {
   page: Int!
   limit: Int!
-  orderBy: Int
+  orderBy: String
   state: String
   user: ID
 }
@@ -551,10 +569,12 @@ type Mutation {
   passwordDriver(passwordDriverInput: UpdatePasswordUser!): String!
   stateDriver(stateInput: StateInput!): String!
   removeDriver(id: ID!): String!
+  createAdvertisement(createAdvertisementInput: CreateAdvertisementInput!): Advertisement!
   updateAdvertisement(updateAdvertisementInput: UpdateAdvertisementInput!): String!
   positionAdvertisement(updatePositionInput: [UpdatePositionInput!]!): String!
   stateAdvertisement(stateInput: StateInput!): String!
   removeAdvertisement(id: ID!): String!
+  createCategory(createCategoryInput: CreateCategoryInput!): Category!
   updateCategory(updateCategoryInput: UpdateCategoryInput!): String!
   positionCategory(updatePositionInput: [UpdatePositionInput!]!): String!
   stateCategory(stateInput: StateInput!): String!
@@ -569,13 +589,13 @@ type Mutation {
   removeMealObject(removeMealObject: RemoveMealObject!): String!
   removeFeedback(id: ID!): String!
   createNotification(createNotificationInput: CreateNotificationInput!): Notification!
-  updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
   removeNotification(id: ID!): Notification!
   createOrder(createOrderInput: CreateOrderInput!): Order!
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
   stateOrder(stateInput: StateInput!): String!
   removeOrder(id: ID!): String!
   createPromoCode(createPromoCodeInput: CreatePromoCodeInput!): PromoCode!
+  checkPromoCode(checkPromoCodeInput: CheckPromoCodeInput!): PromoCode!
   updatePromoCode(updatePromoCodeInput: UpdatePromoCodeInput!): String!
   statePromoCode(stateInput: StateInput!): String!
   removePromoCode(id: ID!): String!
@@ -612,12 +632,15 @@ input CreateUserInput {
   password: String
   type: String
   city: String
-  image: String
+  image: Upload
   deviceToken: String
   ip: String
   platform: String
   refreshToken: String
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input UpdateUserInput {
   name: String
@@ -626,7 +649,7 @@ input UpdateUserInput {
   password: String
   type: String
   city: String
-  image: String
+  image: Upload
   deviceToken: String
   ip: String
   platform: String
@@ -688,16 +711,21 @@ input CreateAdminInput {
   name: String!
   email: String!
   password: String!
-  type: String!
-  image: String
+  permissions: [AdminPermissionsInput!]!
+  image: Upload
+}
+
+input AdminPermissionsInput {
+  object: String!
+  abilities: [String!]!
 }
 
 input UpdateAdminInput {
   name: String
   email: String
   password: String
-  type: String
-  image: String
+  permissions: [AdminPermissionsInput!]
+  image: Upload
   id: ID
   ip: String
   platform: String
@@ -711,7 +739,7 @@ input CreateDriverInput {
   password: String!
   country: String
   city: String!
-  image: String
+  image: Upload
 }
 
 input UpdateDriverInput {
@@ -720,12 +748,23 @@ input UpdateDriverInput {
   password: String
   country: String
   city: String
-  image: String
+  image: Upload
   id: ID
   ip: String
   platform: String
   refreshToken: String
   deviceToken: String
+}
+
+input CreateAdvertisementInput {
+  meal: ID
+  restaurant: ID
+  user: ID
+  title: String!
+  titleEN: String!
+  titleKR: String
+  image: Upload!
+  type: String
 }
 
 input UpdateAdvertisementInput {
@@ -735,7 +774,7 @@ input UpdateAdvertisementInput {
   title: String
   titleEN: String
   titleKR: String
-  image: String
+  image: Upload
   type: String
   id: ID
 }
@@ -745,11 +784,18 @@ input UpdatePositionInput {
   position: Int!
 }
 
+input CreateCategoryInput {
+  title: String!
+  titleEN: String!
+  titleKR: String
+  image: Upload!
+}
+
 input UpdateCategoryInput {
   title: String
   titleEN: String
   titleKR: String
-  image: String
+  image: Upload
   id: ID
 }
 
@@ -764,7 +810,7 @@ input CreateMealInput {
   description: String!
   descriptionEN: String!
   descriptionKR: String
-  image: String
+  image: Upload!
   additions: [CreateMealAdditionInput!]
   ingredients: [CreateMealIngredientInput!]
   price: Int!
@@ -798,7 +844,7 @@ input UpdateMealInput {
   description: String
   descriptionEN: String
   descriptionKR: String
-  image: String
+  image: Upload
   additions: [CreateMealAdditionInput!]
   ingredients: [CreateMealIngredientInput!]
   price: Int
@@ -845,30 +891,11 @@ input CreateNotificationInput {
   body: String!
   bodyEN: String!
   bodyKR: String
+  image: Upload
   submit: String
   dismiss: String
   action: String
   priority: String
-}
-
-input UpdateNotificationInput {
-  user: ID
-  driver: ID
-  order: ID
-  restaurant: ID
-  meal: ID
-  type: String
-  title: String
-  titleEN: String
-  titleKR: String
-  body: String
-  bodyEN: String
-  bodyKR: String
-  submit: String
-  dismiss: String
-  action: String
-  priority: String
-  id: ID!
 }
 
 input CreateOrderInput {
@@ -890,6 +917,7 @@ input CreateOrderItemInput {
   addIngredients: [String!]
   removeIngredients: [String!]
   quantity: Int!
+  description: String
 }
 
 input UpdateOrderInput {
@@ -914,6 +942,11 @@ input CreatePromoCodeInput {
   usageTimes: Int
   isPublic: Boolean
   expire: Timestamp!
+}
+
+input CheckPromoCodeInput {
+  name: String!
+  user: ID
 }
 
 input UpdatePromoCodeInput {
@@ -951,7 +984,7 @@ input CreateRestaurantInput {
   description: String!
   descriptionEN: String!
   descriptionKR: String
-  image: String
+  image: Upload!
   time: Int!
   deliveryPrice: Int
   discount: Int!
@@ -968,7 +1001,7 @@ input UpdateRestaurantInput {
   description: String
   descriptionEN: String
   descriptionKR: String
-  image: String
+  image: Upload
   time: Int
   deliveryPrice: Int
   discount: Int
@@ -1020,7 +1053,7 @@ input UpdateTransactionInput {
   description: String
   paymentMethod: String
   state: String
-  id: ID!
+  id: ID
 }
 
 input ResetAdminWallet {

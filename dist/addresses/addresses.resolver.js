@@ -22,6 +22,7 @@ const accessAuth_guard_1 = require("../guards/accessAuth.guard");
 const common_1 = require("@nestjs/common");
 const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
+const mongoose_1 = require("mongoose");
 let AddressesResolver = class AddressesResolver {
     addressesService;
     constructor(addressesService) {
@@ -31,21 +32,29 @@ let AddressesResolver = class AddressesResolver {
         return this.addressesService.create(createAddressInput);
     }
     findAll(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't address with this id");
         return this.addressesService.findAll(id);
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't address with this id");
         return this.addressesService.findOne(id);
     }
     updateAddress(updateAddressInput) {
+        if (!(0, mongoose_1.isValidObjectId)(updateAddressInput?.id))
+            throw new common_1.BadRequestException("There isn't address with this id");
         return this.addressesService.update(updateAddressInput.id, updateAddressInput);
     }
     removeAddress(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't address with this id");
         return this.addressesService.remove(id);
     }
 };
 __decorate([
     (0, graphql_1.Mutation)(() => address_entity_1.Address),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: address_entity_1.Address }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "User" }),
     __param(0, (0, graphql_1.Args)('createAddressInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_address_input_1.CreateAddressInput]),
@@ -53,7 +62,7 @@ __decorate([
 ], AddressesResolver.prototype, "createAddress", null);
 __decorate([
     (0, graphql_1.Query)(() => [address_entity_1.Address], { name: 'addresses' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: address_entity_1.Address }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "User" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -61,7 +70,7 @@ __decorate([
 ], AddressesResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => address_entity_1.Address, { name: 'address' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: address_entity_1.Address }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "User" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -69,7 +78,7 @@ __decorate([
 ], AddressesResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: address_entity_1.Address }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "User" }),
     __param(0, (0, graphql_1.Args)('updateAddressInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_address_input_1.UpdateAddressInput]),
@@ -77,7 +86,7 @@ __decorate([
 ], AddressesResolver.prototype, "updateAddress", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: address_entity_1.Address }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "User" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

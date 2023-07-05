@@ -1,3 +1,4 @@
+import { AdminPermission } from 'src/admins/entities/admin-permissions.entity';
 export declare class ContextUser {
     _id: string;
     name: string;
@@ -7,4 +8,5 @@ export declare class ContextUser {
     metadata: string;
     refreshToken?: string;
     deviceToken?: string;
+    permissions: AdminPermission[];
 }

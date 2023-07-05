@@ -24,13 +24,14 @@ const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
 const state_input_1 = require("../constants/state.input");
 const position_input_1 = require("../constants/position.input");
+const mongoose_1 = require("mongoose");
 let RestaurantsResolver = class RestaurantsResolver {
     restaurantsService;
     constructor(restaurantsService) {
         this.restaurantsService = restaurantsService;
     }
     createRestaurant(createRestaurantInput) {
-        return this.restaurantsService.create(createRestaurantInput, null);
+        return this.restaurantsService.create(createRestaurantInput);
     }
     findAll() {
         return this.restaurantsService.findAll();
@@ -39,24 +40,32 @@ let RestaurantsResolver = class RestaurantsResolver {
         return this.restaurantsService.search(query);
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't restaurant with this id");
         return this.restaurantsService.findOne(id);
     }
     updateRestaurant(updateRestaurantInput) {
+        if (!(0, mongoose_1.isValidObjectId)(updateRestaurantInput?.id))
+            throw new common_1.BadRequestException("There isn't restaurant with this id");
         return this.restaurantsService.update(updateRestaurantInput.id, updateRestaurantInput);
     }
     stateRestaurant(stateInput) {
+        if (!(0, mongoose_1.isValidObjectId)(stateInput?.id))
+            throw new common_1.BadRequestException("There isn't restaurant with this id");
         return this.restaurantsService.state(stateInput);
     }
     positionRestaurant(updatePositionInput) {
         return this.restaurantsService.position(updatePositionInput);
     }
     removeRestaurant(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't restaurant with this id");
         return this.restaurantsService.remove(id);
     }
 };
 __decorate([
     (0, graphql_1.Mutation)(() => restaurant_entity_1.Restaurant),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: restaurant_entity_1.Restaurant }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: "Restaurant" }),
     __param(0, (0, graphql_1.Args)('createRestaurantInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_restaurant_input_1.CreateRestaurantInput]),
@@ -64,14 +73,14 @@ __decorate([
 ], RestaurantsResolver.prototype, "createRestaurant", null);
 __decorate([
     (0, graphql_1.Query)(() => [restaurant_entity_1.Restaurant], { name: 'restaurants' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: restaurant_entity_1.Restaurant }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Restaurant" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], RestaurantsResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => [restaurant_entity_1.Restaurant], { name: 'searchRestaurants' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: restaurant_entity_1.Restaurant }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Restaurant" }),
     __param(0, (0, graphql_1.Args)('query', { type: () => String })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -79,7 +88,7 @@ __decorate([
 ], RestaurantsResolver.prototype, "search", null);
 __decorate([
     (0, graphql_1.Query)(() => restaurant_entity_1.Restaurant, { name: 'restaurant' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: restaurant_entity_1.Restaurant }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Restaurant" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -87,7 +96,7 @@ __decorate([
 ], RestaurantsResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: restaurant_entity_1.Restaurant }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Restaurant" }),
     __param(0, (0, graphql_1.Args)('updateRestaurantInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [update_restaurant_input_1.UpdateRestaurantInput]),
@@ -95,7 +104,7 @@ __decorate([
 ], RestaurantsResolver.prototype, "updateRestaurant", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: restaurant_entity_1.Restaurant }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Restaurant" }),
     __param(0, (0, graphql_1.Args)('stateInput')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [state_input_1.StateInput]),
@@ -103,7 +112,7 @@ __decorate([
 ], RestaurantsResolver.prototype, "stateRestaurant", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: restaurant_entity_1.Restaurant }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Restaurant" }),
     __param(0, (0, graphql_1.Args)('updatePositionInput', { type: () => [position_input_1.UpdatePositionInput] })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Array]),
@@ -111,7 +120,7 @@ __decorate([
 ], RestaurantsResolver.prototype, "positionRestaurant", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: restaurant_entity_1.Restaurant }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "Restaurant" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

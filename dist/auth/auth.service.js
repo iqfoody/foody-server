@@ -54,7 +54,7 @@ let AuthService = class AuthService {
         const user = await this.usersService.findByPhoneNumber(phoneNumber);
         if (user)
             return user;
-        throw new common_1.BadRequestException('phoneNumber E0010');
+        throw new common_1.BadRequestException('phoneNumber E0009');
     }
     async login(context, loginInput) {
         const ip = context?.ip;
@@ -142,7 +142,7 @@ let AuthService = class AuthService {
         }
     }
     async getTokens(user, metadata) {
-        const userData = { _id: user?._id, type: user?.type, name: user?.name, phoneNumber: user?.phoneNumber, email: user?.email, metadata };
+        const userData = { _id: user?._id, type: user?.type, name: user?.name, phoneNumber: user?.phoneNumber, email: user?.email, permissions: user?.permissions, metadata };
         const [at, rt] = await Promise.all([
             this.jwtService.sign(userData, this.accessOptions),
             this.jwtService.sign(userData, this.refreshOptions),
@@ -150,7 +150,7 @@ let AuthService = class AuthService {
         return { accessToken: at, refreshToken: rt, user };
     }
     async getNewAccessToken(user, metadata) {
-        const userData = { _id: user?._id, type: user?.type, name: user?.name, phoneNumber: user?.phoneNumber, email: user?.email, metadata };
+        const userData = { _id: user?._id, type: user?.type, name: user?.name, phoneNumber: user?.phoneNumber, email: user?.email, permissions: user?.permissions, metadata };
         return this.jwtService.sign(userData, this.accessOptions);
     }
 };

@@ -51,13 +51,13 @@ let DriversService = class DriversService {
             throw new common_1.ForbiddenException('Access Denied');
         return driver;
     }
-    async create(createDriverInput, file) {
+    async create(createDriverInput) {
         let E0011 = await this.findByPhoneNumber(createDriverInput.phoneNumber);
         if (E0011)
             throw new Error('phoneNumber E0011');
         const driver = new this.DriversModel(createDriverInput);
-        if (file) {
-            const result = await this.awsService.createImage(file, driver._id);
+        if (createDriverInput?.image) {
+            const result = await this.awsService.createImage(createDriverInput.image, driver._id);
             driver.image = result?.Key;
         }
         const wallet = await this.walletsService.create({ driver: driver._id });
@@ -99,8 +99,12 @@ let DriversService = class DriversService {
             const { image } = await this.DriversModel.findOne({ _id: updateDriverInput.id }, { image: 1, _id: 0 });
             if (image)
                 this.awsService.removeImage(image);
+            const result = await this.awsService.createImage(updateDriverInput.image, id);
+            await this.DriversModel.findByIdAndUpdate(id, { ...updateDriverInput, image: result?.Key });
         }
-        await this.DriversModel.findByIdAndUpdate(id, updateDriverInput);
+        else {
+            await this.DriversModel.findByIdAndUpdate(id, updateDriverInput);
+        }
         return "account updated";
     }
     async password(id, updatePasswordDriver) {
@@ -126,6 +130,9 @@ let DriversService = class DriversService {
         if (!driver)
             throw new common_1.BadRequestException("There isn't driver regestered with this phone number");
         return driver;
+    }
+    async findDeviceToken(_id) {
+        return this.DriversModel.findOne({ _id }, { deviceToken: 1, _id: 0 });
     }
     async home() {
         return this.DriversModel.countDocuments();

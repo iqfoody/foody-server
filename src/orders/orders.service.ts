@@ -58,6 +58,7 @@ export class OrdersService {
     let price: number = 0;
     let priceAdditions: number = 0;
     let priceAfterDiscount: number = 0;
+    let totalDiscount: number = 0;
     let transaction = {
       user: _id,
       amount: 0
@@ -128,12 +129,15 @@ export class OrdersService {
     if(discount > 0 && totalPrice >= minDiscount){
       if(maxDiscount === 0 || totalPrice < maxDiscount){
         totalPrice += -(totalPrice * (discount/100));
+        totalDiscount += (totalPrice * (discount/100));
       } else
       if(totalPrice > maxDiscount){
         totalPrice += -maxDiscount;
+        totalDiscount += maxDiscount;
       }
     } else if(priceAfterDiscount > 0) {
       totalPrice += -priceAfterDiscount;
+      totalDiscount += priceAfterDiscount;
     }
 
     // -> sync promo code if exist...
@@ -144,7 +148,7 @@ export class OrdersService {
       if(promoCode.type === 'Price') {
         totalPrice += -promoCode.discount;
         if(totalPrice < 0) totalPrice = 0;
-        demoOrderDate = {...demoOrderDate, discountType: "Price", discount: promoCode.discount, promoCode: promoCode.name};
+        demoOrderDate = {...demoOrderDate, discountType: "Price", promoCodeDiscount: promoCode.discount, promoCode: promoCode.name};
         let precentValue = (price / promoCode.discount) / 100;
         pointsBack += - (pointsBack * precentValue);
         
@@ -152,7 +156,7 @@ export class OrdersService {
       if(promoCode.type === 'Percent') {
         totalPrice += - totalPrice * (promoCode.discount/100);
         if(totalPrice < 0) totalPrice = 0;
-        demoOrderDate = {...demoOrderDate, discountType: "Percent", discount: promoCode.discount, promoCode: promoCode.name};
+        demoOrderDate = {...demoOrderDate, discountType: "Percent", promoCodeDiscount: promoCode.discount, promoCode: promoCode.name};
         pointsBack += - (pointsBack * (promoCode.discount / 100));
       }; 
     }
@@ -195,7 +199,7 @@ export class OrdersService {
     const no = await this.OrdersModel.countDocuments();
 
     // -> creating order...
-    const order = await this.OrdersModel.create({...demoOrderDate, totalPrice, price, state: "Pending", deliveryPrice, pointsBack, no});
+    const order = await this.OrdersModel.create({...demoOrderDate, totalPrice, price, state: "Pending", discount, deliveryPrice, pointsBack, no, totalDiscount});
     if(!order) throw new BadRequestException("you order haven't created please try again later");
     if(usePromoCode && createOrderInput?.paymentMethod !== "Points") await this.promoCodeService.usePromoCode(createOrderInput.promoCode, _id);
     if(createOrderInput?.paymentMethod === "Wallet" && transaction.amount !== 0){
@@ -212,9 +216,9 @@ export class OrdersService {
     let orders = [];
     if(state && state === "Deleted") return;
     if(!state){
-      orders = await this.OrdersModel.find({$and: [{user: _id}, {state: {$ne: "Deleted"}}]}).select(['-__v', '-updatedAt', '-type', '-user']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1} } ] );
+      orders = await this.OrdersModel.find({$and: [{user: _id}, {state: {$ne: "Deleted"}}]}).select(['-__v', '-updatedAt', '-type', '-user']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1} }, {path: "driver", select: {name: 1, phoneNumber: 1, image: 1}} ] );
     } else if(state) {
-      orders = await this.OrdersModel.find({$and: [{user: _id}, {state}]}).select(['-__v', '-updatedAt', '-type', '-user']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1}} ] );
+      orders = await this.OrdersModel.find({$and: [{user: _id}, {state}]}).select(['-__v', '-updatedAt', '-type', '-user']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1}}, {path: "driver", select: {name: 1, phoneNumber: 1, image: 1}} ] );
     }
     for(const order of orders){
       if(order?.restaurant?.image) order.restaurant.image = this.awsService.getUrl(order.restaurant.image);
@@ -223,6 +227,28 @@ export class OrdersService {
           if(meal?.meal?.image) meal.meal.image = this.awsService.getUrl(meal.meal.image)
         }
       }
+      if(order?.driver?.image) order.driver.image = this.awsService.getUrl(order.driver.image);
+    }
+    return orders;
+  }
+
+  async findOrdersDriver(phoneNumber: string, state?: orderStatus){
+    const { _id } = await this.driversService.findId(phoneNumber);
+    let orders = [];
+    if(state && state === "Deleted") return;
+    if(!state){
+      orders = await this.OrdersModel.find({$and: [{driver: _id}, {state: {$ne: "Deleted"}}]}).select(['-__v', '-updatedAt', '-type']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1} }, {path: "user", select: {name: 1, phoneNumber: 1, image: 1}} ] );
+    } else if(state) {
+      orders = await this.OrdersModel.find({$and: [{driver: _id}, {state}]}).select(['-__v', '-updatedAt', '-type']).populate( [ {path: 'restaurant', select: {title: 1, titleEN: 1, titleKR: 1, image: 1}}, {path: "address", select: {title: 1, longitude: 1, latitude: 1, _id: 0}}, {path: "meals.meal", select: {title: 1, titleEN: 1, titleKR: 1, price: 1, image: 1}}, {path: "user", select: {name: 1, phoneNumber: 1, image: 1}} ] );
+    }
+    for(const order of orders){
+      if(order?.restaurant?.image) order.restaurant.image = this.awsService.getUrl(order.restaurant.image);
+      if(order?.meals){
+        for(const meal of order.meals){
+          if(meal?.meal?.image) meal.meal.image = this.awsService.getUrl(meal.meal.image)
+        }
+      }
+      if(order?.user?.image) order.user.image = this.awsService.getUrl(order.user.image);
     }
     return orders;
   }
@@ -248,7 +274,7 @@ export class OrdersService {
     if(!order) throw new BadRequestException("Sorry, order not found");
     const updatedOrder = await this.OrdersModel.findOneAndUpdate({$and: [{_id: id}, {user: _id}, {state: "Pending"}]}, {state: "Canceled"});
     if(!updatedOrder) throw new BadRequestException("Sorry, you can't canceled this order");
-    await this.transactionsService.cancelTransaction(order._id, _id);
+    if(order?.paymentMethod !== "Cash") await this.transactionsService.cancelTransaction(order._id, _id);
     await this.notificationsService.createVertual({user: _id, order: order._id, restaurant: order.restaurant as string, type: "Management", title: "Canceled order", titleEN: "Canceled order", body: "Order has been canceled", bodyEN: "Order has been canceled"});
     return "Success";
   }
@@ -267,8 +293,8 @@ export class OrdersService {
   async completeOrder(id: string, phoneNumber: string, recievedPrice: number) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't order with this id");
     const { _id } = await this.driversService.findId(phoneNumber);
-    const order = await this.OrdersModel.findOne({$and: [{_id: id}, {driver: _id}, {state: "InDelivery"}]}, {totalPrice: 1, pointsBack: 1, user: 1});
-    if(!order || order?.totalPrice > recievedPrice) throw new NotAcceptableException("There isn't order for this action or recieved price isn't enough");
+    const order: any = await this.OrdersModel.findOne({$and: [{_id: id}, {driver: _id}, {state: "InDelivery"}]}, {totalPrice: 1, pointsBack: 1, user: 1, restaurant: 1});
+    if(!order?._id || order?.totalPrice > recievedPrice) throw new NotAcceptableException("There isn't order for this action or recieved price isn't enough");
     await this.transactionsService.completeTransaction(order._id, _id);
     await this.OrdersModel.findByIdAndUpdate(order._id, {state: "Completed", recievedPrice});
     if(recievedPrice > order?.totalPrice){
@@ -281,6 +307,7 @@ export class OrdersService {
     if (order.pointsBack > 0) await this.transactionsService.createTransaction({user: order.user as string, amount: order.pointsBack, order: order?._id, type: "Points", procedure: "Plus", paymentMethod: "Points", state: "Completed", description: "Points back from completed order"});
     //TODO: send rating notification to user...
     //TODO: send completed order notification to user...
+    await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "طلبك مكتمل", titleEN: "Order completed", body: "تم اكمال طلبك بنجاح", bodyEN: "Your order is completed"});
     return "Success";
   }
 
@@ -301,7 +328,8 @@ export class OrdersService {
   async deleteOrder(id: string, phoneNumber: string) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't order with this id");
     const { _id } = await this.usersService.findId(phoneNumber);
-    await this.OrdersModel.findOneAndDelete({$and: [{_id: id}, {user: _id}, {$or: [{state: "Completed"}, {state: "Rejected"}]}]});
+    const deleted = await this.OrdersModel.findOneAndUpdate({$and: [{_id: id}, {user: _id}, {$or: [{state: "Completed"}, {state: "Canceled"}]}]}, {state: "Deleted"});
+    if(!deleted) throw new BadRequestException("You can't delete order isn't completed yet");
     return "Success";
   }
 
@@ -312,7 +340,7 @@ export class OrdersService {
     if(!isValidObjectId(createOrderInput?.user) || !isValidObjectId(createOrderInput?.address) || !isValidObjectId(createOrderInput?.restaurant) || !isValidObjectId(createOrderInput?.driver)) throw new BadRequestException("There isn't user, address, restaurant or driver with this id");
     if(createOrderInput.meals?.length === 0) throw new BadRequestException("Please select meal to make order");
     const ActiveOrder = await this.OrdersModel.findOne({$and: [{user: createOrderInput.user}, {restaurant: createOrderInput.restaurant}, {$and: [{state: {$ne: "Completed"}}, {state: {$ne: "Deleted"}}, {state: {$ne: "Canceled"}}]}]}, {_id:  1});
-    if(ActiveOrder) throw new BadRequestException("you have order in ordered.");
+    if(ActiveOrder) throw new BadRequestException("you have order in ordered");
 
     const restaurant = await this.restaurantsService.findRestaurant(createOrderInput.restaurant);
     if(!restaurant) throw new BadRequestException("There isn't restaurant with this restaruant id");
@@ -326,9 +354,11 @@ export class OrdersService {
     let price: number = 0;
     let priceAdditions: number = 0;
     let priceAfterDiscount: number = 0;
+    let totalDiscount: number = 0;
     let discount: number = restaurant?.discount || 0;
     let minDiscount: number = restaurant?.minDiscount || 0;
     let maxDiscount: number = restaurant?.maxDiscount || 0;
+    let usePromoCode: boolean = false;
     const deliveryPrice: number = restaurant?.deliveryPrice || 0;
 
     for(const single of createOrderInput.meals){
@@ -390,12 +420,36 @@ export class OrdersService {
     if(discount > 0 && totalPrice >= minDiscount){
       if(maxDiscount === 0 || totalPrice < maxDiscount){
         totalPrice += -(totalPrice * (discount/100));
+        totalDiscount += (totalPrice * (discount/100));
       } else
       if(totalPrice >= maxDiscount){
         totalPrice += -maxDiscount;
+        totalDiscount += maxDiscount;
       }
     } else if(priceAfterDiscount > 0) {
       totalPrice += -priceAfterDiscount;
+      totalDiscount += priceAfterDiscount;
+    }
+
+    // -> sync promo code if exist...
+    if(createOrderInput?.promoCode){
+      const promoCode :any = await this.promoCodeService.checkPromoCode({name: createOrderInput.promoCode, user: createOrderInput.user});
+      if(!promoCode?.name) throw new BadRequestException("You can't use promo code dosn't exist")
+      usePromoCode = true;
+      if(promoCode.type === 'Price') {
+        totalPrice += -promoCode.discount;
+        if(totalPrice < 0) totalPrice = 0;
+        demoOrderDate = {...demoOrderDate, discountType: "Price", promoCodeDiscount: promoCode.discount, promoCode: promoCode.name};
+        let precentValue = (price / promoCode.discount) / 100;
+        pointsBack += - (pointsBack * precentValue);
+        
+      } else
+      if(promoCode.type === 'Percent') {
+        totalPrice += - totalPrice * (promoCode.discount/100);
+        if(totalPrice < 0) totalPrice = 0;
+        demoOrderDate = {...demoOrderDate, discountType: "Percent", promoCodeDiscount: promoCode.discount, promoCode: promoCode.name};
+        pointsBack += - (pointsBack * (promoCode.discount / 100));
+      }; 
     }
 
     // -> restaurnat delivery price...
@@ -410,8 +464,9 @@ export class OrdersService {
     const no = await this.OrdersModel.countDocuments();
 
     // -> creating order...
-    const order = await this.OrdersModel.create({...demoOrderDate, totalPrice, price, state: "Pending", deliveryPrice, pointsBack, no});
+    const order = await this.OrdersModel.create({...demoOrderDate, totalPrice, price, state: "Pending", discount, deliveryPrice, pointsBack, no, totalDiscount});
     if(!order) throw new BadRequestException("you order haven't created please try again later");
+    if(usePromoCode) await this.promoCodeService.usePromoCode(createOrderInput.promoCode, createOrderInput.user);
     const finalOrder: any = await order.populate([{path: "user", select: {name: 1, phoneNumber: 1, image: 1}}, {path: "restaurant", select: {title: 1, titleEN: 1, titleKR: 1}}]);
     if(finalOrder?.user?.image) finalOrder.user.image = this.awsService.getUrl(finalOrder.user.image);
     //TODO: send noti -> user & driver? ...
@@ -419,12 +474,15 @@ export class OrdersService {
   }
 
   async findAll(limitEntity: LimitEntity) {
+    let readed: boolean = true;
     const startIndex = (limitEntity.page) * limitEntity.limit;
     const total = await this.OrdersModel.countDocuments();
     const orders: any = await this.OrdersModel.find().sort({_id: -1}).limit(limitEntity.limit).skip(startIndex).populate([{path: "user", select: {name: 1, phoneNumber: 1, image: 1}}, {path: "restaurant", select: {title: 1, titleEN: 1, titleKR: 1}}]);
     for(const order of orders){
       if(order?.user?.image) order.user.image = this.awsService.getUrl(order.user.image);
+      if(!order?.readed) readed = false;
     }
+    if(!readed) await this.OrdersModel.updateMany({readed: false}, {readed: true});
     return {data: orders, pages: Math.ceil(total / limitEntity.limit)};
   }
 
@@ -473,10 +531,15 @@ export class OrdersService {
      let price: number = 0;
      let priceAdditions: number = 0;
      let priceAfterDiscount: number = 0;
+     let totalDiscount: number = 0;
      let discount: number = restaurant?.discount || 0;
      let minDiscount: number = restaurant?.minDiscount || 0;
      let maxDiscount: number = restaurant?.maxDiscount || 0;
      const deliveryPrice: number = restaurant?.deliveryPrice || 0;
+     let transaction = {
+      user: order.user,
+      amount: 0
+    };
  
      for(const single of updateOrderInput.meals){
        let additions = [];
@@ -537,48 +600,101 @@ export class OrdersService {
      if(discount > 0 && totalPrice >= minDiscount){
       if(maxDiscount === 0 || totalPrice < maxDiscount){
         totalPrice += -(totalPrice * (discount/100));
+        totalDiscount += (totalPrice * (discount/100));
       } else
       if(totalPrice >= maxDiscount){
         totalPrice += -maxDiscount;
+        totalDiscount += maxDiscount;
       }
     } else if(priceAfterDiscount > 0) {
       totalPrice += -priceAfterDiscount;
+      totalDiscount += priceAfterDiscount;
     }
 
-     // -> restaurnat delivery price...
-     price += deliveryPrice;
-     totalPrice += deliveryPrice;
+     // -> check if there is promo code...
+     if(order?.promoCode){
+      const promoCodeType = order.promoCodeDiscount <= 100 ? "Percent" : "Price";
+      if(promoCodeType === 'Price') {
+        totalPrice += -order.promoCodeDiscount;
+        if(totalPrice < 0) totalPrice = 0;
+        let precentValue = (price / order.promoCodeDiscount) / 100;
+        pointsBack += - (pointsBack * precentValue);
+        
+      } else
+      if(promoCodeType === 'Percent') {
+        totalPrice += - totalPrice * (order.promoCodeDiscount/100);
+        if(totalPrice < 0) totalPrice = 0;
+        pointsBack += - (pointsBack * (order.promoCodeDiscount / 100));
+      }; 
+     }
+
+    // -> restaurnat delivery price...
+    price += deliveryPrice;
+    totalPrice += deliveryPrice;
 
      // -> sync wallet with order...
-     const wallet = await this.walletsService.findUserWallet(order.user);
-     demoOrderDate = {...demoOrderDate, walletPoints: wallet.points};
+     if(order?.paymentMethod !== 'Cash'){
+      if(order?.walletAmount && order?.paymentMethod === 'Wallet'){
+        // -> reset amount wallet...
+        if(order?.walletAmount >= totalPrice){
+          transaction = {...transaction, amount: totalPrice};
+          totalPrice = 0;
+        } else if(order?.walletAmount > 0) {
+          totalPrice += -order?.walletAmount;
+          transaction = {...transaction, amount: order?.walletAmount};
+        } else {
+          demoOrderDate = {...demoOrderDate, paymentMethod: "Cash"}
+        }
+        
+      } else if(order?.walletPoints && order?.paymentMethod === 'Points'){
+        // -> reset points wallet...
+        if(totalPoints > order?.walletPoints) throw new BadRequestException("your points is'nt enough");
+        if(order?.walletPoints >= totalPoints){
+          transaction = {...transaction, amount: totalPoints};
+          totalPrice = deliveryPrice;
+        }
+        
+        // -> add total points to order...
+        demoOrderDate = {...demoOrderDate, totalPoints}
+      }
+    }
+
  
      // -> updating order...
-     const updatedOrder = await this.OrdersModel.findByIdAndUpdate(id, {...demoOrderDate, totalPrice, price, pointsBack});
+     const updatedOrder = await this.OrdersModel.findByIdAndUpdate(id, {...demoOrderDate, totalPrice, price, pointsBack, discount, totalDiscount});
      if(!updatedOrder) throw new BadRequestException("you order haven't updated please try again later");
 
-     //TODO: check if changed driver send notification to driver...
-     //TODO: send notification to user...
+     // -> send notification to driver...
+     if(updateOrderInput?.driver) await this.notificationsService.sendPrivate({driver: order.driver, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تعديل الطلب", titleEN: "Order updated", body: "تم تعديل طلبك", bodyEN: "Your order has been updated"});
+     // -> send notification to user...
+     await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تعديل الطلب", titleEN: "Order updated", body: "تم تعديل طلبك", bodyEN: "Your order has been updated"});
      //? if use wallet...
-     //TODO: update transaction && wallet...
-     //TODO: update order points back...
+     if(updateOrderInput?.paymentMethod !== "Cash" && transaction.amount !== 0){
+      await this.transactionsService.updateTransaction({...transaction, order: order._id});
+     }
     return this.findOne(id);
   }
 
   async state(stateInput: StateInput){
-    const order = await this.OrdersModel.findById(stateInput.id);
+    const order: any = await this.OrdersModel.findById(stateInput.id);
     if(stateInput.state === "Pending"){
-      //TODO: send noti -> user...
+      // -> send noti -> user...
+      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تغيير حالة الطلب", titleEN: "Order changed status", body: "طلبك قيد الانتظار", bodyEN: "Your order is pending"});
     } else if(stateInput.state === "InProgress"){
-      //TODO: send noti -> user...
+      // -> send noti -> user...
+      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تغيير حالة الطلب", titleEN: "Order changed status", body: "طلبك قيد التحضير", bodyEN: "Your order is in progress"});
     } else if(stateInput.state === "InDelivery") {
-      //TODO: send noti -> user, driver...
+      // -> send noti -> user, driver...
+      if(order?.driver) await this.notificationsService.sendPrivate({driver: order.driver, order: order._id, restaurant: order.restaurant, type: "Private", title: "لديك طلب جديد", titleEN: "New order", body: "تم اضافة طلب جديد لديك", bodyEN: "You have new order"});
+      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تغيير حالة الطلب", titleEN: "Order changed status", body: "طلبك قيد التوصيل", bodyEN: "Your order is in delivery"});
     } else if(stateInput.state === "Completed"){
-      //TODO: send noti -> user...
-      //TODO: complete transaction...
+      // -> send noti -> user...
+      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تغيير حالة الطلب", titleEN: "Order changed status", body: "طلبك مكتمل", bodyEN: "Your order is completed"});
+      if(order?.paymentMethod !== "Cash") await this.transactionsService.completeTransaction(order._id, order.user);
     } else if(stateInput.state === "Canceled"){
-      //TODO: send noti -> user, driver...
-      //TODO: cancele transaction...
+      // -> send noti -> user, driver...
+      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تغيير حالة الطلب", titleEN: "Order changed status", body: "تم الغاء طلبك", bodyEN: "Your order is canceled"});
+      if(order?.paymentMethod !== "Cash") await this.transactionsService.cancelTransaction(order._id, order.user);
     }
     await this.OrdersModel.findByIdAndUpdate(stateInput.id, stateInput);
     return "Success";
@@ -594,7 +710,7 @@ export class OrdersService {
     let status = { Pending: 0, InProgress: 0, InDelivery: 0, Completed: 0, Canceled: 0 };
     const data = new Date().setDate(new Date().getDate() -7);
     const ordersInWeek = await this.OrdersModel.aggregate([
-      {$match: {$and: [ {createdAt: {$gte: new Date(data)}}, {createdAt: {$lte: new Date()}} ] }},
+      {$match: {createdAt: {$gt: new Date(data)}} },
       {$group: {_id: "createAt", total: {$push: {createdAt: "$createdAt", state: "$state"}},}},
     ]);
     //TODO: set getDay() to -> getDate()...
@@ -614,8 +730,9 @@ export class OrdersService {
     const meals = await this.mealsService.home();
     const { recentlyRating, rating, total } = await this.ratesService.home();
     const { users, recentlyUsers } = await this.usersService.home();
+    const transactions = await this.transactionsService.home();
     //* 2.58 s, 13.59 KB...
-    return {orders, recentlyOrders, week, status, users, recentlyUsers, rating, total, recentlyRating, restaurants, meals, drivers};
+    return {orders, recentlyOrders, week, status, users, recentlyUsers, rating, total, recentlyRating, restaurants, meals, drivers, transactions};
   }
 
   async ordersReport(date: string){
@@ -646,6 +763,10 @@ export class OrdersService {
       }
     }
     return result;
+  }
+
+  async findUnread() {
+    return this.OrdersModel.countDocuments({readed: false});
   }
 
 }

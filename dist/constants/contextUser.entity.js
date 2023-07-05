@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContextUser = void 0;
 const graphql_1 = require("@nestjs/graphql");
+const admin_permissions_entity_1 = require("../admins/entities/admin-permissions.entity");
 let ContextUser = class ContextUser {
     _id;
     name;
@@ -20,6 +21,7 @@ let ContextUser = class ContextUser {
     metadata;
     refreshToken;
     deviceToken;
+    permissions;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.ID),
@@ -53,6 +55,10 @@ __decorate([
     (0, graphql_1.Field)({ nullable: true }),
     __metadata("design:type", String)
 ], ContextUser.prototype, "deviceToken", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => [admin_permissions_entity_1.AdminPermission]),
+    __metadata("design:type", Array)
+], ContextUser.prototype, "permissions", void 0);
 ContextUser = __decorate([
     (0, graphql_1.ObjectType)()
 ], ContextUser);

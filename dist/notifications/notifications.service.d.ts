@@ -1,5 +1,4 @@
 import { CreateNotificationInput } from './dto/create-notification.input';
-import { UpdateNotificationInput } from './dto/update-notification.input';
 import { MealsService } from 'src/meals/meals.service';
 import { RestaurantsService } from 'src/restaurants/restaurants.service';
 import { AwsService } from 'src/aws/aws.service';
@@ -29,7 +28,8 @@ export declare class NotificationsService {
         pages: number;
     }>;
     createVertual(createNotificationInput: CreateNotificationInput): Promise<string>;
-    create(createNotificationInput: CreateNotificationInput, file: any): Promise<any>;
+    create(createNotificationInput: CreateNotificationInput): Promise<any>;
+    sendPrivate(createNotificationInput: CreateNotificationInput): Promise<void>;
     findAll(limitEntity: LimitEntity): Promise<{
         data: any;
         pages: number;
@@ -37,8 +37,8 @@ export declare class NotificationsService {
     findManagement(limitEntity: LimitEntity): Promise<{
         data: any;
         pages: number;
+        orders: number;
     }>;
     findOne(id: string): Promise<any>;
-    update(id: string, updateNotificationInput: UpdateNotificationInput): Promise<string>;
     remove(id: string): Promise<string>;
 }

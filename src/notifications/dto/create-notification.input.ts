@@ -1,4 +1,6 @@
 import { InputType, Field, ID } from '@nestjs/graphql';
+import GraphQLUpload from 'src/Graphql/GraphQLUpload';
+import Upload from 'src/constants/Upload';
 import { notificationsTypes } from 'src/constants/types.type';
 
 @InputType()
@@ -39,6 +41,9 @@ export class CreateNotificationInput {
 
   @Field({nullable: true})
   bodyKR?: string;
+
+  @Field(()=> GraphQLUpload, {nullable: true})
+  image?: Upload;
 
   @Field({nullable: true})
   submit?: string;

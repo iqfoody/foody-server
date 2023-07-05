@@ -1,18 +1,7 @@
-import {
-  InferSubjects,
-  ExtractSubjectType,
-  AbilityClass,
-  AbilityBuilder,
-  MongoAbility,
-  PureAbility,
-  ConditionsMatcher,
-  buildMongoQueryMatcher,
-  FieldMatcher,
-  MongoQuery 
-} from '@casl/ability';
+import { InferSubjects, ExtractSubjectType, AbilityClass, AbilityBuilder, MongoAbility, PureAbility, buildMongoQueryMatcher, FieldMatcher, MongoQuery } from '@casl/ability';
 import { Injectable } from "@nestjs/common";
 import { User } from "src/users/entities/user.entity";
-import { $ne, ne, $in, within, $eq, eq, createFactory, BuildMongoQuery } from '@ucast/mongo2js';
+import { $eq, eq } from '@ucast/mongo2js';
 import { Admin } from 'src/admins/entities/admin.entity';
 import { Driver } from 'src/drivers/entities/driver.entity';
 import { ContextUser } from 'src/constants/contextUser.entity';
@@ -36,43 +25,33 @@ import { Notification } from 'src/notifications/entities/notification.entity';
 
 export enum Actions {
     Manage = 'manage',
-    Create = 'create',
-    Update = 'update',
-    Read = 'read',
-    Delete = 'delete',
-    Search = 'search',
-    Info = 'info',
-    UpdateInfo = 'updateInfo',
-    Add = "add",
-    Edit = "edit",
-    Remove = "remove",
-    State = 'state',
-    Self = 'self',
-    Password = 'password',
-    Refresh = 'refresh',
-    Complete = 'complete'
+    Create = 'Create',
+    Update = 'Update',
+    Read = 'Read',
+    Delete = 'Delete',
 }
 
 export type Subjects = InferSubjects<
-                                    typeof User |
-                                    typeof Admin |
-                                    typeof Driver |
-                                    typeof Address | 
-                                    typeof Advertisement |
-                                    typeof Category |
-                                    typeof Favorite |
-                                    typeof Feedback | 
-                                    typeof Meal |
-                                    typeof Order |
-                                    typeof PromoCode |
-                                    typeof Rate |
-                                    typeof RestaurantCategory |
-                                    typeof Restaurant |
-                                    typeof Tag |
-                                    typeof Wallet |
-                                    typeof Transaction |
-                                    typeof Setting |
-                                    typeof Notification
+                                    typeof User | "User" |
+                                    typeof Admin | "Admin" |
+                                    typeof Driver | "Driver" |
+                                    typeof Address | "Address" |
+                                    typeof Advertisement | "Advertisement" |
+                                    typeof Category | "Category" |
+                                    typeof Favorite | "Favorite" |
+                                    typeof Feedback | "Feedback" |
+                                    typeof Meal | "Meal" |
+                                    typeof Order | "Order" |
+                                    typeof PromoCode | "PromoCode" |
+                                    typeof Rate | "Rate" |
+                                    typeof RestaurantCategory | "RestaurantCategory" |
+                                    typeof Restaurant | "Restaurant" |
+                                    typeof Tag | "Tag" |
+                                    typeof Wallet | "Wallet" |
+                                    typeof Transaction | "Transaction" |
+                                    typeof Setting | "Setting" |
+                                    typeof Notification | "Notification" |
+                                    "Home"
                                     > | 'all';
 
 export type AppAbility = MongoAbility<[Actions, Subjects], MongoQuery>
@@ -85,48 +64,18 @@ export class AbilityFactory {
     defineAbility(user: ContextUser){
         // define roles...
         const {can, cannot, build} = new AbilityBuilder(PureAbility as AbilityClass<AppAbility>);
-        // User...
-        if(user.metadata === 'User'){
-            // you can check user types...
-            can([Actions.Info, Actions.UpdateInfo, Actions.Password, Actions.Refresh], User);
-            can([Actions.Info, Actions.Edit, Actions.Add, Actions.Remove], Address);
-            can([Actions.Info, Actions.Edit], Favorite);
-            can(Actions.Read, Feedback);
-            can([Actions.Info, Actions.Edit, Actions.Add, Actions.Remove], Order);
-            can([Actions.Info, Actions.Edit], PromoCode);
-            can(Actions.Add, Rate);
-
-        // Driver...
-        } else if(user.metadata === 'Driver'){
-            // you can check driver types...
-            can([Actions.Info, Actions.UpdateInfo, Actions.Password, Actions.Refresh], Driver);
-            can([Actions.Read, Actions.Complete], Driver);
-
-        } else if(user.metadata === 'Admin') {
+        if(user.metadata === 'Admin') {
             // Admin...
             if(user.type === "Admin"){
                 can(Actions.Manage, 'all');
-
-            // Data Entery...
-            } else if(user.type === "Data Entery"){
-                can([Actions.Read, Actions.Delete], Feedback);
-                can(Actions.Manage, Admin);
-            // Accounter...
-            } else if(user.type === "Accounter"){
-
-            // Human Resources...
-            } else if(user.type === "Human Resources"){
-
-            // Support...
-            } else if(user.type === "Support"){
-
-            // Store Keeper...
-            } else if(user.type === "Store Keeper"){
-
-            } 
+            // Sub Admin...
+            } else if(user.type === "Sub Admin"){
+                can(Actions.Read, "Notification")
+                user.permissions.map(item => 
+                    can(item.abilities as any, item.object as any)    
+                )
+            }
         }
-
-
         return build({
             detectSubjectType: (item) => item.constructor as ExtractSubjectType<Subjects>,
             conditionsMatcher,

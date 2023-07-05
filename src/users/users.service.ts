@@ -66,7 +66,7 @@ export class UsersService {
     return user;
   }
 
-  async createUser(createUserInput: CreateUserInput, file: any){
+  async createUser(createUserInput: CreateUserInput){
     // -> check password length...
     if(createUserInput?.password?.length < 6) throw new BadRequestException("password E0004");
     // -> check existing phone number...
@@ -83,8 +83,8 @@ export class UsersService {
     const wallet = await this.walletsService.create({user: user._id});
     user.wallet = wallet._id;
     // -> upload image to s3 bucket...
-    if(file) {
-      const result = await this.awsService.createImage(file, user._id);
+    if(createUserInput?.image) {
+      const result = await this.awsService.createImage(createUserInput.image, user._id);
       user.image = result?.Key;
     }
     await user.save();
@@ -103,13 +103,16 @@ export class UsersService {
     }
     if (updateUserInput?.email) {
       let E0002 = await this.findByEmail(updateUserInput.email);
-      if(E0002 && id != E0002._id) throw new BadRequestException('email E0002')
+      if(E0002 && id != E0002._id) throw new BadRequestException('email E0002');
     }
     if(updateUserInput?.image){
       const { image } = await this.UsersModel.findOne({_id: id}, {image: 1, _id: 0});
       if( image ) this.awsService.removeImage(image);
+      const result = await this.awsService.createImage(updateUserInput.image, id);
+      await this.UsersModel.findByIdAndUpdate(id, {...updateUserInput, image: result?.Key});
+    } else {
+      await this.UsersModel.findByIdAndUpdate(id, updateUserInput);
     }
-    await this.UsersModel.findByIdAndUpdate(id, updateUserInput);
     return "Success";
   }
 
@@ -127,10 +130,10 @@ export class UsersService {
 
   async remove(id: string) {
     const result = await this.UsersModel.findOne({_id: id}, {image: 1, _id: 0});
-    await this.UsersModel.findByIdAndDelete(id);
     await this.favoritesService.remove(id);
     await this.walletsService.remove(id);
     await this.addressesService.clean(id);
+    await this.UsersModel.findByIdAndDelete(id);
     if(result?.image) this.awsService.removeImage(result?.image);
     return "user has been deleted";
   }
@@ -172,36 +175,32 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserInfo: UpdateUserInfo) {
+  async update(updateUserInfo: UpdateUserInfo) {
     if(updateUserInfo?.phoneNumber){
       let E0011 = await this.findByPhoneNumber(updateUserInfo.phoneNumber);
-      if(E0011 && id != E0011._id){
-        throw new BadRequestException('phoneNumber E0011');
-      }
+      if(!E0011) throw new BadRequestException('phoneNumber E0011');
     }
     if (updateUserInfo?.email) {
       let E0002 = await this.findByEmail(updateUserInfo.email);
-      if(E0002 && id != E0002._id) throw new BadRequestException('email E0002')
+      if(E0002 && updateUserInfo.phoneNumber != E0002.phoneNumber) throw new BadRequestException('email E0002')
     }
     if(updateUserInfo?.image){
-      const { image } = await this.UsersModel.findOne({_id: id}, {image: 1, _id: 0});
+      const { image } = await this.UsersModel.findOne({phoneNumber: updateUserInfo.phoneNumber}, {image: 1, _id: 0});
       if( image ) this.awsService.removeImage(image);
     }
-    await this.UsersModel.findByIdAndUpdate(id, updateUserInfo);
+    await this.UsersModel.findOneAndUpdate({phoneNumber: updateUserInfo.phoneNumber}, updateUserInfo);
     return "Success";
   }
 
-  async password(id: string, passwordUserInput: PasswordUserInput) {
-    const user = await this.findOne(id)
+  async password(phoneNumber: string, passwordUserInput: PasswordUserInput) {
+    const user = await this.findByPhoneNumber(phoneNumber)
     const checkPassword = await user.comparePassword(passwordUserInput.oldPassword);
     if(checkPassword){
       const salt = await genSalt();
       const hashed = await hash(passwordUserInput.password, salt)
-      await this.UsersModel.findByIdAndUpdate(id, {password: hashed}).exec();
-      return "Success"
-    } else {
-      throw new BadRequestException('password E0005')
-    }
+      await this.UsersModel.findOneAndUpdate({phoneNumber}, {password: hashed}).exec();
+      return "Success";
+    } else throw new BadRequestException('password E0005');
   }
 
   async logout(phoneNumber: string){
@@ -210,7 +209,7 @@ export class UsersService {
 
   async delete(id: string) {
     await this.UsersModel.findByIdAndUpdate(id, {state: 'Deleted'}).exec();
-    return "Success"
+    return "Success";
   }
 
   //? -> private services

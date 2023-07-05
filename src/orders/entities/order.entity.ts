@@ -64,6 +64,12 @@ export class Order {
   promoCode?: string;
 
   @Field(()=> Int, {nullable: true})
+  promoCodeDiscount?: number;
+
+  @Field(()=> Int, {nullable: true})
+  totalDiscount?: number;
+
+  @Field(()=> Int, {nullable: true})
   discount?: number;
 
   @Field({nullable: true})
@@ -87,5 +93,7 @@ export class Order {
   @Field(()=> Int, {nullable: true})
   no?: number;
 
+  @Field(()=> Boolean, {nullable: true})
+  readed?: boolean;
 
 }

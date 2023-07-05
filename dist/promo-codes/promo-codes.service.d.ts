@@ -28,6 +28,7 @@ import { Model } from 'mongoose';
 import { PromoCodesDocument } from 'src/models/promoCodes.schema';
 import { StateInput } from 'src/constants/state.input';
 import { UsersService } from 'src/users/users.service';
+import { CheckPromoCodeInput } from './dto/check-promo-code.input';
 export declare class PromoCodesService {
     private PromoCodesModel;
     private usersService;
@@ -42,6 +43,9 @@ export declare class PromoCodesService {
     }>;
     usePromoCode(name: string, user: string): Promise<string>;
     create(createPromoCodeInput: CreatePromoCodeInput): Promise<import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
+    checkPromoCode(checkPromoCodeInput: CheckPromoCodeInput): Promise<import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     findAll(): import("mongoose").Query<Omit<import("mongoose").Document<unknown, {}, PromoCodesDocument> & Omit<import("src/models/promoCodes.schema").PromoCodes & import("mongoose").Document<any, any, any> & {

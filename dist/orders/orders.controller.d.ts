@@ -38,6 +38,7 @@ export declare class OrdersController {
     cancelOrder(id: string, req: any): Promise<string>;
     inDeliveryOrder(id: string, req: any): Promise<string>;
     completeOrder(id: string, recievedPrice: number, req: any): Promise<string>;
+    getOrderesDriver(req: any, state?: orderStatus): Promise<any[]>;
     getOrder(id: string, req: any): Promise<any>;
     deleteOrder(id: string, req: any): Promise<string>;
 }

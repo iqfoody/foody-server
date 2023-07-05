@@ -40,12 +40,12 @@ let CategoriesService = class CategoriesService {
             category.image = this.awsService.getUrl(category.image);
         return category;
     }
-    async create(createCategoryInput, file) {
-        if (!file)
+    async create(createCategoryInput) {
+        if (!createCategoryInput.image)
             return new common_1.BadRequestException("image required");
         const position = await this.CategoriesModel.countDocuments();
         const category = new this.CategoriesModel({ ...createCategoryInput, position });
-        const result = await this.awsService.createImage(file, category._id);
+        const result = await this.awsService.createImage(createCategoryInput.image, category._id);
         category.image = result?.Key;
         await category.save();
         category.image = this.awsService.getUrl(result?.Key);
@@ -69,8 +69,12 @@ let CategoriesService = class CategoriesService {
         if (updateCategoryInput?.image) {
             const { image } = await this.CategoriesModel.findOne({ _id: updateCategoryInput.id }, { image: 1, _id: 0 });
             this.awsService.removeImage(image);
+            const result = await this.awsService.createImage(updateCategoryInput.image, id);
+            await this.CategoriesModel.findByIdAndUpdate(id, { ...updateCategoryInput, image: result?.Key });
         }
-        await this.CategoriesModel.findByIdAndUpdate(id, updateCategoryInput);
+        else {
+            await this.CategoriesModel.findByIdAndUpdate(id, updateCategoryInput);
+        }
         return "Success";
     }
     async state(stateInput) {

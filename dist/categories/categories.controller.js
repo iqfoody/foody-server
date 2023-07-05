@@ -15,36 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoriesController = void 0;
 const common_1 = require("@nestjs/common");
 const categories_service_1 = require("./categories.service");
-const aws_service_1 = require("../aws/aws.service");
-const accessAuth_guard_1 = require("../guards/accessAuth.guard");
-const ability_decorator_1 = require("../ability/ability.decorator");
-const ability_factory_1 = require("../ability/ability.factory");
-const platform_express_1 = require("@nestjs/platform-express");
-const category_entity_1 = require("./entities/category.entity");
-const create_category_input_1 = require("./dto/create-category.input");
-const update_category_input_1 = require("./dto/update-category.input");
 const meals_service_1 = require("../meals/meals.service");
 let CategoriesController = class CategoriesController {
     categoriesService;
     mealsService;
-    awsService;
-    constructor(categoriesService, mealsService, awsService) {
+    constructor(categoriesService, mealsService) {
         this.categoriesService = categoriesService;
         this.mealsService = mealsService;
-        this.awsService = awsService;
     }
     async getRestaurantsForCategory(category, orderby) {
         return this.mealsService.findForCategory(category, orderby);
     }
     async getCategories() {
         return this.categoriesService.findCategories();
-    }
-    async createCategory(createCategoryInput, file) {
-        return this.categoriesService.create(createCategoryInput, file);
-    }
-    async updateCategory(updateCategoryInput, file) {
-        const result = await this.awsService.createImage(file, updateCategoryInput.id);
-        return this.categoriesService.update(updateCategoryInput.id, { ...updateCategoryInput, image: result?.Key });
     }
 };
 __decorate([
@@ -61,33 +44,10 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], CategoriesController.prototype, "getCategories", null);
-__decorate([
-    (0, common_1.Post)('/'),
-    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Create, subject: category_entity_1.Category }),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.UploadedFile)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_category_input_1.CreateCategoryInput, Object]),
-    __metadata("design:returntype", Promise)
-], CategoriesController.prototype, "createCategory", null);
-__decorate([
-    (0, common_1.Put)('/'),
-    (0, common_1.UseGuards)(accessAuth_guard_1.AccessAuthGuard),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: category_entity_1.Category }),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.UploadedFile)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [update_category_input_1.UpdateCategoryInput, Object]),
-    __metadata("design:returntype", Promise)
-], CategoriesController.prototype, "updateCategory", null);
 CategoriesController = __decorate([
     (0, common_1.Controller)('categories'),
     __metadata("design:paramtypes", [categories_service_1.CategoriesService,
-        meals_service_1.MealsService,
-        aws_service_1.AwsService])
+        meals_service_1.MealsService])
 ], CategoriesController);
 exports.CategoriesController = CategoriesController;
 //# sourceMappingURL=categories.controller.js.map

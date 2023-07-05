@@ -22,6 +22,7 @@ const ability_decorator_1 = require("../ability/ability.decorator");
 const ability_factory_1 = require("../ability/ability.factory");
 const limitEntity_1 = require("../constants/limitEntity");
 const feedbacks_limit_entity_1 = require("./entities/feedbacks-limit.entity");
+const mongoose_1 = require("mongoose");
 let FeedbacksResolver = class FeedbacksResolver {
     feedbacksService;
     constructor(feedbacksService) {
@@ -31,15 +32,19 @@ let FeedbacksResolver = class FeedbacksResolver {
         return this.feedbacksService.findAll(limitEntity);
     }
     findOne(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't feedback with this id");
         return this.feedbacksService.findOne(id);
     }
     removeFeedback(id) {
+        if (!(0, mongoose_1.isValidObjectId)(id))
+            throw new common_1.BadRequestException("There isn't feedback with this id");
         return this.feedbacksService.remove(id);
     }
 };
 __decorate([
     (0, graphql_1.Query)(() => feedbacks_limit_entity_1.FeedbacksLimit, { name: 'feedbacks' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: feedback_entity_1.Feedback }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Feedback" }),
     __param(0, (0, graphql_1.Args)('limitEntity')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [limitEntity_1.LimitEntity]),
@@ -47,7 +52,7 @@ __decorate([
 ], FeedbacksResolver.prototype, "findAll", null);
 __decorate([
     (0, graphql_1.Query)(() => feedback_entity_1.Feedback, { name: 'feedback' }),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: feedback_entity_1.Feedback }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Read, subject: "Feedback" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -55,7 +60,7 @@ __decorate([
 ], FeedbacksResolver.prototype, "findOne", null);
 __decorate([
     (0, graphql_1.Mutation)(() => String),
-    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: feedback_entity_1.Feedback }),
+    (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Delete, subject: "Feedback" }),
     __param(0, (0, graphql_1.Args)('id', { type: () => graphql_1.ID })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

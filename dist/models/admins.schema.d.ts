@@ -2,6 +2,10 @@ import mongoose, { Document, Model, Query } from 'mongoose';
 import { adminTypes, publicStatus } from 'src/constants/types.type';
 import { LoginInput } from 'src/auth/dto/login.input';
 import { Wallets } from './wallets.schema';
+export declare class Permissions {
+    object: string;
+    abilities: string[];
+}
 export type AdminsDocument = Admins & Document;
 export declare class Admins {
     wallet: string | Wallets;
@@ -15,6 +19,7 @@ export declare class Admins {
     platform: string;
     deviceToken: string;
     refreshToken: string;
+    permissions: Permissions[];
     comparePassword: (password: string) => Promise<boolean>;
     compareToken: (refreshToken: string) => Promise<boolean>;
 }

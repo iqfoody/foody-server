@@ -16,7 +16,7 @@ let UpdateTransactionInput = class UpdateTransactionInput extends (0, graphql_1.
     id;
 };
 __decorate([
-    (0, graphql_1.Field)(() => graphql_1.ID),
+    (0, graphql_1.Field)(() => graphql_1.ID, { nullable: true }),
     __metadata("design:type", String)
 ], UpdateTransactionInput.prototype, "id", void 0);
 UpdateTransactionInput = __decorate([

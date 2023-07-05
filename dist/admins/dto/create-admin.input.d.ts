@@ -1,8 +1,9 @@
-import { adminTypes } from 'src/constants/types.type';
+import Upload from 'src/constants/Upload';
+import { AdminPermissionsInput } from './create-admin-permissions.input';
 export declare class CreateAdminInput {
     name: string;
     email: string;
     password: string;
-    type: adminTypes;
-    image?: string;
+    permissions: AdminPermissionsInput[];
+    image?: Upload;
 }

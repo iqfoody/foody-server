@@ -17,6 +17,7 @@ import { FirebaseModule } from 'src/firebase/firebase.module';
     forwardRef(() => FavoritesModule),
     forwardRef(() => AddressesModule),
     AwsModule,
+    FirebaseModule
   ],
   providers: [UsersResolver, UsersService],
   exports: [UsersService],

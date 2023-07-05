@@ -24,21 +24,13 @@
 /// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
 import { AdvertisementsService } from './advertisements.service';
-import { AwsService } from 'src/aws/aws.service';
-import { CreateAdvertisementInput } from './dto/create-advertisement.input';
-import { UpdateAdvertisementInput } from './dto/update-advertisement.input';
 export declare class AdvertisementsController {
     private readonly advertisementsService;
-    private readonly awsService;
-    constructor(advertisementsService: AdvertisementsService, awsService: AwsService);
+    constructor(advertisementsService: AdvertisementsService);
     getAdvertisement(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     getAdvertisements(): Promise<(import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
-    createAdvertisement(createAdvertisementInput: CreateAdvertisementInput, file: any): Promise<import("@nestjs/common").BadRequestException | (import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)>;
-    updateAdvertisement(updateAdvertisementInput: UpdateAdvertisementInput, file: any): Promise<string>;
 }

@@ -40,6 +40,12 @@ export declare class OrdersResolver {
         restaurants: number;
         meals: number;
         drivers: number;
+        transactions: {
+            minusAmount: any;
+            plusAmount: any;
+            minusPoints: any;
+            plusPoints: any;
+        };
     }>;
     findAllUserOrders(limitEntity: LimitEntity): Promise<{
         data: any;

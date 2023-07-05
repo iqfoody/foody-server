@@ -8,14 +8,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateAdminInput = void 0;
 const graphql_1 = require("@nestjs/graphql");
+const GraphQLUpload_1 = __importDefault(require("../../Graphql/GraphQLUpload"));
+const create_admin_permissions_input_1 = require("./create-admin-permissions.input");
 let CreateAdminInput = class CreateAdminInput {
     name;
     email;
     password;
-    type;
+    permissions;
     image;
 };
 __decorate([
@@ -31,12 +36,12 @@ __decorate([
     __metadata("design:type", String)
 ], CreateAdminInput.prototype, "password", void 0);
 __decorate([
-    (0, graphql_1.Field)(),
-    __metadata("design:type", String)
-], CreateAdminInput.prototype, "type", void 0);
+    (0, graphql_1.Field)(() => [create_admin_permissions_input_1.AdminPermissionsInput]),
+    __metadata("design:type", Array)
+], CreateAdminInput.prototype, "permissions", void 0);
 __decorate([
-    (0, graphql_1.Field)({ nullable: true }),
-    __metadata("design:type", String)
+    (0, graphql_1.Field)(() => GraphQLUpload_1.default, { nullable: true }),
+    __metadata("design:type", Object)
 ], CreateAdminInput.prototype, "image", void 0);
 CreateAdminInput = __decorate([
     (0, graphql_1.InputType)()

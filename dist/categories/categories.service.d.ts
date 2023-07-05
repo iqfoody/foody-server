@@ -40,7 +40,7 @@ export declare class CategoriesService {
     findCategory(id: string): Promise<import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    create(createCategoryInput: CreateCategoryInput, file: any): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
+    create(createCategoryInput: CreateCategoryInput): Promise<BadRequestException | (import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)>;
     findAll(): Promise<(import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {

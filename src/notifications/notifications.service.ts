@@ -1,6 +1,5 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateNotificationInput } from './dto/create-notification.input';
-import { UpdateNotificationInput } from './dto/update-notification.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { MealsService } from 'src/meals/meals.service';
 import { RestaurantsService } from 'src/restaurants/restaurants.service';
@@ -49,10 +48,10 @@ export class NotificationsService {
 
   //? -> dashboard...
 
-  async create(createNotificationInput: CreateNotificationInput, file: any) {
+  async create(createNotificationInput: CreateNotificationInput) {
     const notification = new this.NotificationsModel(createNotificationInput);
-    if(file){
-      const result = await this.awsService.createImage(file, notification._id);
+    if(createNotificationInput?.image){
+      const result = await this.awsService.createImage(createNotificationInput.image, notification._id);
       notification.image = result?.Key;
     }
     await notification.save();
@@ -68,6 +67,18 @@ export class NotificationsService {
     return finalResult;
   }
 
+  async sendPrivate(createNotificationInput: CreateNotificationInput){
+    const notification: any = new this.NotificationsModel(createNotificationInput);
+    if(createNotificationInput?.user){
+      const user = await this.usersService.findDeviceToken(createNotificationInput.user);
+      if(user?.deviceToken) await this.firebaseService.sendPrivate(notification, user.deviceToken);
+    } else if(createNotificationInput?.driver){
+      const driver = await this.driversService.findDeviceToken(createNotificationInput.driver);
+      if(driver?.deviceToken) await this.firebaseService.sendPrivate(notification, driver.deviceToken);
+    }
+    return;
+  }
+
   async findAll(limitEntity: LimitEntity) {
       const startIndex = limitEntity.limit * limitEntity.page;
       const notifications: any = await this.NotificationsModel.find({$and: [{type: {$ne: "Vertual"}}, {type: {$ne: "Management"}}]}).limit(limitEntity.limit).skip(startIndex).sort({_id: -1}).populate("user");
@@ -79,14 +90,18 @@ export class NotificationsService {
   }
 
   async findManagement(limitEntity: LimitEntity){
+    let unRead: boolean = false;
     const startIndex = limitEntity.limit * limitEntity.page;
     const notifications: any = await this.NotificationsModel.find({type: "Management"}).limit(limitEntity.limit).skip(startIndex).sort({_id: -1}).populate("user");
     const total = await this.NotificationsModel.countDocuments({type: "Management"});
     for(const single of notifications){
       if(single.user?.image) single.user.image = this.awsService.getUrl(single.user.image);
       if(single?.image) single.image = this.awsService.getUrl(single.image);
+      if(single.state === "Unread") unRead = true;
     }
-    return {data: notifications, pages: Math.ceil(total/limitEntity.limit)};
+    if(unRead) this.NotificationsModel.updateMany({$and: [{state: "Unread"}, {type: "Management"}]}, {state: "Read"});
+    const orders = await this.ordersService.findUnread();
+    return {data: notifications, pages: Math.ceil(total/limitEntity.limit), orders};
   }
 
   async findOne(id: string) {
@@ -94,11 +109,6 @@ export class NotificationsService {
     if(notification.user?.image) notification.user.image = this.awsService.getUrl(notification.user.image);
     if(notification?.image) notification.image = this.awsService.getUrl(notification.image);
     return notification;
-  }
-
-  async update(id: string, updateNotificationInput: UpdateNotificationInput) {
-    await this.NotificationsModel.findByIdAndUpdate(id);
-    return "Success";
   }
 
   async remove(id: string) {

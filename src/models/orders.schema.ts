@@ -39,6 +39,9 @@ export class OrderItems {
 
   @Prop({type: mongoose.Schema.Types.Number, required: [true, "Quantity required"], minlength: [1, "Min quantity 1"]})
   quantity: number;
+
+  @Prop()
+  description: string;
 }
 export const OrderItemSchema = SchemaFactory.createForClass(OrderItems);
 
@@ -91,6 +94,12 @@ export class Orders {
   promoCode: string;
 
   @Prop({type: mongoose.Schema.Types.Number})
+  promoCodeDiscount: number;
+
+  @Prop({type: mongoose.Schema.Types.Number, default: 0})
+  totalDiscount: number;
+
+  @Prop({type: mongoose.Schema.Types.Number})
   discount: number;
 
   @Prop()
@@ -115,6 +124,9 @@ export class Orders {
 
   @Prop({type: mongoose.Schema.Types.Number, default: 0})
   no: number;
+
+  @Prop({type: mongoose.Schema.Types.Boolean, default: false})
+  readed: boolean;
 
 }
 

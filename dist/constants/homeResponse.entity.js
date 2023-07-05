@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HomeResponse = exports.WeekResponse = exports.StatusResponse = exports.RatingResponse = void 0;
 const graphql_1 = require("@nestjs/graphql");
 const order_entity_1 = require("../orders/entities/order.entity");
+const transactionsHomeResponse_entity_1 = require("../transactions/entities/transactionsHomeResponse.entity");
 const user_entity_1 = require("../users/entities/user.entity");
 let RatingResponse = class RatingResponse {
     user;
@@ -114,6 +115,7 @@ let HomeResponse = class HomeResponse {
     restaurants;
     meals;
     drivers;
+    transactions;
 };
 __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int),
@@ -163,6 +165,10 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int),
     __metadata("design:type", Number)
 ], HomeResponse.prototype, "drivers", void 0);
+__decorate([
+    (0, graphql_1.Field)(() => transactionsHomeResponse_entity_1.TransactionsHomeResponse),
+    __metadata("design:type", transactionsHomeResponse_entity_1.TransactionsHomeResponse)
+], HomeResponse.prototype, "transactions", void 0);
 HomeResponse = __decorate([
     (0, graphql_1.ObjectType)()
 ], HomeResponse);

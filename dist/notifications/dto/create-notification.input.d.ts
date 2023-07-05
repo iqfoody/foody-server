@@ -1,3 +1,4 @@
+import Upload from 'src/constants/Upload';
 import { notificationsTypes } from 'src/constants/types.type';
 export declare class CreateNotificationInput {
     user?: string;
@@ -12,6 +13,7 @@ export declare class CreateNotificationInput {
     body: string;
     bodyEN: string;
     bodyKR?: string;
+    image?: Upload;
     submit?: string;
     dismiss?: string;
     action?: string;
