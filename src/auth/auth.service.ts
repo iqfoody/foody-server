@@ -13,8 +13,8 @@ import { hash } from 'bcryptjs';
 export class AuthService {
   public cookieOptions: CookieOptions;
   public cookieRefreshOptions: CookieOptions;
-  public accessOptions : any;
-  public refreshOptions : any;
+  public accessOptions: any;
+  public refreshOptions: any;
 
   constructor(
     private usersService: UsersService,

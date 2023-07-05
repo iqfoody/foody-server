@@ -14,7 +14,7 @@ async function bootstrap() {
         bodyParser: true,
         cors: {
             credentials: true,
-            origin: ['http://localhost:3000', 'https://admin.iqfoody.com'],
+            origin: ['https://admin.iqfoody.com'],
             optionsSuccessStatus: 200
         },
     });
