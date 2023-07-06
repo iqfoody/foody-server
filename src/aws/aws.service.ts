@@ -1,10 +1,8 @@
 import { getSignedUrl } from '@aws-sdk/cloudfront-signer';
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { S3, SNS } from 'aws-sdk';
 import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront';
-import { createReadStream, createWriteStream } from 'fs';
 import Upload from 'src/constants/Upload';
-import { unlink } from 'fs/promises';
 
 @Injectable()
 export class AwsService {
@@ -81,17 +79,11 @@ export class AwsService {
 
   async createImage(file: Upload, Key: string) {
     if(!this.imageTypes.includes(file.mimetype)) throw new BadRequestException("Invalide image extention")
-    const filename = file.filename;
-    const path = `./src/uploads/${filename}`;
-    const saved = await this.getReadStream(file, path);
-    if(!saved) await this.getReadStream(file, path);
-    const fileStraem = createReadStream(path);
     const uploadParams: S3.Types.PutObjectRequest = {
         Bucket: this.bucketImages,
-        Body: fileStraem,
-        Key: Date.now()+'-'+Key+'-'+filename
+        Body: file.createReadStream(),
+        Key: Date.now()+'-'+Key+'-'+file.filename
     }
-    // unlink(path);
     return this.s3.upload(uploadParams).promise();
   }
 
@@ -131,77 +123,4 @@ export class AwsService {
     this.cloudFront.send(invalidationCommand);
   }
 
-  async getReadStream(file: Upload, path: string): Promise<boolean>{
-    return new Promise(async (resolve, reject) => 
-    (await file.createReadStream())
-      .pipe(createWriteStream(path))
-      .on("finish", ()=> resolve(true))
-      .on("error", ()=> reject(false))
-    )
-  }
-
-//* this under testing, isn't completed...
-  async sendOtp(phoneNumber: string){
-    const challengeAnswer = Math.random().toString(10).substring(2, 8);
-    const options = {
-      Message: "Your foody account OTP: " + challengeAnswer,
-      PhoneNumber: phoneNumber,
-    }
-    const listPhones = await this.sns.listSMSSandboxPhoneNumbers().promise();
-    const list = listPhones?.PhoneNumbers?.reduce((prev, current) => [...prev, current?.PhoneNumber], []);
-    if(list?.includes(phoneNumber)){
-      const list = this.otps.find(ot => ot.phoneNumber === phoneNumber);
-      if(list) return "Sended";
-      this.otps.push({phoneNumber, otp: challengeAnswer});
-      console.log(this.otps);
-      return this.sns.publish(options, (err, data) => {
-        if(err) return err
-        if(data) return "Sended";
-      }).promise();
-    } else {
-      return this.sns.createSMSSandboxPhoneNumber({PhoneNumber: phoneNumber}).promise();
-    }
-    //return this.sns.publish(options).promise();
-  }
-
-  async verifyOtp(phoneNumber: string, otp: string){
-    const listPhones = await this.sns.listSMSSandboxPhoneNumbers().promise();
-    const list = listPhones?.PhoneNumbers?.reduce((prev, current) => [...prev, current?.PhoneNumber], []);
-    if(list?.includes(phoneNumber)){
-      const prevOtp = this.otps?.find(ot => ot.otp === otp);
-      if(prevOtp){ 
-        this.otps = this.otps.filter(ot => ot.phoneNumber !== phoneNumber);
-        return "Verified";
-      } else throw new UnauthorizedException("Access Denied");
-    } else {
-      const result = await this.sns.verifySMSSandboxPhoneNumber({PhoneNumber: phoneNumber, OneTimePassword: `${otp}`}, (err, data) => {
-        if(err) throw new UnauthorizedException("Access Denied")
-        if(data) return "Verified";
-      }).promise();
-      return result
-
-    }
-  }
-
-  async message(){
-    const options = {
-      Message: "Hi hassan, how are you?",
-      PhoneNumber: "+9647714103179",
-    }
-    return this.sns.publish(options).promise();
-  }
-
 }
-
-//  MessageStructuer: 'string',
-//       MessageAttributes: {
-//         'AWS. SNS. SMS. SenderID': {
-//         DataType: 'String',
-//         StringValue: 'AMPLIFY',
-//         },
-//         'AWS. SNS. SMS. SMSType': {
-//         DataType: 'String',
-//         StringValue:
-//         'Transactional',
-//         }
-//       }

@@ -13,8 +13,8 @@ import { hash } from 'bcryptjs';
 export class AuthService {
   public cookieOptions: CookieOptions;
   public cookieRefreshOptions: CookieOptions;
-  public accessOptions: any;
-  public refreshOptions: any;
+  public accessOptions : any;
+  public refreshOptions : any;
 
   constructor(
     private usersService: UsersService,
@@ -23,7 +23,7 @@ export class AuthService {
     private driversService: DriversService,
   ) {
     this.cookieOptions = {
-      domain: 'admin.iqfoody.com', // <- change it to your client domain... -> admin.iqfoody.com
+      domain: '.iqfoody.com', // <- change it to your client domain... -> .iqfoody.com
       secure: true, // <- should be true in production...
       sameSite: 'lax',
       httpOnly: true,
@@ -31,7 +31,7 @@ export class AuthService {
       maxAge: 1000*60*60*24
     };
     this.cookieRefreshOptions = {
-      domain: 'admin.iqfoody.com', // <- change it to your client domain... -> admin.iqfoody.com
+      domain: '.iqfoody.com', // <- change it to your client domain... -> .iqfoody.com
       secure: true, // <- should be true in production...
       sameSite: 'lax',
       httpOnly: true,

@@ -14,7 +14,6 @@ const cloudfront_signer_1 = require("@aws-sdk/cloudfront-signer");
 const common_1 = require("@nestjs/common");
 const aws_sdk_1 = require("aws-sdk");
 const client_cloudfront_1 = require("@aws-sdk/client-cloudfront");
-const fs_1 = require("fs");
 let AwsService = class AwsService {
     s3;
     sns;
@@ -82,16 +81,10 @@ let AwsService = class AwsService {
     async createImage(file, Key) {
         if (!this.imageTypes.includes(file.mimetype))
             throw new common_1.BadRequestException("Invalide image extention");
-        const filename = file.filename;
-        const path = `./src/uploads/${filename}`;
-        const saved = await this.getReadStream(file, path);
-        if (!saved)
-            await this.getReadStream(file, path);
-        const fileStraem = (0, fs_1.createReadStream)(path);
         const uploadParams = {
             Bucket: this.bucketImages,
-            Body: fileStraem,
-            Key: Date.now() + '-' + Key + '-' + filename
+            Body: file.createReadStream(),
+            Key: Date.now() + '-' + Key + '-' + file.filename
         };
         return this.s3.upload(uploadParams).promise();
     }
@@ -127,66 +120,6 @@ let AwsService = class AwsService {
         };
         const invalidationCommand = new client_cloudfront_1.CreateInvalidationCommand(invalidationParams);
         this.cloudFront.send(invalidationCommand);
-    }
-    async getReadStream(file, path) {
-        return new Promise(async (resolve, reject) => (await file.createReadStream())
-            .pipe((0, fs_1.createWriteStream)(path))
-            .on("finish", () => resolve(true))
-            .on("error", () => reject(false)));
-    }
-    async sendOtp(phoneNumber) {
-        const challengeAnswer = Math.random().toString(10).substring(2, 8);
-        const options = {
-            Message: "Your foody account OTP: " + challengeAnswer,
-            PhoneNumber: phoneNumber,
-        };
-        const listPhones = await this.sns.listSMSSandboxPhoneNumbers().promise();
-        const list = listPhones?.PhoneNumbers?.reduce((prev, current) => [...prev, current?.PhoneNumber], []);
-        if (list?.includes(phoneNumber)) {
-            const list = this.otps.find(ot => ot.phoneNumber === phoneNumber);
-            if (list)
-                return "Sended";
-            this.otps.push({ phoneNumber, otp: challengeAnswer });
-            console.log(this.otps);
-            return this.sns.publish(options, (err, data) => {
-                if (err)
-                    return err;
-                if (data)
-                    return "Sended";
-            }).promise();
-        }
-        else {
-            return this.sns.createSMSSandboxPhoneNumber({ PhoneNumber: phoneNumber }).promise();
-        }
-    }
-    async verifyOtp(phoneNumber, otp) {
-        const listPhones = await this.sns.listSMSSandboxPhoneNumbers().promise();
-        const list = listPhones?.PhoneNumbers?.reduce((prev, current) => [...prev, current?.PhoneNumber], []);
-        if (list?.includes(phoneNumber)) {
-            const prevOtp = this.otps?.find(ot => ot.otp === otp);
-            if (prevOtp) {
-                this.otps = this.otps.filter(ot => ot.phoneNumber !== phoneNumber);
-                return "Verified";
-            }
-            else
-                throw new common_1.UnauthorizedException("Access Denied");
-        }
-        else {
-            const result = await this.sns.verifySMSSandboxPhoneNumber({ PhoneNumber: phoneNumber, OneTimePassword: `${otp}` }, (err, data) => {
-                if (err)
-                    throw new common_1.UnauthorizedException("Access Denied");
-                if (data)
-                    return "Verified";
-            }).promise();
-            return result;
-        }
-    }
-    async message() {
-        const options = {
-            Message: "Hi hassan, how are you?",
-            PhoneNumber: "+9647714103179",
-        };
-        return this.sns.publish(options).promise();
     }
 };
 AwsService = __decorate([
