@@ -134,11 +134,16 @@ let NotificationsService = class NotificationsService {
         return notification;
     }
     async remove(id) {
-        const { image } = await this.NotificationsModel.findOne({ _id: id }, { image: 1, _id: 0 });
-        await this.NotificationsModel.findByIdAndDelete(id);
-        if (image)
-            this.awsService.removeImage(image);
-        return "Success";
+        const result = await this.NotificationsModel.findOne({ _id: id }, { image: 1, _id: 0 });
+        try {
+            if (result?.image)
+                await this.awsService.removeImage(result.image);
+            await this.NotificationsModel.findByIdAndDelete(id);
+            return "Success";
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(error);
+        }
     }
 };
 NotificationsService = __decorate([

@@ -10,7 +10,7 @@ async function bootstrap() {
     bodyParser: true,
     cors: {
       credentials: true,
-      origin: ['https://admin.iqfoody.com'], // , "http://localhost:3000"
+      origin: ['https://admin.iqfoody.com'], //'http://localhost:3000', 
       optionsSuccessStatus: 200
     },
   });

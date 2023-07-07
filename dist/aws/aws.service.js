@@ -12,24 +12,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AwsService = void 0;
 const cloudfront_signer_1 = require("@aws-sdk/cloudfront-signer");
 const common_1 = require("@nestjs/common");
-const aws_sdk_1 = require("aws-sdk");
+const client_s3_1 = require("@aws-sdk/client-s3");
 const client_cloudfront_1 = require("@aws-sdk/client-cloudfront");
 let AwsService = class AwsService {
     s3;
-    sns;
     cloudFront;
     bucketImages;
     errorParams;
     cloudFrontKeyID;
     cloudFrontPrivateKey;
     distributionId;
-    otps;
     imageTypes;
     constructor() {
         const region = process.env.AWS_BUCKET_REGION;
         const accessKeyId = process.env.AWS_ACCESS_KEY_PRODUCTION;
         const secretAccessKey = process.env.AWS_SECRET_KEY_PRODUCTION;
-        this.otps = [];
         this.imageTypes = [
             "image/jpg",
             "image/JPG",
@@ -40,28 +37,15 @@ let AwsService = class AwsService {
             "image/webp",
             "image/WEBP"
         ];
-        this.s3 = new aws_sdk_1.S3({
-            region,
-            accessKeyId,
-            secretAccessKey
-        });
-        this.sns = new aws_sdk_1.SNS({
-            region,
-            accessKeyId,
-            secretAccessKey
+        this.s3 = new client_s3_1.S3Client({
+            credentials: { accessKeyId, secretAccessKey },
+            region
         });
         this.cloudFront = new client_cloudfront_1.CloudFrontClient({
-            credentials: {
-                accessKeyId,
-                secretAccessKey,
-            },
+            credentials: { accessKeyId, secretAccessKey },
             region
         });
         this.bucketImages = process.env.AWS_BUCKET_IMAGES;
-        this.errorParams = {
-            Key: 'Error-404',
-            Bucket: this.bucketImages
-        };
         this.cloudFrontKeyID = process.env.CLOUDFRONT_KEY_PAIR_ID;
         this.cloudFrontPrivateKey = process.env.CLOUDFRONT_PRIVATE_KEY;
         this.distributionId = process.env.CLOUDFRONT_DISTRiBUTION_ID;
@@ -78,32 +62,55 @@ let AwsService = class AwsService {
             return url;
         return result;
     }
-    async createImage(file, Key) {
+    async createImage(file, id) {
         if (!this.imageTypes.includes(file.mimetype))
             throw new common_1.BadRequestException("Invalide image extention");
+        const buffer = await this.getReadStream(file);
+        const Key = Date.now() + '-' + id + '-' + file.filename;
         const uploadParams = {
             Bucket: this.bucketImages,
-            Body: file.createReadStream(),
-            Key: Date.now() + '-' + Key + '-' + file.filename
+            Body: buffer,
+            Key
         };
-        return this.s3.upload(uploadParams).promise();
+        const command = new client_s3_1.PutObjectCommand(uploadParams);
+        try {
+            await this.s3.send(command);
+            return { Key };
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(error);
+        }
     }
-    createRestImage(file, Key) {
+    async createRestImage(file, id) {
+        const Key = Date.now() + '-' + id + '-' + file.originalname;
         const uploadParams = {
             Bucket: this.bucketImages,
             Body: file.buffer,
-            Key: Date.now() + '-' + Key + '-' + file.originalname
+            Key
         };
-        return this.s3.upload(uploadParams).promise();
+        const command = new client_s3_1.PutObjectCommand(uploadParams);
+        try {
+            await this.s3.send(command);
+            return { Key };
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(error);
+        }
     }
-    removeImage(Key) {
+    async removeImage(Key) {
         const deleteParams = {
+            Bucket: this.bucketImages,
             Key,
-            Bucket: this.bucketImages
         };
-        this.invalidatationImage(Key);
-        this.s3.deleteObject(deleteParams).send();
-        return;
+        const command = new client_s3_1.DeleteObjectCommand(deleteParams);
+        try {
+            await this.s3.send(command);
+            this.invalidatationImage(Key);
+            return;
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(error);
+        }
     }
     invalidatationImage(Key) {
         const invalidationParams = {
@@ -120,6 +127,13 @@ let AwsService = class AwsService {
         };
         const invalidationCommand = new client_cloudfront_1.CreateInvalidationCommand(invalidationParams);
         this.cloudFront.send(invalidationCommand);
+    }
+    async getReadStream(file) {
+        let buffers = [];
+        return new Promise(async (resolve, reject) => (await file.createReadStream())
+            .on("data", (buf) => buffers.push(buf))
+            .on('end', () => resolve(Buffer.concat(buffers)))
+            .on("error", (err) => reject(err)));
     }
 };
 AwsService = __decorate([

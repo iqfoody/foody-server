@@ -84,9 +84,14 @@ export class CategoriesService {
   }
 
   async remove(id: string) {
-    const {image} = await this.CategoriesModel.findOne({_id: id}, {image: 1, _id: 0});
-    await this.CategoriesModel.findByIdAndDelete(id);
-    this.awsService.removeImage(image);
-    return "Success";
+    const result = await this.CategoriesModel.findOne({_id: id}, {image: 1, _id: 0});
+    try {
+      if(result?.image) await this.awsService.removeImage(result.image);
+      //TODO: delete all category field from meals...
+      await this.CategoriesModel.findByIdAndDelete(id);
+      return "Success";
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

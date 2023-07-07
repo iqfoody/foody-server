@@ -1,28 +1,24 @@
 import { getSignedUrl } from '@aws-sdk/cloudfront-signer';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { S3, SNS } from 'aws-sdk';
+import { S3Client, DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront';
 import Upload from 'src/constants/Upload';
 
 @Injectable()
 export class AwsService {
-  public s3: S3;
-  public sns: SNS;
+  public s3: S3Client;
   public cloudFront: CloudFrontClient;
   public bucketImages: string;
   public errorParams: {Key: string, Bucket: string};
   public cloudFrontKeyID: string;
   public cloudFrontPrivateKey: string;
   public distributionId: string;
-  public otps: {phoneNumber: string, otp: string}[];
   public imageTypes: string[];
   
   constructor () {
     const region = process.env.AWS_BUCKET_REGION
     const accessKeyId = process.env.AWS_ACCESS_KEY_PRODUCTION
     const secretAccessKey = process.env.AWS_SECRET_KEY_PRODUCTION
-
-    this.otps = [];
 
     this.imageTypes =[
       "image/jpg",
@@ -35,31 +31,17 @@ export class AwsService {
       "image/WEBP"
     ];
     
-    this.s3 = new S3({
-      region,
-      accessKeyId,
-      secretAccessKey
+    this.s3 = new S3Client({
+      credentials:{ accessKeyId, secretAccessKey },
+      region
     });
 
-    this.sns = new SNS({
-      region,
-      accessKeyId,
-      secretAccessKey
-    })
-
     this.cloudFront = new CloudFrontClient({
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
+      credentials: { accessKeyId, secretAccessKey },
       region
     })
 
     this.bucketImages = process.env.AWS_BUCKET_IMAGES;
-    this.errorParams = {
-      Key: 'Error-404',
-      Bucket: this.bucketImages
-    }
     this.cloudFrontKeyID = process.env.CLOUDFRONT_KEY_PAIR_ID;
     this.cloudFrontPrivateKey = process.env.CLOUDFRONT_PRIVATE_KEY;
     this.distributionId = process.env.CLOUDFRONT_DISTRiBUTION_ID;
@@ -77,33 +59,53 @@ export class AwsService {
     return result;
   }
 
-  async createImage(file: Upload, Key: string) {
-    if(!this.imageTypes.includes(file.mimetype)) throw new BadRequestException("Invalide image extention")
-    const uploadParams: S3.Types.PutObjectRequest = {
+  async createImage(file: Upload, id: string) {
+    if(!this.imageTypes.includes(file.mimetype)) throw new BadRequestException("Invalide image extention");
+    const buffer = await this.getReadStream(file);
+    const Key = Date.now()+'-'+id+'-'+file.filename;
+    const uploadParams = {
         Bucket: this.bucketImages,
-        Body: file.createReadStream(),
-        Key: Date.now()+'-'+Key+'-'+file.filename
+        Body: buffer,
+        Key
     }
-    return this.s3.upload(uploadParams).promise();
+    const command = new PutObjectCommand(uploadParams);
+    try {
+      await this.s3.send(command);
+      return {Key};
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
-  createRestImage(file: any, Key: string){
-    const uploadParams: S3.Types.PutObjectRequest = {
+  async createRestImage(file: any, id: string){
+    const Key = Date.now()+'-'+id+'-'+file.originalname;
+    const uploadParams = {
       Bucket: this.bucketImages,
       Body: file.buffer,
-      Key: Date.now()+'-'+Key+'-'+file.originalname
+      Key
     }
-    return this.s3.upload(uploadParams).promise();
+    const command = new PutObjectCommand(uploadParams);
+    try {
+      await this.s3.send(command);
+      return {Key};
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
-  removeImage(Key: string) {
+  async removeImage(Key: string) {
     const deleteParams = {
+      Bucket: this.bucketImages,
       Key,
-      Bucket: this.bucketImages
     };
-    this.invalidatationImage(Key);
-    this.s3.deleteObject(deleteParams).send();
-   return;
+    const command = new DeleteObjectCommand(deleteParams);
+    try {
+      await this.s3.send(command);
+      this.invalidatationImage(Key);
+      return;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   invalidatationImage(Key: string) {
@@ -121,6 +123,16 @@ export class AwsService {
     }
     const invalidationCommand = new CreateInvalidationCommand(invalidationParams);
     this.cloudFront.send(invalidationCommand);
+  }
+
+  async getReadStream(file: Upload): Promise<Buffer>{
+    let buffers: Buffer[] = [];
+    return new Promise(async (resolve, reject) => 
+    (await file.createReadStream())
+      .on("data", (buf) => buffers.push(buf))
+      .on('end', () => resolve(Buffer.concat(buffers)))
+      .on("error", (err)=> reject(err))
+    )
   }
 
 }

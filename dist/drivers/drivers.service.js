@@ -118,12 +118,17 @@ let DriversService = class DriversService {
         return "success";
     }
     async remove(_id) {
-        const { image } = await this.DriversModel.findOne({ _id }, { image: 1, _id: 0 });
-        await this.DriversModel.findByIdAndDelete(_id);
-        await this.walletsService.removeDriver(_id);
-        if (image)
-            this.awsService.removeImage(image);
-        return "success";
+        const result = await this.DriversModel.findOne({ _id }, { image: 1, _id: 0 });
+        try {
+            if (result?.image)
+                await this.awsService.removeImage(result.image);
+            await this.walletsService.removeDriver(_id);
+            await this.DriversModel.findByIdAndDelete(_id);
+            return "success";
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(error);
+        }
     }
     async findId(phoneNumber) {
         const driver = await this.DriversModel.findOne({ phoneNumber }, { _id: 1, deviceToken: 1 });

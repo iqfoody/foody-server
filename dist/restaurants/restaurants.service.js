@@ -118,11 +118,17 @@ let RestaurantsService = class RestaurantsService {
         return "success";
     }
     async remove(id) {
-        const { image } = await this.RestaurantsModel.findOne({ _id: id }, { image: 1, _id: 0 });
-        await this.RestaurantsModel.findByIdAndDelete(id);
-        await this.restaurantCategoriesService.clean(id);
-        this.awsService.removeImage(image);
-        return "Success";
+        const result = await this.RestaurantsModel.findOne({ _id: id }, { image: 1, _id: 0 });
+        try {
+            if (result?.image)
+                await this.awsService.removeImage(result.image);
+            await this.RestaurantsModel.findByIdAndDelete(id);
+            await this.restaurantCategoriesService.clean(id);
+            return "Success";
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(error);
+        }
     }
     async search(query) {
         const search = new RegExp(query, 'i');

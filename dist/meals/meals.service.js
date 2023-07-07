@@ -168,11 +168,16 @@ let MealsService = class MealsService {
         return "success";
     }
     async remove(id) {
-        const { image } = await this.MealsModel.findOne({ _id: id }, { image: 1, _id: 0 });
-        await this.MealsModel.findByIdAndDelete(id);
-        if (image)
-            this.awsService.removeImage(image);
-        return "Success";
+        const result = await this.MealsModel.findOne({ _id: id }, { image: 1, _id: 0 });
+        try {
+            if (result?.image)
+                await this.awsService.removeImage(result.image);
+            await this.MealsModel.findByIdAndDelete(id);
+            return "Success";
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(error);
+        }
     }
     async findExtention(_id, restaurant) {
         if (!(0, mongoose_2.isValidObjectId)(_id) || !(0, mongoose_2.isValidObjectId)(restaurant))

@@ -130,12 +130,16 @@ export class UsersService {
 
   async remove(id: string) {
     const result = await this.UsersModel.findOne({_id: id}, {image: 1, _id: 0});
-    await this.favoritesService.remove(id);
-    await this.walletsService.remove(id);
-    await this.addressesService.clean(id);
-    await this.UsersModel.findByIdAndDelete(id);
-    if(result?.image) this.awsService.removeImage(result?.image);
-    return "user has been deleted";
+    try {
+      if(result?.image) await this.awsService.removeImage(result?.image);
+      await this.favoritesService.remove(id);
+      await this.walletsService.remove(id);
+      await this.addressesService.clean(id);
+      await this.UsersModel.findByIdAndDelete(id);
+      return "user has been deleted";
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async findDeviceToken(_id: string){

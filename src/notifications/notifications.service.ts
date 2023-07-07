@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateNotificationInput } from './dto/create-notification.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { MealsService } from 'src/meals/meals.service';
@@ -112,9 +112,13 @@ export class NotificationsService {
   }
 
   async remove(id: string) {
-    const {image} = await this.NotificationsModel.findOne({_id: id}, {image: 1, _id: 0});
-    await this.NotificationsModel.findByIdAndDelete(id);
-    if(image) this.awsService.removeImage(image);
-    return "Success";
+    const result = await this.NotificationsModel.findOne({_id: id}, {image: 1, _id: 0});
+    try {
+      if(result?.image) await this.awsService.removeImage(result.image);
+      await this.NotificationsModel.findByIdAndDelete(id);
+      return "Success";
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }

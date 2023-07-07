@@ -127,12 +127,17 @@ let AdminsService = class AdminsService {
         return admin;
     }
     async remove(_id) {
-        const { image } = await this.AdminsModel.findOne({ $and: [{ _id }, { type: { $ne: "Admin" } }] }, { image: 1, _id: 0 });
-        await this.AdminsModel.findOneAndDelete({ $and: [{ _id }, { type: { $ne: "Admin" } }] });
-        await this.walletsService.removeAdmin(_id);
-        if (image)
-            this.awsService.removeImage(image);
-        return "success";
+        const result = await this.AdminsModel.findOne({ $and: [{ _id }, { type: { $ne: "Admin" } }] }, { image: 1, _id: 0 });
+        try {
+            if (result?.image)
+                await this.awsService.removeImage(result.image);
+            await this.walletsService.removeAdmin(_id);
+            await this.AdminsModel.findOneAndDelete({ $and: [{ _id }, { type: { $ne: "Admin" } }] });
+            return "success";
+        }
+        catch (error) {
+            throw new common_1.BadRequestException(error);
+        }
     }
 };
 AdminsService = __decorate([

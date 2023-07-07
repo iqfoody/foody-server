@@ -95,9 +95,13 @@ export class AdvertisementsService {
   }
 
   async remove(id: string) {
-    const {image} = await this.AdvertisementsModel.findOne({_id: id}, {image: 1, _id: 0});
-    await this.AdvertisementsModel.findByIdAndDelete(id);
-    this.awsService.removeImage(image);
-    return "Success";
+    const result = await this.AdvertisementsModel.findOne({_id: id}, {image: 1, _id: 0});
+    try {
+      if(result?.image) await this.awsService.removeImage(result.image);
+      await this.AdvertisementsModel.findByIdAndDelete(id);
+      return "Success";
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }
