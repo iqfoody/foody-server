@@ -1,21 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateRestaurantCategoryInput } from './dto/create-restaurant-category.input';
 import { UpdateRestaurantCategoryInput } from './dto/update-restaurant-category.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RestaurantCategoriesDocument } from 'src/models/restaurantCategories.schema';
 import { UpdatePositionInput } from 'src/constants/position.input';
+import { MealsService } from 'src/meals/meals.service';
 
 @Injectable()
 export class RestaurantCategoriesService {
   constructor(
     @InjectModel("RestaurantCategories") private RestaurantCategoriesModel: Model<RestaurantCategoriesDocument>,
+    @Inject(forwardRef(()=> MealsService)) private mealsService: MealsService, 
   ) {}
 
   //? application...
 
-  findForRestaurant(restaurant: string) {
-    return this.RestaurantCategoriesModel.find({restaurant}).select(['-__v', '-position', '-restaurant']);
+  async findForRestaurant(restaurant: string) {
+    let result = [];
+    const categories = await this.RestaurantCategoriesModel.find({restaurant}).select(['-__v', '-position', '-restaurant']);
+    for(const single of categories){
+      const meals = await this.mealsService.findForRestaurantCategory(single._id);
+      const { _doc: restCategory }: any = single;
+      result.push({...restCategory, meals});
+    }
+    return result;
   }
 
   //? dashbaord...

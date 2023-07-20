@@ -16,13 +16,23 @@ exports.RestaurantCategoriesService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const meals_service_1 = require("../meals/meals.service");
 let RestaurantCategoriesService = class RestaurantCategoriesService {
     RestaurantCategoriesModel;
-    constructor(RestaurantCategoriesModel) {
+    mealsService;
+    constructor(RestaurantCategoriesModel, mealsService) {
         this.RestaurantCategoriesModel = RestaurantCategoriesModel;
+        this.mealsService = mealsService;
     }
-    findForRestaurant(restaurant) {
-        return this.RestaurantCategoriesModel.find({ restaurant }).select(['-__v', '-position', '-restaurant']);
+    async findForRestaurant(restaurant) {
+        let result = [];
+        const categories = await this.RestaurantCategoriesModel.find({ restaurant }).select(['-__v', '-position', '-restaurant']);
+        for (const single of categories) {
+            const meals = await this.mealsService.findForRestaurantCategory(single._id);
+            const { _doc: restCategory } = single;
+            result.push({ ...restCategory, meals });
+        }
+        return result;
     }
     create(createRestaurantCategoryInput) {
         return this.RestaurantCategoriesModel.create(createRestaurantCategoryInput);
@@ -55,7 +65,9 @@ let RestaurantCategoriesService = class RestaurantCategoriesService {
 RestaurantCategoriesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)("RestaurantCategories")),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => meals_service_1.MealsService))),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        meals_service_1.MealsService])
 ], RestaurantCategoriesService);
 exports.RestaurantCategoriesService = RestaurantCategoriesService;
 //# sourceMappingURL=restaurant-categories.service.js.map

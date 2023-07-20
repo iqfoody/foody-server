@@ -23,6 +23,6 @@ export declare class AwsService {
         Key: string;
     }>;
     removeImage(Key: string): Promise<void>;
-    invalidatationImage(Key: string): void;
+    invalidatationImage(Key: string): Promise<void>;
     getReadStream(file: Upload): Promise<Buffer>;
 }

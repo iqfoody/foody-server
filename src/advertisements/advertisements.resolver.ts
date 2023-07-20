@@ -35,7 +35,7 @@ export class AdvertisementsResolver {
     return this.advertisementsService.findOne(id);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Advertisement)
   @CheckAbilities({actions: Actions.Update, subject: "Advertisement"})
   updateAdvertisement(@Args('updateAdvertisementInput') updateAdvertisementInput: UpdateAdvertisementInput) {
     if(!isValidObjectId(updateAdvertisementInput?.id)) throw new BadRequestException("There isn't advertisement with this id");

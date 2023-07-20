@@ -73,7 +73,7 @@ export declare class UsersService {
         createdAt: any;
         email: any;
     }>;
-    updateUser(id: string, updateUserInput: UpdateUserInput): Promise<string>;
+    updateUser(id: string, updateUserInput: UpdateUserInput): Promise<any>;
     passwordUser(id: string, updatePasswordUser: UpdatePasswordUser): Promise<string>;
     state(stateInput: StateInput): Promise<string>;
     remove(id: string): Promise<string>;
@@ -98,7 +98,7 @@ export declare class UsersService {
     update(updateUserInfo: UpdateUserInfo): Promise<string>;
     password(phoneNumber: string, passwordUserInput: PasswordUserInput): Promise<string>;
     logout(phoneNumber: string): Promise<void>;
-    delete(id: string): Promise<string>;
+    delete(phoneNumber: string): Promise<string>;
     getCreatedAt(_id: string): Promise<Partial<User>>;
     findByPhoneNumber(phoneNumber: string): Promise<import("mongoose").Document<unknown, import("src/models/users.schema").IUsersQueryHelpers, import("src/models/users.schema").UsersDocument> & Omit<import("src/models/users.schema").Users & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;

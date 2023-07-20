@@ -54,7 +54,7 @@ export class MealsResolver {
     return this.mealsService.findOne(id);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Meal)
   @CheckAbilities({actions: Actions.Update, subject: "Meal"})
   updateMeal(@Args('updateMealInput') updateMealInput: UpdateMealInput) {
     if(!isValidObjectId(updateMealInput?.id)) throw new BadRequestException("There isn't meal with this id");

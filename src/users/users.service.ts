@@ -97,6 +97,7 @@ export class UsersService {
   }
 
   async updateUser(id: string, updateUserInput: UpdateUserInput) {
+    let updatedUser;
     if(updateUserInput?.phoneNumber){
       let E0011 = await this.findByPhoneNumber(updateUserInput.phoneNumber);
       if(E0011 && id != E0011._id) throw new BadRequestException('phoneNumber E0011');
@@ -106,14 +107,15 @@ export class UsersService {
       if(E0002 && id != E0002._id) throw new BadRequestException('email E0002');
     }
     if(updateUserInput?.image){
-      const { image } = await this.UsersModel.findOne({_id: id}, {image: 1, _id: 0});
-      if( image ) this.awsService.removeImage(image);
+      const user = await this.UsersModel.findOne({_id: id}, {image: 1, _id: 0});
+      if(user?.image) await this.awsService.removeImage(user.image);
       const result = await this.awsService.createImage(updateUserInput.image, id);
-      await this.UsersModel.findByIdAndUpdate(id, {...updateUserInput, image: result?.Key});
+      updatedUser = await this.UsersModel.findByIdAndUpdate(id, {...updateUserInput, image: result?.Key}, {new: true}).populate("wallet");
     } else {
-      await this.UsersModel.findByIdAndUpdate(id, updateUserInput);
+      updatedUser = await this.UsersModel.findByIdAndUpdate(id, updateUserInput, {new: true}).populate("wallet");
     }
-    return "Success";
+    if(updatedUser?.image) updatedUser.image = this.awsService.getUrl(updatedUser.image);
+    return updatedUser;
   }
 
   async passwordUser(id: string, updatePasswordUser: UpdatePasswordUser) {
@@ -211,8 +213,9 @@ export class UsersService {
     await this.UsersModel.findOneAndUpdate({phoneNumber}, {refreshToken: null})
   }
 
-  async delete(id: string) {
-    await this.UsersModel.findByIdAndUpdate(id, {state: 'Deleted'}).exec();
+  async delete(phoneNumber: string) {
+    const deletedUser = await this.UsersModel.findOneAndUpdate({phoneNumber}, {state: 'Deleted'}).exec();
+    if(!deletedUser) throw new BadRequestException("Account hasn't deleted please try again later.");
     return "Success";
   }
 

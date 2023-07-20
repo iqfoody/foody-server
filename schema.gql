@@ -300,6 +300,7 @@ type OrderItem {
   addIngredients: [MealIngredient!]
   removeIngredients: [MealIngredient!]
   quantity: Int!
+  description: String
 }
 
 type Order {
@@ -548,7 +549,7 @@ input SearchInput {
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
-  updateUser(updateUserInput: UpdateUserInput!): String!
+  updateUser(updateUserInput: UpdateUserInput!): User!
   passwordUser(passwordUserInput: UpdatePasswordUser!): String!
   stateUser(stateInput: StateInput!): String!
   removeUser(id: ID!): String!
@@ -560,27 +561,27 @@ type Mutation {
   loginAdmin(loginAdminInput: LoginInput!): LoginAdmin!
   logoutAdmin: String!
   createAdmin(createAdminInput: CreateAdminInput!): Admin!
-  updateAdmin(updateAdminInput: UpdateAdminInput!): String!
+  updateAdmin(updateAdminInput: UpdateAdminInput!): Admin!
   passwordAdmin(passwordAdminInput: UpdatePasswordUser!): String!
   stateAdmin(stateInput: StateInput!): String!
   removeAdmin(id: ID!): String!
   createDriver(createDriverInput: CreateDriverInput!): Driver!
-  updateDriver(updateDriverInput: UpdateDriverInput!): String!
+  updateDriver(updateDriverInput: UpdateDriverInput!): Driver!
   passwordDriver(passwordDriverInput: UpdatePasswordUser!): String!
   stateDriver(stateInput: StateInput!): String!
   removeDriver(id: ID!): String!
   createAdvertisement(createAdvertisementInput: CreateAdvertisementInput!): Advertisement!
-  updateAdvertisement(updateAdvertisementInput: UpdateAdvertisementInput!): String!
+  updateAdvertisement(updateAdvertisementInput: UpdateAdvertisementInput!): Advertisement!
   positionAdvertisement(updatePositionInput: [UpdatePositionInput!]!): String!
   stateAdvertisement(stateInput: StateInput!): String!
   removeAdvertisement(id: ID!): String!
   createCategory(createCategoryInput: CreateCategoryInput!): Category!
-  updateCategory(updateCategoryInput: UpdateCategoryInput!): String!
+  updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
   positionCategory(updatePositionInput: [UpdatePositionInput!]!): String!
   stateCategory(stateInput: StateInput!): String!
   removeCategory(id: ID!): String!
   createMeal(createMealInput: CreateMealInput!): Meal!
-  updateMeal(updateMealInput: UpdateMealInput!): String!
+  updateMeal(updateMealInput: UpdateMealInput!): Meal!
   stateMeal(stateInput: StateInput!): String!
   positionMeal(updatePositionInput: [UpdatePositionInput!]!): String!
   removeMeal(id: ID!): String!
@@ -603,7 +604,7 @@ type Mutation {
   updateRate(updateRateInput: UpdateRateInput!): Rate!
   removeRate(id: ID!): Rate!
   createRestaurant(createRestaurantInput: CreateRestaurantInput!): Restaurant!
-  updateRestaurant(updateRestaurantInput: UpdateRestaurantInput!): String!
+  updateRestaurant(updateRestaurantInput: UpdateRestaurantInput!): Restaurant!
   stateRestaurant(stateInput: StateInput!): String!
   positionRestaurant(updatePositionInput: [UpdatePositionInput!]!): String!
   removeRestaurant(id: ID!): String!

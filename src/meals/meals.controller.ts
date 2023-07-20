@@ -17,10 +17,10 @@ export class MealsController {
         return this.mealsService.findForRestaurant(restaurant);
     }
 
-    @Get('/tag/:id')
-    async getTags(@Param('id') tag: string){
-        return this.mealsService.findForTag(tag);
-    }
+    // @Get('/tag/:id')
+    // async getTags(@Param('id') tag: string){
+    //     return this.mealsService.findForTag(tag);
+    // }
 
     @Get('/restaurantCategory/:id')
     async getrestaurantCategory(@Param('id') restaurantCategory: string){

@@ -17,8 +17,8 @@ export class AwsService {
   
   constructor () {
     const region = process.env.AWS_BUCKET_REGION
-    const accessKeyId = process.env.AWS_ACCESS_KEY_PRODUCTION
-    const secretAccessKey = process.env.AWS_SECRET_KEY_PRODUCTION
+    const accessKeyId = process.env.AWS_ACCESS_KEY_LOCAL
+    const secretAccessKey = process.env.AWS_SECRET_KEY_LOCAL
 
     this.imageTypes =[
       "image/jpg",
@@ -100,15 +100,15 @@ export class AwsService {
     };
     const command = new DeleteObjectCommand(deleteParams);
     try {
+      await this.invalidatationImage(Key);
       await this.s3.send(command);
-      this.invalidatationImage(Key);
       return;
     } catch (error) {
       throw new BadRequestException(error);
     }
   }
 
-  invalidatationImage(Key: string) {
+  async invalidatationImage(Key: string) {
     const invalidationParams = {
       DistributionId: this.distributionId,
       InvalidationBatch: {
@@ -122,7 +122,7 @@ export class AwsService {
       }
     }
     const invalidationCommand = new CreateInvalidationCommand(invalidationParams);
-    this.cloudFront.send(invalidationCommand);
+    await this.cloudFront.send(invalidationCommand);
   }
 
   async getReadStream(file: Upload): Promise<Buffer>{

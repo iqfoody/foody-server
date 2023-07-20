@@ -17,7 +17,6 @@ const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const users_service_1 = require("./users.service");
 const aws_service_1 = require("../aws/aws.service");
-const password_user_input_1 = require("./dto/password-user.input");
 const update_info_input_1 = require("./dto/update-info.input");
 const firebase_auth_guard_1 = require("../firebase-auth/firebase-auth.guard");
 let UsersController = class UsersController {
@@ -36,8 +35,8 @@ let UsersController = class UsersController {
             return this.usersService.update({ ...updateUserInfo, phoneNumber: req.user });
         }
     }
-    async password(passwordUserInput, req) {
-        return this.usersService.password(req.user, passwordUserInput);
+    async deleteAccount(req) {
+        return this.usersService.delete(req.user);
     }
 };
 __decorate([
@@ -52,14 +51,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "update", null);
 __decorate([
-    (0, common_1.Post)('/password'),
+    (0, common_1.Delete)('/'),
     (0, common_1.UseGuards)(firebase_auth_guard_1.FirebaseAuthGuard),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Req)()),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [password_user_input_1.PasswordUserInput, Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], UsersController.prototype, "password", null);
+], UsersController.prototype, "deleteAccount", null);
 UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService,

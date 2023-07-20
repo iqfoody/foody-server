@@ -15,8 +15,6 @@ export class AdvertisementsService {
     private readonly awsService: AwsService,
   ) {}
 
-  //TODO: populate -> user & target...
-
   //? application...
 
   async findAdvertisements() {
@@ -58,11 +56,7 @@ export class AdvertisementsService {
   }
 
   async findOne(id: string) {
-    const advertisement: any = await this.AdvertisementsModel.findById(id).populate([
-      {path: "restaurant", select: {title: 1, titleEN: 1, titleKR: 1, image: 1}},
-      {path: "meal", select: {title: 1, titleEN: 1, titleKR: 1, image: 1}},
-      {path: "user", select: {name: 1, phoneNumber: 1, image: 1}},
-    ]);
+    const advertisement: any = await this.AdvertisementsModel.findById(id).populate(["restaurant", "meal", "user"]);
     if(advertisement?.image) advertisement.image = this.awsService.getUrl(advertisement.image);
     if(advertisement?.restaurant?.image) advertisement.restaurant.image = this.awsService.getUrl(advertisement.restaurant.image);
     if(advertisement?.meal?.image) advertisement.meal.image = this.awsService.getUrl(advertisement.meal.image);
@@ -71,15 +65,20 @@ export class AdvertisementsService {
   }
 
   async update(id: string, updateAdvertisementInput: UpdateAdvertisementInput) {
+    let updatedAdvertisement;
     if(updateAdvertisementInput?.image){
       const {image} = await this.AdvertisementsModel.findOne({_id: updateAdvertisementInput.id}, {image: 1, _id: 0});
       this.awsService.removeImage(image);
       const result = await this.awsService.createImage(updateAdvertisementInput.image, id);
-      await this.AdvertisementsModel.findByIdAndUpdate(id, {...updateAdvertisementInput, image: result?.Key});
+      updatedAdvertisement = await this.AdvertisementsModel.findByIdAndUpdate(id, {...updateAdvertisementInput, image: result?.Key}, {new: true}).populate(["restaurant", "meal", "user"]);
     } else {
-      await this.AdvertisementsModel.findByIdAndUpdate(id, updateAdvertisementInput);
+      updatedAdvertisement = await this.AdvertisementsModel.findByIdAndUpdate(id, updateAdvertisementInput, {new: true}).populate(["restaurant", "meal", "user"]);;
     }
-    return "Success";
+    if(updatedAdvertisement?.image) updatedAdvertisement.image = this.awsService.getUrl(updatedAdvertisement.image);
+    if(updatedAdvertisement?.restaurant?.image) updatedAdvertisement.restaurant.image = this.awsService.getUrl(updatedAdvertisement.restaurant.image);
+    if(updatedAdvertisement?.meal?.image) updatedAdvertisement.meal.image = this.awsService.getUrl(updatedAdvertisement.meal.image);
+    if(updatedAdvertisement?.user?.image) updatedAdvertisement.user.image = this.awsService.getUrl(updatedAdvertisement.user.image);
+    return updatedAdvertisement;
   }
 
   async state(stateInput: StateInput){

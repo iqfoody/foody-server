@@ -57,7 +57,7 @@ export declare class MealsResolver {
     findOne(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    updateMeal(updateMealInput: UpdateMealInput): Promise<string>;
+    updateMeal(updateMealInput: UpdateMealInput): Promise<any>;
     stateMeal(stateInput: StateInput): Promise<string>;
     positionMeal(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     removeMeal(id: string): Promise<string>;

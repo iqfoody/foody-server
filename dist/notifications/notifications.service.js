@@ -121,7 +121,7 @@ let NotificationsService = class NotificationsService {
                 unRead = true;
         }
         if (unRead)
-            this.NotificationsModel.updateMany({ $and: [{ state: "Unread" }, { type: "Management" }] }, { state: "Read" });
+            await this.NotificationsModel.updateMany({ $and: [{ state: "Unread" }, { type: "Management" }] }, { state: "Read" });
         const orders = await this.ordersService.findUnread();
         return { data: notifications, pages: Math.ceil(total / limitEntity.limit), orders };
     }

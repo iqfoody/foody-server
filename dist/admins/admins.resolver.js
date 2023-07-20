@@ -87,7 +87,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AdminsResolver.prototype, "findOne", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => String),
+    (0, graphql_1.Mutation)(() => admin_entity_1.Admin),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Admin" }),
     __param(0, (0, graphql_1.Args)('updateAdminInput')),
     __metadata("design:type", Function),

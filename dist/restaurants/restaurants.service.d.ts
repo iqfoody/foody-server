@@ -61,7 +61,7 @@ export declare class RestaurantsService {
     findOne(id: string): Promise<import("mongoose").Document<unknown, {}, RestaurantsDocument> & Omit<import("src/models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    update(id: string, updateRestaurantInput: UpdateRestaurantInput): Promise<string>;
+    update(id: string, updateRestaurantInput: UpdateRestaurantInput): Promise<any>;
     state(stateInput: StateInput): Promise<string>;
     position(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     remove(id: string): Promise<string>;

@@ -124,7 +124,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], MealsResolver.prototype, "findOne", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => String),
+    (0, graphql_1.Mutation)(() => meal_entity_1.Meal),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Meal" }),
     __param(0, (0, graphql_1.Args)('updateMealInput')),
     __metadata("design:type", Function),

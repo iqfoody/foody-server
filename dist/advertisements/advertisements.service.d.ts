@@ -47,7 +47,7 @@ export declare class AdvertisementsService {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
     findOne(id: string): Promise<any>;
-    update(id: string, updateAdvertisementInput: UpdateAdvertisementInput): Promise<string>;
+    update(id: string, updateAdvertisementInput: UpdateAdvertisementInput): Promise<any>;
     state(stateInput: StateInput): Promise<string>;
     position(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     remove(id: string): Promise<string>;

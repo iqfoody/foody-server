@@ -17,8 +17,14 @@ let RefreshAuthGuard = class RefreshAuthGuard extends (0, passport_1.AuthGuard)(
         if (request.cookies.iop) {
             const refresh = request.cookies?.iop;
             request.body = { ...request.body, refresh };
+            return request;
         }
-        return request;
+        else if (request.headers.authorization) {
+            const refresh = request.headers.authorization.replace('Bearer', '').trim();
+            request.body = { ...request.body, refresh };
+        }
+        else
+            throw new common_1.UnauthorizedException("Access denied");
     }
 };
 RefreshAuthGuard = __decorate([

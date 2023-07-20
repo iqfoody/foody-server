@@ -57,6 +57,7 @@ __decorate([
 ], AuthController.prototype, "login", null);
 __decorate([
     (0, common_1.Post)('/signup'),
+    (0, common_1.UseGuards)(firebase_auth_guard_1.FirebaseAuthGuard),
     __param(0, (0, common_1.Body)('createUserInput')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -73,6 +74,7 @@ __decorate([
 ], AuthController.prototype, "info", null);
 __decorate([
     (0, common_1.Post)('/driver/login'),
+    (0, common_1.UseGuards)(firebase_auth_guard_1.FirebaseAuthGuard),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),

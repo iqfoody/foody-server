@@ -41,7 +41,7 @@ export declare class CategoriesResolver {
     findOne(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/categories.schema").CategoriesDocument> & Omit<import("../models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    updateCategory(updateCategoryInput: UpdateCategoryInput): Promise<string>;
+    updateCategory(updateCategoryInput: UpdateCategoryInput): Promise<any>;
     positionCategory(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     stateCategory(stateInput: StateInput): Promise<string>;
     removeCategory(id: string): Promise<string>;

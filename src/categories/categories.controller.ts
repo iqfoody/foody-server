@@ -9,13 +9,8 @@ export class CategoriesController {
         private readonly mealsService: MealsService,
     ) {}
 
-    // @Get('/:id')
-    // async getCategory(@Param('id') id: string){
-    //     return this.categoriesService.findCategory(id);
-    // }
-
     @Get('/:id')
-    async getRestaurantsForCategory(@Param('id') category: string, @Query('orderBy') orderby: string){
+    async getMealsForCategory(@Param('id') category: string, @Query('orderBy') orderby: string){
         return this.mealsService.findForCategory(category, orderby);
     }
 

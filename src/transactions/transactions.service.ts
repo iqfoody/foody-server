@@ -176,8 +176,8 @@ export class TransactionsService {
 
   async findAllAdmin(limitEntity: LimitEntity) {
     const skipIndex = limitEntity.page * limitEntity.page;
-    const transactions: any = await this.TransactionsModel.find({admin: {$exists: true}}).populate([{path: "user", select: {name: 1, image: 1}}, {path: "driver", select: {name: 1, image: 1}}]).sort({_id: -1}).limit(limitEntity.limit).skip(skipIndex);
-    const total = await this.TransactionsModel.countDocuments({admin: {$exists: true}});
+    const transactions: any = await this.TransactionsModel.find({admin: limitEntity?.user}).populate([{path: "user", select: {name: 1, image: 1}}, {path: "driver", select: {name: 1, image: 1}}]).sort({_id: -1}).limit(limitEntity.limit).skip(skipIndex);
+    const total = await this.TransactionsModel.countDocuments({admin: limitEntity?.user});
     for(const single of transactions){
       if(single.user?.image) single.user.image = this.awsService.getUrl(single.user.image);
     }

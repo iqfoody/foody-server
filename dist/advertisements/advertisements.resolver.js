@@ -84,7 +84,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AdvertisementsResolver.prototype, "findOne", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => String),
+    (0, graphql_1.Mutation)(() => advertisement_entity_1.Advertisement),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Advertisement" }),
     __param(0, (0, graphql_1.Args)('updateAdvertisementInput')),
     __metadata("design:type", Function),

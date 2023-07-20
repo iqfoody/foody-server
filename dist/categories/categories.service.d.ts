@@ -49,7 +49,7 @@ export declare class CategoriesService {
     findOne(id: string): Promise<import("mongoose").Document<unknown, {}, CategoriesDocument> & Omit<import("src/models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    update(id: string, updateCategoryInput: UpdateCategoryInput): Promise<string>;
+    update(id: string, updateCategoryInput: UpdateCategoryInput): Promise<any>;
     state(stateInput: StateInput): Promise<string>;
     position(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     remove(id: string): Promise<string>;

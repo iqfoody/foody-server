@@ -37,7 +37,7 @@ export declare class DriversService {
     private readonly awsService;
     constructor(DriversModel: IDriversModel, walletsService: WalletsService, awsService: AwsService);
     login(loginInput: LoginInput): Promise<import("src/models/drivers.schema").DriversDocument>;
-    info(id: string): Promise<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
+    info(phoneNumber: string): Promise<import("mongoose").Document<unknown, import("src/models/drivers.schema").IDriversQueryHelpers, import("src/models/drivers.schema").DriversDocument> & Omit<import("src/models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     logout(id: string): Promise<void>;
@@ -57,7 +57,7 @@ export declare class DriversService {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     updateAny(id: string, updateAdminInput: UpdateDriverInput): Promise<void>;
-    update(id: string, updateDriverInput: UpdateDriverInput): Promise<string>;
+    update(id: string, updateDriverInput: UpdateDriverInput): Promise<any>;
     password(id: string, updatePasswordDriver: UpdatePasswordUser): Promise<string>;
     state(stateInput: StateInput): Promise<string>;
     remove(_id: string): Promise<string>;

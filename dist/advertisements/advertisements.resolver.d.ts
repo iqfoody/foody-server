@@ -39,7 +39,7 @@ export declare class AdvertisementsResolver {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
     findOne(id: string): Promise<any>;
-    updateAdvertisement(updateAdvertisementInput: UpdateAdvertisementInput): Promise<string>;
+    updateAdvertisement(updateAdvertisementInput: UpdateAdvertisementInput): Promise<any>;
     positionAdvertisement(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     stateAdvertisement(stateInput: StateInput): Promise<string>;
     removeAdvertisement(id: string): Promise<string>;

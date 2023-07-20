@@ -40,7 +40,7 @@ export declare class AdminsResolver {
     findOne(id: string): Promise<import("mongoose").Document<unknown, import("../models/admins.schema").IAdminsQueryHelpers, import("../models/admins.schema").AdminsDocument> & Omit<import("../models/admins.schema").Admins & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    updateAdmin(updateAdminInput: UpdateAdminInput): Promise<string>;
+    updateAdmin(updateAdminInput: UpdateAdminInput): Promise<any>;
     passwordUser(passwordAdminInput: UpdatePasswordUser): Promise<string>;
     stateAdmin(stateInput: StateInput): Promise<string>;
     removeAdmin(id: string): Promise<string>;

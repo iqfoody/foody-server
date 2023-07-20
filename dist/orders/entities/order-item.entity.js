@@ -20,6 +20,7 @@ let OrderItem = class OrderItem {
     addIngredients;
     removeIngredients;
     quantity;
+    description;
 };
 __decorate([
     (0, graphql_1.Field)(() => meal_entity_1.Meal),
@@ -41,6 +42,10 @@ __decorate([
     (0, graphql_1.Field)(() => graphql_1.Int),
     __metadata("design:type", Number)
 ], OrderItem.prototype, "quantity", void 0);
+__decorate([
+    (0, graphql_1.Field)({ nullable: true }),
+    __metadata("design:type", String)
+], OrderItem.prototype, "description", void 0);
 OrderItem = __decorate([
     (0, graphql_1.ObjectType)()
 ], OrderItem);

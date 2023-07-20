@@ -80,7 +80,7 @@ export declare class MealsService {
     findOne(id: string): Promise<import("mongoose").Document<unknown, {}, MealsDocument> & Omit<import("src/models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    update(id: string, updateMealInput: UpdateMealInput): Promise<string>;
+    update(id: string, updateMealInput: UpdateMealInput): Promise<any>;
     state(stateInput: StateInput): Promise<string>;
     position(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     remove(id: string): Promise<string>;

@@ -71,42 +71,30 @@ export class AuthService {
   }
 
   async loginDriver(context: any, loginInput: LoginInput) {
-    if(loginInput.password.length < 6) throw new Error('password E0004');
-    const driver = await this.driversService.login(loginInput);
-    if(!driver) throw new Error('email E0001');
-    const result = await this.getTokens(driver, "Driver");
-    const refreshToken = await hash(result.refreshToken, 10)
+    const driver = await this.driversService.findByPhoneNumber(context.user);
+    if(!driver) throw new Error('phoneNumber E0009');
     const ip: string = context.ip;
     const platform: string = context?.get('user-agent');
-    await this.driversService.updateAny(driver._id, {refreshToken, ip, platform, deviceToken: loginInput.deviceToken});
-    return result;
+    await this.driversService.updateAny(driver._id, {ip, platform, deviceToken: loginInput.deviceToken});
+    return driver;
   }
 
   async signup(createUserInput: CreateUserInput, context: any) {
-    if(context?.phoneNumber){
-      let E0011 = await this.usersService.findByPhoneNumber(context?.phoneNumber);
+    if(context?.user){
+      let E0011 = await this.usersService.findByPhoneNumber(context?.user);
       if(E0011) throw new BadRequestException('phoneNumber E0011')
     }
     const ip: string = context?.ip;
     const platform: string = context?.get('user-agent');
-    const user = await this.usersService.create({...createUserInput, phoneNumber: context?.phoneNumber, ip, platform});
+    const user = await this.usersService.create({...createUserInput, phoneNumber: context?.user, ip, platform});
     return user;
   }
 
   async logout(context: any, type: string) {
-    if(type === "User"){
-      await this.usersService.logout(context);
-      return 'success';
-    } else {
-      if (type === "Admin"){
-        await this.adminsService.logout(context.req.user._id);
-      } else if (type === "Driver"){
-        await this.driversService.logout(context.user._id);
-      }
-      context.res.cookie('osk', '', {...this.cookieOptions, maxAge: 0});
-      context.res.cookie('iop', '', {...this.cookieOptions, maxAge: 0});
-      return 'success';
-    }
+    await this.adminsService.logout(context.req.user._id);
+    context.res.cookie('osk', '', {...this.cookieOptions, maxAge: 0});
+    context.res.cookie('iop', '', {...this.cookieOptions, maxAge: 0});
+    return 'success';
   }
 
   async findInfoAdmin(context: any) {
@@ -118,17 +106,11 @@ export class AuthService {
   }
 
   async refresh(context: any, type: string) {
-    if(type === "Driver") {
-      const driver = await this.driversService.refresh(context.user._id, context.user.refreshToken);
-      const accessToken = await this.getNewAccessToken(driver, "Driver");
-      return accessToken;
-    } else {
       const admin = await this.adminsService.refresh(context.req.user._id, context.req.user.refreshToken);
       if(!admin) return this.logout(context, "Admin");
       const accessToken = await this.getNewAccessToken(admin, "Admin");
       context.res.cookie('osk', accessToken, this.cookieOptions);
       return "success";
-    }
   }
 
   async getTokens(user: any, metadata: string) {

@@ -49,11 +49,9 @@ export declare class AuthService {
         refreshToken: string;
         user: any;
     }>;
-    loginDriver(context: any, loginInput: LoginInput): Promise<{
-        accessToken: string;
-        refreshToken: string;
-        user: any;
-    }>;
+    loginDriver(context: any, loginInput: LoginInput): Promise<import("mongoose").Document<unknown, import("../models/drivers.schema").IDriversQueryHelpers, import("../models/drivers.schema").DriversDocument> & Omit<import("../models/drivers.schema").Drivers & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
     signup(createUserInput: CreateUserInput, context: any): Promise<Omit<import("mongoose").Document<unknown, import("../models/users.schema").IUsersQueryHelpers, import("../models/users.schema").UsersDocument> & Omit<import("../models/users.schema").Users & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>, never>>;

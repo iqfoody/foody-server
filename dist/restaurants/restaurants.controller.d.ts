@@ -27,7 +27,6 @@ import { RestaurantsService } from './restaurants.service';
 export declare class RestaurantsController {
     private readonly restaurantsService;
     constructor(restaurantsService: RestaurantsService);
-    getRestaurant(restaurant: string): Promise<any>;
     getRestaurants(): Promise<(import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
@@ -37,4 +36,5 @@ export declare class RestaurantsController {
         }, never>)[];
         pages: number;
     }>;
+    getRestaurant(restaurant: string): Promise<any>;
 }

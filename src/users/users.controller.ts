@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
 import { AwsService } from 'src/aws/aws.service';
@@ -25,10 +25,10 @@ export class UsersController {
         }
     }
 
-    @Post('/password')
+    @Delete('/')
     @UseGuards(FirebaseAuthGuard)
-    async password(@Body() passwordUserInput: PasswordUserInput, @Req() req){
-        return this.usersService.password(req.user, passwordUserInput);
+    async deleteAccount(@Req() req){
+        return this.usersService.delete(req.user);
     }
 
 }

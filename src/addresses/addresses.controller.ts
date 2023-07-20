@@ -11,11 +11,6 @@ export class AddressesController {
         private readonly addressesService: AddressesService,
     ) {}
 
-    @Get('/:id')
-    async getAddress(@Param('id') id: string, @Req() req){
-        return this.addressesService.findAddress(id, req.user);
-    }
-
     @Get('/')
     async getAddresses(@Req() req){
         return this.addressesService.findAddresses(req.user);
@@ -24,6 +19,11 @@ export class AddressesController {
     @Post('/')
     async createAddress(@Body('createAddressInput') createAddressInput: CreateAddressInput, @Req() req){
         return this.addressesService.create({...createAddressInput, user: req.user});
+    }
+
+    @Get('/:id')
+    async getAddress(@Param('id') id: string, @Req() req){
+        return this.addressesService.findAddress(id, req.user);
     }
 
     @Put('/:id')

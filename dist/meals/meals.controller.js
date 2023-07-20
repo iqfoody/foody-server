@@ -26,9 +26,6 @@ let MealsController = class MealsController {
     async getRestaurants(restaurant) {
         return this.mealsService.findForRestaurant(restaurant);
     }
-    async getTags(tag) {
-        return this.mealsService.findForTag(tag);
-    }
     async getrestaurantCategory(restaurantCategory) {
         return this.mealsService.findForRestaurantCategory(restaurantCategory);
     }
@@ -52,13 +49,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], MealsController.prototype, "getRestaurants", null);
-__decorate([
-    (0, common_1.Get)('/tag/:id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], MealsController.prototype, "getTags", null);
 __decorate([
     (0, common_1.Get)('/restaurantCategory/:id'),
     __param(0, (0, common_1.Param)('id')),

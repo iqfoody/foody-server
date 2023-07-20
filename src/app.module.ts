@@ -39,7 +39,6 @@ import { SettingsModule } from './settings/settings.module';
       buildSchemaOptions: {
         dateScalarMode: 'timestamp',
       },
-      //TODO: active this line on production: playground: false,
       playground: false,
       context: ({req, res}) => {
         return {req, res}

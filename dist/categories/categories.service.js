@@ -66,16 +66,19 @@ let CategoriesService = class CategoriesService {
         return category;
     }
     async update(id, updateCategoryInput) {
+        let updatedCategory;
         if (updateCategoryInput?.image) {
             const { image } = await this.CategoriesModel.findOne({ _id: updateCategoryInput.id }, { image: 1, _id: 0 });
             this.awsService.removeImage(image);
             const result = await this.awsService.createImage(updateCategoryInput.image, id);
-            await this.CategoriesModel.findByIdAndUpdate(id, { ...updateCategoryInput, image: result?.Key });
+            updatedCategory = await this.CategoriesModel.findByIdAndUpdate(id, { ...updateCategoryInput, image: result?.Key }, { new: true });
         }
         else {
-            await this.CategoriesModel.findByIdAndUpdate(id, updateCategoryInput);
+            updatedCategory = await this.CategoriesModel.findByIdAndUpdate(id, updateCategoryInput, { new: true });
         }
-        return "Success";
+        if (updatedCategory?.image)
+            updatedCategory.image = this.awsService.getUrl(updatedCategory.image);
+        return updatedCategory;
     }
     async state(stateInput) {
         await this.CategoriesModel.findByIdAndUpdate(stateInput.id, stateInput);

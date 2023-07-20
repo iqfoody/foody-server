@@ -23,7 +23,7 @@ let CategoriesController = class CategoriesController {
         this.categoriesService = categoriesService;
         this.mealsService = mealsService;
     }
-    async getRestaurantsForCategory(category, orderby) {
+    async getMealsForCategory(category, orderby) {
         return this.mealsService.findForCategory(category, orderby);
     }
     async getCategories() {
@@ -37,7 +37,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
-], CategoriesController.prototype, "getRestaurantsForCategory", null);
+], CategoriesController.prototype, "getMealsForCategory", null);
 __decorate([
     (0, common_1.Get)('/'),
     __metadata("design:type", Function),

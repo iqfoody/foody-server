@@ -7,14 +7,14 @@ export class AdvertisementsController {
         private readonly advertisementsService: AdvertisementsService,
     ){}
 
-    @Get('/:id')
-    async getAdvertisement(@Param('id') id: string){
-        return this.advertisementsService.findAdvertisement(id);
-    }
-
     @Get('/')
     async getAdvertisements(){
         return this.advertisementsService.findAdvertisements();
+    }
+
+    @Get('/:id')
+    async getAdvertisement(@Param('id') id: string){
+        return this.advertisementsService.findAdvertisement(id);
     }
 
 }

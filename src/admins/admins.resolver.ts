@@ -35,7 +35,7 @@ export class AdminsResolver {
     return this.adminsService.findOne(id);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Admin)
   @CheckAbilities({actions: Actions.Update, subject: "Admin"})
   updateAdmin(@Args('updateAdminInput') updateAdminInput: UpdateAdminInput) {
     if(!isValidObjectId(updateAdminInput?.id)) throw new BadRequestException("There isn't admin with this id");

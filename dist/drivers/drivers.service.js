@@ -33,8 +33,8 @@ let DriversService = class DriversService {
             driver.image = this.awsService.getUrl(driver?.image);
         return driver;
     }
-    async info(id) {
-        const driver = await this.DriversModel.findById(id);
+    async info(phoneNumber) {
+        const driver = await this.DriversModel.findOne({ phoneNumber });
         if (driver?.image)
             driver.image = this.awsService.getUrl(driver?.image);
         return driver;
@@ -95,17 +95,20 @@ let DriversService = class DriversService {
         let E0011 = await this.findByPhoneNumber(updateDriverInput.phoneNumber);
         if (E0011 && id != E0011._id)
             throw new Error('phoneNumber E0011');
+        let updatedDriver;
         if (updateDriverInput?.image) {
-            const { image } = await this.DriversModel.findOne({ _id: updateDriverInput.id }, { image: 1, _id: 0 });
-            if (image)
-                this.awsService.removeImage(image);
+            const driver = await this.DriversModel.findOne({ _id: updateDriverInput.id }, { image: 1, _id: 0 });
+            if (driver?.image)
+                this.awsService.removeImage(driver.image);
             const result = await this.awsService.createImage(updateDriverInput.image, id);
-            await this.DriversModel.findByIdAndUpdate(id, { ...updateDriverInput, image: result?.Key });
+            updatedDriver = await this.DriversModel.findByIdAndUpdate(id, { ...updateDriverInput, image: result?.Key }, { new: true }).populate("wallet");
         }
         else {
-            await this.DriversModel.findByIdAndUpdate(id, updateDriverInput);
+            updatedDriver = await this.DriversModel.findByIdAndUpdate(id, updateDriverInput, { new: true }).populate("wallet");
         }
-        return "account updated";
+        if (updatedDriver?.image)
+            updatedDriver.image = this.awsService.getUrl(updatedDriver.image);
+        return updatedDriver;
     }
     async password(id, updatePasswordDriver) {
         const salt = await (0, bcryptjs_1.genSalt)();

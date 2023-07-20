@@ -27,10 +27,10 @@ import { AdvertisementsService } from './advertisements.service';
 export declare class AdvertisementsController {
     private readonly advertisementsService;
     constructor(advertisementsService: AdvertisementsService);
-    getAdvertisement(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
     getAdvertisements(): Promise<(import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
+    getAdvertisement(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/advertisements.schema").AdvertisementsDocument> & Omit<import("../models/advertisements.schema").Advertisements & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
 }

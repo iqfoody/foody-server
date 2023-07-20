@@ -90,15 +90,17 @@ export class RestaurantsService {
   }
 
   async update(id: string, updateRestaurantInput: UpdateRestaurantInput) {
+    let updatedRestaurant;
     if(updateRestaurantInput?.image){
       const {image} = await this.RestaurantsModel.findOne({_id: updateRestaurantInput.id}, {image: 1, _id: 0});
       this.awsService.removeImage(image);
       const result = await this.awsService.createImage(updateRestaurantInput.image, id);
-      await this.RestaurantsModel.findByIdAndUpdate(id, {...updateRestaurantInput, image: result?.Key});
+      updatedRestaurant = await this.RestaurantsModel.findByIdAndUpdate(id, {...updateRestaurantInput, image: result?.Key}, {new: true});
     } else {
-      await this.RestaurantsModel.findByIdAndUpdate(id, updateRestaurantInput);
+      updatedRestaurant = await this.RestaurantsModel.findByIdAndUpdate(id, updateRestaurantInput, {new: true});
     }
-    return "Success";
+    if(updatedRestaurant?.image) updatedRestaurant.image = this.awsService.getUrl(updatedRestaurant.image);
+    return updatedRestaurant;
   }
 
   async state(stateInput: StateInput){

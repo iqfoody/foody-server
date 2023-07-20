@@ -92,17 +92,20 @@ let AdminsService = class AdminsService {
         let E0011 = await this.findByEmail(updateAdminInput.email);
         if (E0011 && id != E0011._id)
             throw new Error('email E0002');
+        let updatedAdmin;
         if (updateAdminInput?.image) {
-            const { image } = await this.AdminsModel.findOne({ _id: updateAdminInput.id }, { image: 1, _id: 0 });
-            if (image)
-                this.awsService.removeImage(image);
+            const admin = await this.AdminsModel.findOne({ _id: updateAdminInput.id }, { image: 1, _id: 0 });
+            if (admin?.image)
+                await this.awsService.removeImage(admin.image);
             const result = await this.awsService.createImage(updateAdminInput.image, id);
-            await this.AdminsModel.findByIdAndUpdate(id, { ...updateAdminInput, image: result?.Key });
+            updatedAdmin = await this.AdminsModel.findByIdAndUpdate(id, { ...updateAdminInput, image: result?.Key }, { new: true }).populate("wallet");
         }
         else {
-            await this.AdminsModel.findByIdAndUpdate(id, updateAdminInput);
+            updatedAdmin = await this.AdminsModel.findByIdAndUpdate(id, updateAdminInput, { new: true }).populate("wallet");
         }
-        return "admin updated";
+        if (updatedAdmin?.image)
+            updatedAdmin.image = this.awsService.getUrl(updatedAdmin.image);
+        return updatedAdmin;
     }
     async passwordAdmin(id, updatePasswordAdmin) {
         const salt = await (0, bcryptjs_1.genSalt)();

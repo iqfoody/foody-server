@@ -146,16 +146,19 @@ let MealsService = class MealsService {
         return meal;
     }
     async update(id, updateMealInput) {
+        let updatedMeal;
         if (updateMealInput?.image) {
             const { image } = await this.MealsModel.findOne({ _id: updateMealInput.id }, { image: 1, _id: 0 });
             this.awsService.removeImage(image);
             const result = await this.awsService.createImage(updateMealInput.image, id);
-            await this.MealsModel.findByIdAndUpdate(id, { ...updateMealInput, image: result?.Key });
+            updatedMeal = await this.MealsModel.findByIdAndUpdate(id, { ...updateMealInput, image: result?.Key }, { new: true }).populate({ path: "category", select: { _id: 1 } });
         }
         else {
-            await this.MealsModel.findByIdAndUpdate(id, updateMealInput);
+            updatedMeal = await this.MealsModel.findByIdAndUpdate(id, updateMealInput, { new: true }).populate({ path: "category", select: { _id: 1 } });
         }
-        return "Success";
+        if (updatedMeal?.image)
+            updatedMeal.image = this.awsService.getUrl(updatedMeal.image);
+        return updatedMeal;
     }
     async state(stateInput) {
         await this.MealsModel.findByIdAndUpdate(stateInput.id, stateInput);

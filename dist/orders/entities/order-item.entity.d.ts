@@ -7,4 +7,5 @@ export declare class OrderItem {
     addIngredients?: MealIngredient[];
     removeIngredients?: MealIngredient[];
     quantity: number;
+    description?: string;
 }

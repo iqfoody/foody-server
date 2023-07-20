@@ -29,7 +29,7 @@ export declare class CategoriesController {
     private readonly categoriesService;
     private readonly mealsService;
     constructor(categoriesService: CategoriesService, mealsService: MealsService);
-    getRestaurantsForCategory(category: string, orderby: string): Promise<(import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
+    getMealsForCategory(category: string, orderby: string): Promise<(import("mongoose").Document<unknown, {}, import("../models/meals.schema").MealsDocument> & Omit<import("../models/meals.schema").Meals & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
     getCategories(): Promise<(import("mongoose").Document<unknown, {}, import("../models/categories.schema").CategoriesDocument> & Omit<import("../models/categories.schema").Categories & import("mongoose").Document<any, any, any> & {

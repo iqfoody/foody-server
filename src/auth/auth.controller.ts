@@ -22,6 +22,7 @@ export class AuthController {
     }
 
     @Post('/signup')
+    @UseGuards(FirebaseAuthGuard)
     async signup(@Body('createUserInput') createUserInput: CreateUserInput, @Req() req){
         return this.authService.signup(createUserInput, req);
     }
@@ -35,6 +36,7 @@ export class AuthController {
     // drivers routes...
 
     @Post('/driver/login')
+    @UseGuards(FirebaseAuthGuard)
     async loginDriver(@Body() loginInput: LoginInput, @Req() req){
         return this.authService.loginDriver(req, loginInput);
     }

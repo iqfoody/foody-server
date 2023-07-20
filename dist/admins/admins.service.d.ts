@@ -54,7 +54,7 @@ export declare class AdminsService {
     }, never>>;
     updateAny(_id: string, updateAdminInput: UpdateAdminInput): Promise<void>;
     updateAdmin(_id: string, updateAdminInput: UpdateAdminInput): Promise<void>;
-    update(id: string, updateAdminInput: UpdateAdminInput): Promise<string>;
+    update(id: string, updateAdminInput: UpdateAdminInput): Promise<any>;
     passwordAdmin(id: string, updatePasswordAdmin: UpdatePasswordUser): Promise<string>;
     state(stateInput: StateInput): Promise<string>;
     logout(_id: string): Promise<void>;

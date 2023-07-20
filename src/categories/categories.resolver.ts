@@ -35,7 +35,7 @@ export class CategoriesResolver {
     return this.categoriesService.findOne(id);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Category)
   @CheckAbilities({actions: Actions.Update, subject: "Category"})
   updateCategory(@Args('updateCategoryInput') updateCategoryInput: UpdateCategoryInput) {
     if(!isValidObjectId(updateCategoryInput?.id)) throw new BadRequestException("There isn't category with this id");

@@ -44,7 +44,7 @@ export declare class RestaurantsResolver {
     findOne(id: string): Promise<import("mongoose").Document<unknown, {}, import("../models/restaurants.schema").RestaurantsDocument> & Omit<import("../models/restaurants.schema").Restaurants & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    updateRestaurant(updateRestaurantInput: UpdateRestaurantInput): Promise<string>;
+    updateRestaurant(updateRestaurantInput: UpdateRestaurantInput): Promise<any>;
     stateRestaurant(stateInput: StateInput): Promise<string>;
     positionRestaurant(updatePositionInput: UpdatePositionInput[]): Promise<string>;
     removeRestaurant(id: string): Promise<string>;

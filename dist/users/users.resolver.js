@@ -93,7 +93,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersResolver.prototype, "findOne", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => String),
+    (0, graphql_1.Mutation)(() => user_entity_1.User),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "User" }),
     __param(0, (0, graphql_1.Args)('updateUserInput')),
     __metadata("design:type", Function),

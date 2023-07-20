@@ -99,7 +99,7 @@ export class NotificationsService {
       if(single?.image) single.image = this.awsService.getUrl(single.image);
       if(single.state === "Unread") unRead = true;
     }
-    if(unRead) this.NotificationsModel.updateMany({$and: [{state: "Unread"}, {type: "Management"}]}, {state: "Read"});
+    if(unRead) await this.NotificationsModel.updateMany({$and: [{state: "Unread"}, {type: "Management"}]}, {state: "Read"});
     const orders = await this.ordersService.findUnread();
     return {data: notifications, pages: Math.ceil(total/limitEntity.limit), orders};
   }

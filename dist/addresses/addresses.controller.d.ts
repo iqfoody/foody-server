@@ -29,13 +29,13 @@ import { UpdateAddressInput } from './dto/update-address.input';
 export declare class AddressesController {
     private readonly addressesService;
     constructor(addressesService: AddressesService);
-    getAddress(id: string, req: any): Promise<import("mongoose").Document<unknown, {}, import("../models/addresses.schema").AddressesDocument> & Omit<import("../models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>>;
     getAddresses(req: any): Promise<(import("mongoose").Document<unknown, {}, import("../models/addresses.schema").AddressesDocument> & Omit<import("../models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>)[]>;
     createAddress(createAddressInput: CreateAddressInput, req: any): Promise<import("mongoose").Document<unknown, {}, import("../models/addresses.schema").AddressesDocument> & Omit<import("../models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>>;
+    getAddress(id: string, req: any): Promise<import("mongoose").Document<unknown, {}, import("../models/addresses.schema").AddressesDocument> & Omit<import("../models/addresses.schema").Addresses & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
     updateAddress(id: string, updateAddressInput: UpdateAddressInput, req: any): Promise<string>;

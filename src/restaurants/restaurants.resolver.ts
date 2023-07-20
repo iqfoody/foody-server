@@ -41,7 +41,7 @@ export class RestaurantsResolver {
     return this.restaurantsService.findOne(id);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Restaurant)
   @CheckAbilities({actions: Actions.Update, subject: "Restaurant"})
   updateRestaurant(@Args('updateRestaurantInput') updateRestaurantInput: UpdateRestaurantInput) {
     if(!isValidObjectId(updateRestaurantInput?.id)) throw new BadRequestException("There isn't restaurant with this id");

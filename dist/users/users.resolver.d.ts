@@ -51,7 +51,7 @@ export declare class UsersResolver {
     findOne(id: string): Promise<import("mongoose").Document<unknown, import("../models/users.schema").IUsersQueryHelpers, import("../models/users.schema").UsersDocument> & Omit<import("../models/users.schema").Users & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    updateUser(updateUserInput: UpdateUserInput): Promise<string>;
+    updateUser(updateUserInput: UpdateUserInput): Promise<any>;
     passwordUser(passwordUserInput: UpdatePasswordUser): Promise<string>;
     stateUser(stateInput: StateInput): Promise<string>;
     removeUser(id: string): Promise<string>;

@@ -78,45 +78,30 @@ let AuthService = class AuthService {
         return result;
     }
     async loginDriver(context, loginInput) {
-        if (loginInput.password.length < 6)
-            throw new Error('password E0004');
-        const driver = await this.driversService.login(loginInput);
+        const driver = await this.driversService.findByPhoneNumber(context.user);
         if (!driver)
-            throw new Error('email E0001');
-        const result = await this.getTokens(driver, "Driver");
-        const refreshToken = await (0, bcryptjs_1.hash)(result.refreshToken, 10);
+            throw new Error('phoneNumber E0009');
         const ip = context.ip;
         const platform = context?.get('user-agent');
-        await this.driversService.updateAny(driver._id, { refreshToken, ip, platform, deviceToken: loginInput.deviceToken });
-        return result;
+        await this.driversService.updateAny(driver._id, { ip, platform, deviceToken: loginInput.deviceToken });
+        return driver;
     }
     async signup(createUserInput, context) {
-        if (context?.phoneNumber) {
-            let E0011 = await this.usersService.findByPhoneNumber(context?.phoneNumber);
+        if (context?.user) {
+            let E0011 = await this.usersService.findByPhoneNumber(context?.user);
             if (E0011)
                 throw new common_1.BadRequestException('phoneNumber E0011');
         }
         const ip = context?.ip;
         const platform = context?.get('user-agent');
-        const user = await this.usersService.create({ ...createUserInput, phoneNumber: context?.phoneNumber, ip, platform });
+        const user = await this.usersService.create({ ...createUserInput, phoneNumber: context?.user, ip, platform });
         return user;
     }
     async logout(context, type) {
-        if (type === "User") {
-            await this.usersService.logout(context);
-            return 'success';
-        }
-        else {
-            if (type === "Admin") {
-                await this.adminsService.logout(context.req.user._id);
-            }
-            else if (type === "Driver") {
-                await this.driversService.logout(context.user._id);
-            }
-            context.res.cookie('osk', '', { ...this.cookieOptions, maxAge: 0 });
-            context.res.cookie('iop', '', { ...this.cookieOptions, maxAge: 0 });
-            return 'success';
-        }
+        await this.adminsService.logout(context.req.user._id);
+        context.res.cookie('osk', '', { ...this.cookieOptions, maxAge: 0 });
+        context.res.cookie('iop', '', { ...this.cookieOptions, maxAge: 0 });
+        return 'success';
     }
     async findInfoAdmin(context) {
         const admin = await this.adminsService.findInfo(context.req.user._id, context.req.user.refreshToken);
@@ -127,19 +112,12 @@ let AuthService = class AuthService {
         return admin;
     }
     async refresh(context, type) {
-        if (type === "Driver") {
-            const driver = await this.driversService.refresh(context.user._id, context.user.refreshToken);
-            const accessToken = await this.getNewAccessToken(driver, "Driver");
-            return accessToken;
-        }
-        else {
-            const admin = await this.adminsService.refresh(context.req.user._id, context.req.user.refreshToken);
-            if (!admin)
-                return this.logout(context, "Admin");
-            const accessToken = await this.getNewAccessToken(admin, "Admin");
-            context.res.cookie('osk', accessToken, this.cookieOptions);
-            return "success";
-        }
+        const admin = await this.adminsService.refresh(context.req.user._id, context.req.user.refreshToken);
+        if (!admin)
+            return this.logout(context, "Admin");
+        const accessToken = await this.getNewAccessToken(admin, "Admin");
+        context.res.cookie('osk', accessToken, this.cookieOptions);
+        return "success";
     }
     async getTokens(user, metadata) {
         const userData = { _id: user?._id, type: user?.type, name: user?.name, phoneNumber: user?.phoneNumber, email: user?.email, permissions: user?.permissions, metadata };

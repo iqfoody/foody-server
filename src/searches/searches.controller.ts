@@ -12,7 +12,7 @@ export class SearchesController {
 
     @Get('/search')
     async search(@Query('search') query: string){
-        if(!query || query?.length <= 2 || query?.length >= 15) return
+        if(!query || query?.length < 2 || query?.length >= 15) return
         const restaurants = await this.restaurantsService.search(query);
         const meals = await this.mealsService.search(query);
         return [...restaurants, ...meals];

@@ -22,4 +22,7 @@ export class OrderItem {
     @Field(()=> Int)
     quantity: number;
 
+    @Field({nullable: true})
+    description?: string;
+
 }

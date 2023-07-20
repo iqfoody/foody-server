@@ -41,7 +41,7 @@ export class UsersResolver {
     return this.usersService.findOne(id);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => User)
   @CheckAbilities({actions: Actions.Update, subject: "User"})
   async updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     if(!isValidObjectId(updateUserInput?.id)) throw new BadRequestException("There isn't user with this id");

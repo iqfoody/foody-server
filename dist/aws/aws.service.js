@@ -25,8 +25,8 @@ let AwsService = class AwsService {
     imageTypes;
     constructor() {
         const region = process.env.AWS_BUCKET_REGION;
-        const accessKeyId = process.env.AWS_ACCESS_KEY_PRODUCTION;
-        const secretAccessKey = process.env.AWS_SECRET_KEY_PRODUCTION;
+        const accessKeyId = process.env.AWS_ACCESS_KEY_LOCAL;
+        const secretAccessKey = process.env.AWS_SECRET_KEY_LOCAL;
         this.imageTypes = [
             "image/jpg",
             "image/JPG",
@@ -104,15 +104,15 @@ let AwsService = class AwsService {
         };
         const command = new client_s3_1.DeleteObjectCommand(deleteParams);
         try {
+            await this.invalidatationImage(Key);
             await this.s3.send(command);
-            this.invalidatationImage(Key);
             return;
         }
         catch (error) {
             throw new common_1.BadRequestException(error);
         }
     }
-    invalidatationImage(Key) {
+    async invalidatationImage(Key) {
         const invalidationParams = {
             DistributionId: this.distributionId,
             InvalidationBatch: {
@@ -126,7 +126,7 @@ let AwsService = class AwsService {
             }
         };
         const invalidationCommand = new client_cloudfront_1.CreateInvalidationCommand(invalidationParams);
-        this.cloudFront.send(invalidationCommand);
+        await this.cloudFront.send(invalidationCommand);
     }
     async getReadStream(file) {
         let buffers = [];

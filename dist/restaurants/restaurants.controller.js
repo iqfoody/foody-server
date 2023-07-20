@@ -20,23 +20,16 @@ let RestaurantsController = class RestaurantsController {
     constructor(restaurantsService) {
         this.restaurantsService = restaurantsService;
     }
-    async getRestaurant(restaurant) {
-        return this.restaurantsService.findRestaurant(restaurant);
-    }
     async getRestaurants() {
         return this.restaurantsService.findRestaurnats();
     }
     async getRestaurantsInfinty(limit, page) {
         return this.restaurantsService.findRestaurnatsInfinty({ limit, page });
     }
+    async getRestaurant(restaurant) {
+        return this.restaurantsService.findRestaurant(restaurant);
+    }
 };
-__decorate([
-    (0, common_1.Get)('/:id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], RestaurantsController.prototype, "getRestaurant", null);
 __decorate([
     (0, common_1.Get)('/'),
     __metadata("design:type", Function),
@@ -51,6 +44,13 @@ __decorate([
     __metadata("design:paramtypes", [Number, Number]),
     __metadata("design:returntype", Promise)
 ], RestaurantsController.prototype, "getRestaurantsInfinty", null);
+__decorate([
+    (0, common_1.Get)('/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], RestaurantsController.prototype, "getRestaurant", null);
 RestaurantsController = __decorate([
     (0, common_1.Controller)('restaurants'),
     __metadata("design:paramtypes", [restaurants_service_1.RestaurantsService])

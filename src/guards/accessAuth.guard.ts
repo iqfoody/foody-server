@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable } from "@nestjs/common";
+import { ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { GqlExecutionContext } from "@nestjs/graphql";
 import { AuthGuard } from '@nestjs/passport'
 
@@ -15,10 +15,11 @@ export class AccessAuthGuard extends AuthGuard('jwt') {
             request.body = {...request.body, access, handler}
         }
         // check if request header from application contain access token...
-        //  else if(request.headers.authorization) {
-        //     const access = request.headers.authorization.replace('Bearer', '').trim();
-        //     request.body = {...request.body, access, handler}
-        // }
+         else if(request.headers.authorization) {
+            const access = request.headers.authorization.replace('Bearer', '').trim();
+            request.body = {...request.body, access, handler}
+        }
+        else throw new UnauthorizedException("Access denied");
         return request;
     }
 }

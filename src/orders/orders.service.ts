@@ -142,7 +142,7 @@ export class OrdersService {
 
     // -> sync promo code if exist...
     if(createOrderInput?.promoCode && createOrderInput?.paymentMethod !== "Points"){
-      const promoCode :any = await this.promoCodeService.check(createOrderInput.promoCode, _id);
+      const promoCode :any = await this.promoCodeService.check(createOrderInput.promoCode, createOrderInput.user);
       if(!promoCode?.name) throw new BadRequestException("You can't use promo code dosn't exist")
       usePromoCode = true;
       if(promoCode.type === 'Price') {
@@ -283,9 +283,9 @@ export class OrdersService {
   async inDeliveryOrder(id: string, phoneNumber: string) {
     if(!isValidObjectId(id)) throw new BadRequestException("There isn't order with this id");
     const { _id } = await this.driversService.findId(phoneNumber);
-    const updatedOrder = await this.OrdersModel.findOneAndUpdate({$and: [{_id: id}, {driver: _id}, {state: "InProgress"}]}, {state: "InDelivery"});
+    const updatedOrder: any = await this.OrdersModel.findOneAndUpdate({$and: [{_id: id}, {driver: _id}, {state: "InProgress"}]}, {state: "InDelivery"});
     if(!updatedOrder) throw new BadRequestException("This order isn't in progress, make sure this order if an in progress state");
-    //TODO: send in delivery order notification to user...
+    await this.notificationsService.sendPrivate({user: updatedOrder.user, order: id, restaurant: updatedOrder.restaurant, type: "Private", title: "فودي", titleEN: "Foody", body: "السائق في طريقه اليك", bodyEN: "The driver is on his way to you"})
     return "Success";
   }
 
@@ -306,8 +306,7 @@ export class OrdersService {
     }
     if (order.pointsBack > 0) await this.transactionsService.createTransaction({user: order.user as string, amount: order.pointsBack, order: order?._id, type: "Points", procedure: "Plus", paymentMethod: "Points", state: "Completed", description: "Points back from completed order"});
     //TODO: send rating notification to user...
-    //TODO: send completed order notification to user...
-    await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "طلبك مكتمل", titleEN: "Order completed", body: "تم اكمال طلبك بنجاح", bodyEN: "Your order is completed"});
+    await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "فودي", titleEN: "Foody", body: "تم تسليم طلبك بنجاح", bodyEN: "Your order is completed"});
     return "Success";
   }
 
@@ -507,7 +506,7 @@ export class OrdersService {
   }
 
   async findOne(id: string) {
-    const order: any = await this.OrdersModel.findById(id).populate([{path: "user", select: {name: 1, phoneNumber: 1, image: 1}}, {path: "restaurant", select: {title: 1, titleEN: 1, titleKR: 1, image: 1, discount: 1, minDiscount: 1, maxDiscount: 1 }}, {path: "address", select: {_id: 1}}, {path: "meals.meal"}, {path: "driver", select:{name: 1, phoneNumber: 1, image: 1}} ]);
+    const order: any = await this.OrdersModel.findById(id).populate([{path: "user"}, {path: "restaurant"}, {path: "address"}, {path: "meals.meal"}, {path: "driver"} ]);
     if(order?.user?.image) order.user.image = this.awsService.getUrl(order.user.image);
     if(order?.restaurant?.image) order.restaurant.image = this.awsService.getUrl(order.restaurant.image);
     return order;
@@ -661,7 +660,7 @@ export class OrdersService {
 
  
      // -> updating order...
-     const updatedOrder = await this.OrdersModel.findByIdAndUpdate(id, {...demoOrderDate, totalPrice, price, pointsBack, discount, totalDiscount});
+     const updatedOrder: any = await this.OrdersModel.findByIdAndUpdate(id, {...demoOrderDate, totalPrice, price, pointsBack, discount, totalDiscount}, {new: true}).populate([{path: "user"}, {path: "restaurant"}, {path: "address"}, {path: "meals.meal"}, {path: "driver"} ]);
      if(!updatedOrder) throw new BadRequestException("you order haven't updated please try again later");
 
      // -> send notification to driver...
@@ -672,28 +671,30 @@ export class OrdersService {
      if(updateOrderInput?.paymentMethod !== "Cash" && transaction.amount !== 0){
       await this.transactionsService.updateTransaction({...transaction, order: order._id});
      }
-    return this.findOne(id);
+     if(updatedOrder?.user?.image) updatedOrder.user.image = this.awsService.getUrl(updatedOrder.user.image);
+    if(updatedOrder?.restaurant?.image) updatedOrder.restaurant.image = this.awsService.getUrl(updatedOrder.restaurant.image);
+    return updatedOrder;
   }
 
   async state(stateInput: StateInput){
     const order: any = await this.OrdersModel.findById(stateInput.id);
     if(stateInput.state === "Pending"){
       // -> send noti -> user...
-      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تغيير حالة الطلب", titleEN: "Order changed status", body: "طلبك قيد الانتظار", bodyEN: "Your order is pending"});
+      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "فودي", titleEN: "Foody", body: "طلبك قيد الانتظار", bodyEN: "Your order is pending"});
     } else if(stateInput.state === "InProgress"){
       // -> send noti -> user...
-      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تغيير حالة الطلب", titleEN: "Order changed status", body: "طلبك قيد التحضير", bodyEN: "Your order is in progress"});
+      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "فودي", titleEN: "Foody", body: "طلبك قيد التحضير", bodyEN: "Your order is in progress"});
     } else if(stateInput.state === "InDelivery") {
       // -> send noti -> user, driver...
       if(order?.driver) await this.notificationsService.sendPrivate({driver: order.driver, order: order._id, restaurant: order.restaurant, type: "Private", title: "لديك طلب جديد", titleEN: "New order", body: "تم اضافة طلب جديد لديك", bodyEN: "You have new order"});
-      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تغيير حالة الطلب", titleEN: "Order changed status", body: "طلبك قيد التوصيل", bodyEN: "Your order is in delivery"});
+      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "فودي", titleEN: "Foody", body: "طلبك قيد التوصيل", bodyEN: "Your order is in delivery"});
     } else if(stateInput.state === "Completed"){
       // -> send noti -> user...
-      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تغيير حالة الطلب", titleEN: "Order changed status", body: "طلبك مكتمل", bodyEN: "Your order is completed"});
+      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "فودي", titleEN: "Foody", body: "طلبك مكتمل", bodyEN: "Your order is completed"});
       if(order?.paymentMethod !== "Cash") await this.transactionsService.completeTransaction(order._id, order.user);
     } else if(stateInput.state === "Canceled"){
       // -> send noti -> user, driver...
-      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "تم تغيير حالة الطلب", titleEN: "Order changed status", body: "تم الغاء طلبك", bodyEN: "Your order is canceled"});
+      await this.notificationsService.sendPrivate({user: order.user, order: order._id, restaurant: order.restaurant, type: "Private", title: "فودي", titleEN: "Foody", body: "تم الغاء طلبك", bodyEN: "Your order is canceled"});
       if(order?.paymentMethod !== "Cash") await this.transactionsService.cancelTransaction(order._id, order.user);
     }
     await this.OrdersModel.findByIdAndUpdate(stateInput.id, stateInput);
@@ -708,12 +709,15 @@ export class OrdersService {
   async home() {
     let week = { d0: 0, d1: 0, d2:0, d3: 0, d4: 0, d5: 0, d6:0 };
     let status = { Pending: 0, InProgress: 0, InDelivery: 0, Completed: 0, Canceled: 0 };
-    const data = new Date().setDate(new Date().getDate() -7);
+    const data = new Date().setDate(new Date().getDate() -6);
     const ordersInWeek = await this.OrdersModel.aggregate([
       {$match: {createdAt: {$gt: new Date(data)}} },
       {$group: {_id: "createAt", total: {$push: {createdAt: "$createdAt", state: "$state"}},}},
     ]);
     //TODO: set getDay() to -> getDate()...
+    //? orders week return previous result day like fri, sat, sun... 
+    //? maybe get day() is the problem 
+    //? check get Date() instade get Day()...
     if(ordersInWeek[0]?.total){
       for(const single of ordersInWeek[0]?.total){
         status = {...status, [single.state]: status[single.state] + 1};

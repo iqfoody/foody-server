@@ -13,12 +13,14 @@ const restaurant_categories_resolver_1 = require("./restaurant-categories.resolv
 const restaurant_categories_controller_1 = require("./restaurant-categories.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const restaurantCategories_schema_1 = require("../models/restaurantCategories.schema");
+const meals_module_1 = require("../meals/meals.module");
 let RestaurantCategoriesModule = class RestaurantCategoriesModule {
 };
 RestaurantCategoriesModule = __decorate([
     (0, common_1.Module)({
         imports: [
             mongoose_1.MongooseModule.forFeature([{ name: "RestaurantCategories", schema: restaurantCategories_schema_1.RestaurantCategoriesSchema }]),
+            (0, common_1.forwardRef)(() => meals_module_1.MealsModule)
         ],
         providers: [restaurant_categories_resolver_1.RestaurantCategoriesResolver, restaurant_categories_service_1.RestaurantCategoriesService],
         exports: [restaurant_categories_service_1.RestaurantCategoriesService],

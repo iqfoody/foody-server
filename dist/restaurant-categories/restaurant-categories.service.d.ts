@@ -27,14 +27,12 @@ import { UpdateRestaurantCategoryInput } from './dto/update-restaurant-category.
 import { Model } from 'mongoose';
 import { RestaurantCategoriesDocument } from 'src/models/restaurantCategories.schema';
 import { UpdatePositionInput } from 'src/constants/position.input';
+import { MealsService } from 'src/meals/meals.service';
 export declare class RestaurantCategoriesService {
     private RestaurantCategoriesModel;
-    constructor(RestaurantCategoriesModel: Model<RestaurantCategoriesDocument>);
-    findForRestaurant(restaurant: string): import("mongoose").Query<(import("mongoose").Document<unknown, {}, RestaurantCategoriesDocument> & Omit<import("src/models/restaurantCategories.schema").RestaurantCategories & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>)[], import("mongoose").Document<unknown, {}, RestaurantCategoriesDocument> & Omit<import("src/models/restaurantCategories.schema").RestaurantCategories & import("mongoose").Document<any, any, any> & {
-        _id: import("mongoose").Types.ObjectId;
-    }, never>, {}, RestaurantCategoriesDocument>;
+    private mealsService;
+    constructor(RestaurantCategoriesModel: Model<RestaurantCategoriesDocument>, mealsService: MealsService);
+    findForRestaurant(restaurant: string): Promise<any[]>;
     create(createRestaurantCategoryInput: CreateRestaurantCategoryInput): Promise<import("mongoose").Document<unknown, {}, RestaurantCategoriesDocument> & Omit<import("src/models/restaurantCategories.schema").RestaurantCategories & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;

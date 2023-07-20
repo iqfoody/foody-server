@@ -20,13 +20,19 @@ let AdvertisementsController = class AdvertisementsController {
     constructor(advertisementsService) {
         this.advertisementsService = advertisementsService;
     }
-    async getAdvertisement(id) {
-        return this.advertisementsService.findAdvertisement(id);
-    }
     async getAdvertisements() {
         return this.advertisementsService.findAdvertisements();
     }
+    async getAdvertisement(id) {
+        return this.advertisementsService.findAdvertisement(id);
+    }
 };
+__decorate([
+    (0, common_1.Get)('/'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdvertisementsController.prototype, "getAdvertisements", null);
 __decorate([
     (0, common_1.Get)('/:id'),
     __param(0, (0, common_1.Param)('id')),
@@ -34,12 +40,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AdvertisementsController.prototype, "getAdvertisement", null);
-__decorate([
-    (0, common_1.Get)('/'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], AdvertisementsController.prototype, "getAdvertisements", null);
 AdvertisementsController = __decorate([
     (0, common_1.Controller)('advertisements'),
     __metadata("design:paramtypes", [advertisements_service_1.AdvertisementsService])

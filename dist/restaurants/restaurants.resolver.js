@@ -95,7 +95,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], RestaurantsResolver.prototype, "findOne", null);
 __decorate([
-    (0, graphql_1.Mutation)(() => String),
+    (0, graphql_1.Mutation)(() => restaurant_entity_1.Restaurant),
     (0, ability_decorator_1.CheckAbilities)({ actions: ability_factory_1.Actions.Update, subject: "Restaurant" }),
     __param(0, (0, graphql_1.Args)('updateRestaurantInput')),
     __metadata("design:type", Function),

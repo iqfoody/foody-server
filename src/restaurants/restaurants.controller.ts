@@ -6,11 +6,6 @@ export class RestaurantsController {
     constructor(
         private readonly restaurantsService: RestaurantsService,
     ){}
-
-    @Get('/:id')
-    async getRestaurant(@Param('id') restaurant: string){
-        return this.restaurantsService.findRestaurant(restaurant);
-    }
     
     @Get('/')
     async getRestaurants(){
@@ -20,6 +15,11 @@ export class RestaurantsController {
     @Get('/main')
     async getRestaurantsInfinty(@Query('limit') limit: number, @Query('page') page: number){
         return this.restaurantsService.findRestaurnatsInfinty({limit, page});
+    }
+
+    @Get('/:id')
+    async getRestaurant(@Param('id') restaurant: string){
+        return this.restaurantsService.findRestaurant(restaurant);
     }
 
 }

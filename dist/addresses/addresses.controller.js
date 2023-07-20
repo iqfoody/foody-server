@@ -23,14 +23,14 @@ let AddressesController = class AddressesController {
     constructor(addressesService) {
         this.addressesService = addressesService;
     }
-    async getAddress(id, req) {
-        return this.addressesService.findAddress(id, req.user);
-    }
     async getAddresses(req) {
         return this.addressesService.findAddresses(req.user);
     }
     async createAddress(createAddressInput, req) {
         return this.addressesService.create({ ...createAddressInput, user: req.user });
+    }
+    async getAddress(id, req) {
+        return this.addressesService.findAddress(id, req.user);
     }
     async updateAddress(id, updateAddressInput, req) {
         return this.addressesService.updateAddress({ ...updateAddressInput, id }, req.user);
@@ -39,14 +39,6 @@ let AddressesController = class AddressesController {
         return this.addressesService.removeAddress(id, req.user);
     }
 };
-__decorate([
-    (0, common_1.Get)('/:id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
-], AddressesController.prototype, "getAddress", null);
 __decorate([
     (0, common_1.Get)('/'),
     __param(0, (0, common_1.Req)()),
@@ -62,6 +54,14 @@ __decorate([
     __metadata("design:paramtypes", [create_address_input_1.CreateAddressInput, Object]),
     __metadata("design:returntype", Promise)
 ], AddressesController.prototype, "createAddress", null);
+__decorate([
+    (0, common_1.Get)('/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AddressesController.prototype, "getAddress", null);
 __decorate([
     (0, common_1.Put)('/:id'),
     __param(0, (0, common_1.Param)('id')),

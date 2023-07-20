@@ -35,7 +35,7 @@ export class DriversResolver {
     return this.driversService.findOne(id);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Driver)
   @CheckAbilities({actions: Actions.Update, subject: "Driver"})
   updateDriver(@Args('updateDriverInput') updateDriverInput: UpdateDriverInput) {
     if(!isValidObjectId(updateDriverInput?.id)) throw new BadRequestException("There isn't driver with this id");
